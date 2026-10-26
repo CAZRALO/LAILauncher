@@ -1,0 +1,1141 @@
+<Window x:Class="Launcher.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:Launcher.App.Converters"
+        mc:Ignorable="d"
+        Title="Local AI Launcher"
+        Height="530" Width="760"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        Topmost="True"
+        ShowInTaskbar="False"
+        WindowStartupLocation="Manual"
+        PreviewKeyDown="OnWindowPreviewKeyDown"
+        Deactivated="OnWindowDeactivated">
+
+    <Window.Resources>
+        <conv:ResultToIconConverter x:Key="ResultToIconConverter"/>
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <conv:ResultTypeToColorConverter x:Key="ResultTypeToColorConverter"/>
+        <conv:ResultTypeToBackgroundConverter x:Key="ResultTypeToBackgroundConverter"/>
+        <conv:ResultTypeToBorderConverter x:Key="ResultTypeToBorderConverter"/>
+        <conv:ResultTypeToGeometryConverter x:Key="ResultTypeToGeometryConverter"/>
+        <conv:ResultTypeToDisplayNameConverter x:Key="ResultTypeToDisplayNameConverter"/>
+
+        <!-- Quick Settings Button Style (Horizontal Pill Bar) -->
+        <Style x:Key="QuickSettingBtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{DynamicResource BadgeBgBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="9,4.5">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dynamic Context Menu -->
+        <Style TargetType="ContextMenu">
+            <Setter Property="Background" Value="{DynamicResource ContextMenuBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ContextMenuBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border Background="{DynamicResource ContextMenuBgBrush}" 
+                                BorderBrush="{DynamicResource ContextMenuBorderBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="10" 
+                                Padding="5">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="20" ShadowDepth="4" Direction="270" 
+                                                  Color="{DynamicResource ShadowColor}" 
+                                                  Opacity="{DynamicResource ShadowOpacity}"/>
+                            </Border.Effect>
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="MenuItem">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="9,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="MenuBorder" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}" Margin="0,1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentPresenter Grid.Column="0" ContentSource="Icon" TextElement.Foreground="{DynamicResource IconBrush}" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                                <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" FontFamily="Segoe UI, Consolas, monospace" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="MenuBorder" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Action Flyout Menu Button Style (matching web flyout-item) -->
+        <Style x:Key="FlyoutButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="9,6"/>
+            <Setter Property="Margin" Value="0,1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBd" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Liquid Glass Native OS Container -->
+    <Border Background="{DynamicResource WindowBgBrush}" 
+            BorderBrush="{DynamicResource WindowBorderBrush}" 
+            BorderThickness="1" 
+            CornerRadius="{DynamicResource WindowCornerRadius}" 
+            Margin="12">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="3" Direction="270" 
+                              Color="{DynamicResource ShadowColor}" 
+                              Opacity="{DynamicResource ShadowOpacity}"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                            <DoubleAnimation Storyboard.TargetName="OrbPrimaryTrans" Storyboard.TargetProperty="X" From="0" To="35" Duration="0:0:9">
+                                <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut"/></DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="OrbPrimaryTrans" Storyboard.TargetProperty="Y" From="0" To="20" Duration="0:0:7">
+                                <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut"/></DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="OrbSecondaryTrans" Storyboard.TargetProperty="X" From="0" To="-30" Duration="0:0:8">
+                                <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut"/></DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="OrbSecondaryTrans" Storyboard.TargetProperty="Y" From="0" To="-25" Duration="0:0:10">
+                                <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut"/></DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="OrbTertiaryTrans" Storyboard.TargetProperty="X" From="-15" To="20" Duration="0:0:11">
+                                <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut"/></DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Grid.Triggers>
+
+            <!-- Ambient Aurora Refraction Glow Mesh (Liquid Glass Orbs from Web with breathing animation) -->
+            <Grid IsHitTestVisible="False" ClipToBounds="True">
+                <!-- Top Left Ambient Light Orb -->
+                <Ellipse x:Name="OrbPrimary" Width="380" Height="260" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-70,0,0" Opacity="0.18" RenderTransformOrigin="0.5,0.5">
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="OrbPrimaryTrans"/>
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Fill>
+                        <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                            <GradientStop Color="{DynamicResource AccentColor}" Offset="0"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <!-- Center Ambient Light Orb -->
+                <Ellipse x:Name="OrbTertiary" Width="320" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.10" RenderTransformOrigin="0.5,0.5">
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="OrbTertiaryTrans"/>
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Fill>
+                        <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                            <GradientStop Color="{DynamicResource LogoColor}" Offset="0"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <!-- Bottom Right Ambient Light Orb -->
+                <Ellipse x:Name="OrbSecondary" Width="360" Height="240" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-80,-80" Opacity="0.14" RenderTransformOrigin="0.5,0.5">
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform x:Name="OrbSecondaryTrans"/>
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Fill>
+                        <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                            <GradientStop Color="{DynamicResource AccentColor}" Offset="0"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </Grid>
+
+            <!-- Specular Sheen Rim Reflection (Top edge highlight) -->
+            <Border Height="1.5" VerticalAlignment="Top" 
+                    Background="{DynamicResource GlassSpecularBrush}" 
+                    CornerRadius="{DynamicResource WindowCornerRadiusTop}"
+                    IsHitTestVisible="False"/>
+
+            <Grid Margin="16,8,16,12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
+                    <!-- Linux GNOME Top Bar (Visible in Linux Mode) -->
+                    <Border x:Name="GnomeTopBar" 
+                            Visibility="{DynamicResource LinuxVisibility}"
+                            Background="{DynamicResource CardBgBrush}" 
+                            BorderBrush="{DynamicResource SeparatorBrush}" 
+                            BorderThickness="0,0,0,1" 
+                            Padding="12,5" 
+                            Margin="-16,-8,-16,8" 
+                            CornerRadius="{DynamicResource WindowCornerRadiusTop}"
+                            MouseLeftButtonDown="OnWindowDragMouseDown"
+                            Cursor="SizeAll">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Left: Activities Pill -->
+                            <Border Grid.Column="0" Background="{DynamicResource BadgeBgBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="0.8" CornerRadius="10" Padding="8,2" Cursor="Hand">
+                                <TextBlock Text="Activities" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </Border>
+
+                            <!-- Center: System Clock -->
+                            <TextBlock Grid.Column="1" x:Name="GnomeClockText" Text="" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                            <!-- Right: Quick Status Icons -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoWifi}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,8,0" ToolTip="Mạng Wi-Fi"/>
+                                <Path Data="{StaticResource GeoVolume}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,8,0" ToolTip="Âm lượng"/>
+                                <Path Data="{StaticResource GeoBattery}" Width="13" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,8,0" ToolTip="Pin 100%"/>
+                                <Border Background="{DynamicResource BadgeBgBrush}" CornerRadius="9" Width="18" Height="18" ToolTip="Nguồn điện">
+                                    <Path Data="{StaticResource GeoPower}" Width="9" Height="9" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Native OS Header Bar (Linux Traffic dots on left / Windows caption controls on right) -->
+                    <Grid x:Name="HeaderTitleBar" 
+                          Margin="2,0,2,8" 
+                          Background="Transparent" 
+                          MouseLeftButtonDown="OnWindowDragMouseDown">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- LEFT: Linux Traffic Dots (Visible on Linux) & Brand Logo -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Linux Traffic Dots -->
+                            <StackPanel Orientation="Horizontal" Visibility="{DynamicResource LinuxVisibility}" Margin="0,0,12,0" VerticalAlignment="Center">
+                                <!-- Close Dot (Red) -->
+                                <Button x:Name="LinuxCloseBtn" Width="13" Height="13" Margin="0,0,7,0" Cursor="Hand" ToolTip="Đóng (Esc)" Click="OnWindowCloseClicked" Background="Transparent" BorderThickness="0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="dot" CornerRadius="6.5" Background="#FF5F56" Width="13" Height="13" BorderBrush="#E0443E" BorderThickness="0.8">
+                                                <Path x:Name="dotGlyph" Data="{StaticResource GeoClear}" Stroke="#440000" StrokeThickness="1.2" Width="6" Height="6" Stretch="Uniform" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="dotGlyph" Property="Visibility" Value="Visible"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <!-- Minimize Dot (Yellow) -->
+                                <Button x:Name="LinuxMinBtn" Width="13" Height="13" Margin="0,0,7,0" Cursor="Hand" ToolTip="Ẩn launcher" Click="OnWindowMinimizeClicked" Background="Transparent" BorderThickness="0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="dot" CornerRadius="6.5" Background="#FFBD2E" Width="13" Height="13" BorderBrush="#DEA123" BorderThickness="0.8">
+                                                <Path x:Name="dotGlyph" Data="{StaticResource GeoMinimize}" Stroke="#443000" StrokeThickness="1.2" Width="6" Height="6" Stretch="Uniform" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="dotGlyph" Property="Visibility" Value="Visible"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <!-- Settings Dot (Green) -->
+                                <Button x:Name="LinuxMaxBtn" Width="13" Height="13" Cursor="Hand" ToolTip="Cài đặt hệ thống" Click="OnSettingsClicked" Background="Transparent" BorderThickness="0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="dot" CornerRadius="6.5" Background="#27C93F" Width="13" Height="13" BorderBrush="#1AAB29" BorderThickness="0.8">
+                                                <Path x:Name="dotGlyph" Data="{StaticResource GeoSettings}" Stroke="#003300" StrokeThickness="1.2" Width="6" Height="6" Stretch="Uniform" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="dotGlyph" Property="Visibility" Value="Visible"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- Brand Squircle Icon & Title (Draggable with Grip) -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Cursor="SizeAll" ToolTip="Kéo giữ chuột để di chuyển vị trí cửa sổ LAILauncher">
+                                <!-- Drag Grip Dots -->
+                                <Path Data="{StaticResource GeoGrip}" Width="6" Height="10" Fill="{DynamicResource TextMutedBrush}" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" Opacity="0.6"/>
+
+                                <!-- Gradient Squircle Icon ⚡ -->
+                                <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource AccentBrush}" Margin="0,0,7,0" VerticalAlignment="Center">
+                                    <Path Data="{StaticResource GeoLightning}" Width="12" Height="12" Fill="#FFFFFF" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <TextBlock Text="LAILauncher" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                
+                                <!-- Version Chip (v2.4 Pro) matching web -->
+                                <Border Background="#DBEAFE" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="6" Padding="6,1.5" Margin="7,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="v2.4 Pro" FontSize="9.5" FontWeight="Bold" Foreground="#2563EB"/>
+                                </Border>
+                                <TextBlock x:Name="HeaderThemeBadge" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- CENTER: Header Clock & Hotkey Meta Chip -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <!-- Clock chip -->
+                            <Border Background="{DynamicResource CardBgBrush}" BorderBrush="{DynamicResource SeparatorBrush}" BorderThickness="1" CornerRadius="6" Padding="7,2" Margin="0,0,6,0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Path Data="{StaticResource GeoClock}" Width="11" Height="11" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="HeaderClockText" Text="" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Hotkey badge chip -->
+                            <Border Style="{StaticResource KbdBadgeStyle}" VerticalAlignment="Center" ToolTip="Phím tắt gọi Launcher">
+                                <TextBlock Text="Alt + Space" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- RIGHT: Minimalist Header Controls (Mode Toggle, Settings, Close & Dynamic Reset Pos) -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Quick OS Switcher Button (Windows 11 / Linux GNOME) - Kept hidden for clean UI, fully configured in Settings -->
+                            <Button x:Name="OsSwitchButton" Click="OnOsSwitchClicked" Visibility="Collapsed">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path x:Name="OsIconPath" Data="{StaticResource GeoWindows}"/>
+                                    <TextBlock x:Name="OsLabelText" Text="Win 11"/>
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Quick AI Assistant Button - Kept hidden for clean UI, directly accessible via search (ai / Alt+2) -->
+                            <Button x:Name="AiAssistantQuickBtn" Click="OnAiQuickLaunchClicked" Visibility="Collapsed">
+                                <TextBlock Text="Trợ lý AI"/>
+                            </Button>
+
+                            <!-- Quick Reset Position Button (Appears ONLY when window is moved away from center) -->
+                            <Button x:Name="ResetPositionBtn" Click="OnResetPositionClicked" ToolTip="Đưa cửa sổ về vị trí trung tâm" Width="26" Height="24" Margin="0,0,4,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Visibility="Collapsed">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{DynamicResource BadgeBgBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="1" CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                                                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Path x:Name="ResetPosIcon" Data="{StaticResource GeoReset}" Width="11" Height="11" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ResetPosLabel" Visibility="Collapsed"/>
+                                    <Ellipse x:Name="CustomPosIndicator" Visibility="Collapsed"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Quick Light / Dark Mode Toggle Button (Ctrl+D) - Sleek Minimalist Icon -->
+                            <Button x:Name="LightDarkToggleBtn" Click="OnLightDarkToggleClicked" ToolTip="Chuyển đổi Chế độ Sáng / Tối (Ctrl + D)" Width="26" Height="24" Margin="0,0,4,0" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{DynamicResource BadgeBgBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="1" CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                                                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock x:Name="ModeEmojiText" Text="🌙" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ModeLabelText" Visibility="Collapsed"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Quick Settings Button (Ctrl+,) - Sleek Minimalist Icon -->
+                            <Button x:Name="SettingsQuickBtn" Click="OnSettingsClicked" ToolTip="Cài đặt Theme &amp; Tùy biến (Ctrl+,)" Width="26" Height="24" Margin="0,0,4,0" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{DynamicResource BadgeBgBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="1" CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                                                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Path Data="{StaticResource GeoSettings}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+
+                            <!-- Windows 11 Caption Controls (Close only, Min/Max collapsed) -->
+                            <StackPanel Orientation="Horizontal" Visibility="{DynamicResource WindowsVisibility}" VerticalAlignment="Center">
+                                <Button x:Name="WinMinBtn" Visibility="Collapsed"/>
+                                <Button x:Name="WinMaxBtn" Visibility="Collapsed"/>
+
+                                <!-- Win Close -->
+                                <Button x:Name="WinCloseBtn" Click="OnWindowCloseClicked" ToolTip="Đóng (Esc)" Width="26" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="bd" CornerRadius="6" Background="Transparent">
+                                                <Path x:Name="closeP" Data="{StaticResource GeoClear}" Width="8" Height="8" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="bd" Property="Background" Value="#E81123"/>
+                                                    <Setter TargetName="closeP" Property="Stroke" Value="#FFFFFF"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Clean & Focused Search Bar Container with Horizontal Quick Settings Strip -->
+                <StackPanel Grid.Row="1">
+                    <Border Background="{DynamicResource SearchBarBgBrush}" 
+                            CornerRadius="12" 
+                            Padding="14,10" 
+                            BorderBrush="{DynamicResource SearchBarBorderBrush}" 
+                            BorderThickness="1.5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Search icon (Outlined Lucide / Feather style matching web) -->
+                            <Path Grid.Column="0" 
+                                  Data="{StaticResource GeoSearch}" 
+                                  Width="18" Height="18" 
+                                  Stroke="{DynamicResource IconBrush}" 
+                                  StrokeThickness="2" 
+                                  StrokeStartLineCap="Round" 
+                                  StrokeEndLineCap="Round" 
+                                  StrokeLineJoin="Round"
+                                  Stretch="Uniform" 
+                                  VerticalAlignment="Center" 
+                                  Margin="0,0,12,0"/>
+
+                            <!-- Search Box, Prefix Chip & Clear Button Container -->
+                            <Grid Grid.Column="1" VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Dynamic Prefix Chip (Terminal, Web, AI, Calc) -->
+                                <Border Grid.Column="0" x:Name="SearchPrefixBadge" 
+                                        Background="{DynamicResource AccentBrush}" 
+                                        CornerRadius="6" 
+                                        Padding="7,2.5" 
+                                        Margin="0,0,8,0" 
+                                        VerticalAlignment="Center" 
+                                        Visibility="Collapsed">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path x:Name="SearchPrefixIcon" Data="{StaticResource GeoTerminal}" Width="10" Height="10" Fill="#FFFFFF" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="SearchPrefixText" Text="Lệnh Shell" FontSize="10.5" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Grid Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBox x:Name="SearchBox" 
+                                             Background="Transparent" 
+                                             BorderThickness="0" 
+                                             Foreground="{DynamicResource TextPrimaryBrush}" 
+                                             FontSize="16.5" 
+                                             FontFamily="Segoe UI Variable Text, Segoe UI, sans-serif"
+                                             FontWeight="Medium"
+                                             VerticalAlignment="Center" 
+                                             Margin="0,0,8,0"
+                                             CaretBrush="{DynamicResource AccentBrush}"
+                                             TextChanged="OnSearchTextChanged"/>
+
+                                    <TextBlock x:Name="PlaceholderText" 
+                                               Text="Tìm ứng dụng, tệp tin, lệnh (>) hoặc tính toán..." 
+                                               Foreground="{DynamicResource TextMutedBrush}" 
+                                               FontSize="15" 
+                                               FontFamily="Segoe UI Variable Text, Segoe UI, sans-serif"
+                                               IsHitTestVisible="False" 
+                                               VerticalAlignment="Center"
+                                               Margin="2,0,8,0"/>
+                                </Grid>
+
+                                <!-- Quick Clear Button (✕) -->
+                                <Button Grid.Column="2" x:Name="ClearSearchButton" 
+                                        Width="22" Height="22" 
+                                        HorizontalAlignment="Right" 
+                                        VerticalAlignment="Center" 
+                                        Background="Transparent" 
+                                        BorderThickness="0" 
+                                        Cursor="Hand" 
+                                        ToolTip="Xóa tìm kiếm (Esc)"
+                                        Visibility="Collapsed"
+                                        Click="OnClearSearchClicked">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="clearBorder" Background="{DynamicResource BadgeBgBrush}" CornerRadius="11">
+                                                <Path Data="{StaticResource GeoClear}" Width="8.5" Height="8.5" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.8" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="clearBorder" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Horizontal Quick Settings / Inline Controls Strip (Windows Search 2025 Inline Toggles) -->
+                    <Border x:Name="QuickSettingsStrip" Margin="0,7,0,0" Visibility="Visible">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" PanningMode="HorizontalOnly">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Hotspot Button -->
+                                <Button x:Name="QuickHotspotBtn" Click="OnQuickHotspotClicked" ToolTip="Bật / Tắt Mobile Hotspot trực tiếp không cần mở Settings" Style="{StaticResource QuickSettingBtnStyle}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="{StaticResource GeoHotspot}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Hotspot" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Energy Saver Button -->
+                                <Button x:Name="QuickEnergySaverBtn" Click="OnQuickEnergySaverClicked" ToolTip="Bật / Tắt Tiết kiệm pin (Energy Saver) trực tiếp không cần mở Settings" Style="{StaticResource QuickSettingBtnStyle}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path x:Name="QuickEnergySaverIcon" Data="{StaticResource GeoLeaf}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="QuickEnergySaverText" Text="Tiết kiệm pin" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Taskbar Alignment Button -->
+                                <Button x:Name="QuickTaskbarAlignBtn" Click="OnQuickTaskbarAlignClicked" ToolTip="Đổi vị trí thanh Taskbar (Căn Giữa ↔ Căn Trái) và áp dụng ngay" Style="{StaticResource QuickSettingBtnStyle}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="{StaticResource GeoTaskbar}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="QuickTaskbarText" Text="Taskbar: Giữa" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Screenshot Button -->
+                                <Button x:Name="QuickScreenshotBtn" Click="OnQuickScreenshotClicked" MouseRightButtonUp="OnQuickScreenshotRightClicked" ToolTip="Chụp ảnh màn hình (Chuột trái: Toàn màn hình, Chuột phải: Snipping Tool)" Style="{StaticResource QuickSettingBtnStyle}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="{StaticResource GeoCamera}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Chụp màn hình" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Background Processes Button -->
+                                <Button x:Name="QuickProcessesBtn" Click="OnQuickProcessesClicked" ToolTip="Xem danh sách các trình chạy ngầm và tắt ứng dụng ngốn RAM" Style="{StaticResource QuickSettingBtnStyle}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="{StaticResource GeoCpu}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Trình chạy ngầm" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Wi-Fi Flyout Button -->
+                                <Button x:Name="QuickWifiBtn" Click="OnQuickWifiClicked" ToolTip="Mở danh sách kết nối Wi-Fi khả dụng" Style="{StaticResource QuickSettingBtnStyle}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="{StaticResource GeoWifi}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Wi-Fi" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Bluetooth Button -->
+                                <Button x:Name="QuickBluetoothBtn" Click="OnQuickBluetoothClicked" ToolTip="Bật / Tắt kết nối sóng Bluetooth" Style="{StaticResource QuickSettingBtnStyle}" Margin="0,0,0,0">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="{StaticResource GeoBluetooth}" Width="12" Height="12" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.4" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Bluetooth" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+
+                <!-- Results List & Empty State Container -->
+                <Grid Grid.Row="2" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Results Section Header (Exact match with web) -->
+                    <Grid Grid.Row="0" Margin="4,2,4,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="KẾT QUẢ TÌM KIẾM &amp; HÀNH ĐỘNG" 
+                                   FontSize="10.5" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" 
+                                   Text="Sử dụng phím mũi tên ↑ / ↓ để chọn" 
+                                   FontSize="10" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <!-- Results List -->
+                        <ListBox x:Name="ResultsList" 
+                                 Background="Transparent" 
+                                 BorderThickness="0" 
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             SelectionMode="Single"
+                             MouseDoubleClick="OnResultDoubleClick">
+                        <ListBox.ContextMenu>
+                            <ContextMenu x:Name="ResultsContextMenu">
+                                <MenuItem Header="TÙY CHỌN TÁC VỤ" IsHitTestVisible="False" Focusable="False" FontWeight="Bold" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" Padding="8,4,8,4"/>
+                                <Separator Background="{DynamicResource SeparatorBrush}" Margin="0,2,0,4"/>
+                                <MenuItem Header="⚡ Thực thi mặc định" InputGestureText="Enter" Click="OnActionOpenClicked">
+                                    <MenuItem.Icon>
+                                        <Path Data="{StaticResource GeoEnter}" Width="14" Height="14" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5" Stretch="Uniform"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="🛡️ Chạy với quyền Administrator" InputGestureText="Ctrl+Shift+↵" Click="OnActionRunAsAdminClicked">
+                                    <MenuItem.Icon>
+                                        <Path Data="{StaticResource GeoShield}" Width="14" Height="14" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5" Stretch="Uniform"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="📁 Mở thư mục chứa (Explorer)" InputGestureText="Ctrl+↵" Click="OnActionOpenFolderClicked">
+                                    <MenuItem.Icon>
+                                        <Path Data="{StaticResource GeoFolder}" Width="14" Height="14" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5" Stretch="Uniform"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="📋 Sao chép đường dẫn" InputGestureText="Ctrl+C" Click="OnActionCopyPathClicked">
+                                    <MenuItem.Icon>
+                                        <Path Data="{StaticResource GeoCopy}" Width="14" Height="14" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5" Stretch="Uniform"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator Background="{DynamicResource SeparatorBrush}" Margin="0,4"/>
+                                <MenuItem Header="✨ Hỏi AI giải thích chi tiết" InputGestureText="Tab" Click="OnActionAskAIClicked">
+                                    <MenuItem.Icon>
+                                        <Path Data="{StaticResource GeoSparkle}" Width="14" Height="14" Fill="{DynamicResource AccentBrush}" Stretch="Uniform"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator Background="{DynamicResource SeparatorBrush}" Margin="0,4"/>
+                                <MenuItem Header="⚙️ Cài đặt &amp; Tùy biến" InputGestureText="Ctrl+," Click="OnSettingsClicked">
+                                    <MenuItem.Icon>
+                                        <Path Data="{StaticResource GeoSettings}" Width="14" Height="14" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5" Stretch="Uniform"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0,1"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="ItemBorder" Background="Transparent" CornerRadius="10" Padding="10,8" Margin="0,1" BorderThickness="1" BorderBrush="Transparent" RenderTransformOrigin="0,0.5">
+                                                <Border.RenderTransform>
+                                                    <TranslateTransform x:Name="ItemTranslate" X="0"/>
+                                                </Border.RenderTransform>
+                                                <Grid>
+                                                    <!-- Minimalist Left Selection Indicator Bar -->
+                                                    <Border x:Name="ActiveIndicator" 
+                                                            Width="3.5" Height="22" 
+                                                            CornerRadius="2" 
+                                                            Background="{DynamicResource SelectionIndicatorBrush}" 
+                                                            HorizontalAlignment="Left" 
+                                                            VerticalAlignment="Center" 
+                                                            Margin="-7,0,0,0" 
+                                                            Visibility="Collapsed"/>
+                                                    <ContentPresenter Margin="4,0,0,0" />
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="ItemTranslate" Storyboard.TargetProperty="X" To="6" Duration="0:0:0.14">
+                                                                    <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                                </DoubleAnimation>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.EnterActions>
+                                                    <Trigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="ItemTranslate" Storyboard.TargetProperty="X" To="0" Duration="0:0:0.18">
+                                                                    <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                                </DoubleAnimation>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.ExitActions>
+                                                    <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource ItemSelectedBgBrush}"/>
+                                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{DynamicResource ItemSelectedBorderBrush}"/>
+                                                    <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Visible"/>
+                                                </Trigger>
+                                                <MultiTrigger>
+                                                    <MultiTrigger.Conditions>
+                                                        <Condition Property="IsMouseOver" Value="True"/>
+                                                        <Condition Property="IsSelected" Value="False"/>
+                                                    </MultiTrigger.Conditions>
+                                                    <MultiTrigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="ItemTranslate" Storyboard.TargetProperty="X" To="4" Duration="0:0:0.14">
+                                                                    <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                                </DoubleAnimation>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </MultiTrigger.EnterActions>
+                                                    <MultiTrigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="ItemTranslate" Storyboard.TargetProperty="X" To="0" Duration="0:0:0.18">
+                                                                    <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                                </DoubleAnimation>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </MultiTrigger.ExitActions>
+                                                    <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                                                </MultiTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Squircle Icon Container (36x36 with 10px radius) -->
+                                    <Border Grid.Column="0" 
+                                            Background="{Binding Type, Converter={StaticResource ResultTypeToBackgroundConverter}}" 
+                                            BorderBrush="{Binding Type, Converter={StaticResource ResultTypeToBorderConverter}}" 
+                                            BorderThickness="1" 
+                                            CornerRadius="10" 
+                                            Width="36" Height="36" 
+                                            Margin="0,0,12,0" 
+                                            VerticalAlignment="Center">
+                                        <Grid>
+                                            <!-- Shell/App Real Icon -->
+                                            <Image Source="{Binding IconPath, Converter={StaticResource ResultToIconConverter}}" 
+                                                   Width="22" Height="22" 
+                                                   RenderOptions.BitmapScalingMode="HighQuality" 
+                                                   RenderOptions.EdgeMode="Aliased" 
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center" 
+                                                   Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToVisibilityConverter}}"/>
+
+                                            <!-- Emoji / Glyph Icon -->
+                                            <TextBlock Text="{Binding IconGlyph}" 
+                                                       FontSize="17" 
+                                                       HorizontalAlignment="Center" 
+                                                       VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IconPath, Converter={StaticResource ResultToIconConverter}}" Value="{x:Null}"/>
+                                                                    <Condition Binding="{Binding IconGlyph, Converter={StaticResource NullToVisibilityConverter}}" Value="Visible"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+
+                                            <!-- High-End Vector Icon Fallback -->
+                                            <Path Width="18" Height="18" 
+                                                  Stretch="Uniform" 
+                                                  HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center" 
+                                                  Fill="{Binding Type, Converter={StaticResource ResultTypeToColorConverter}}" 
+                                                  Data="{Binding Converter={StaticResource ResultTypeToGeometryConverter}}">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IconPath, Converter={StaticResource ResultToIconConverter}}" Value="{x:Null}"/>
+                                                                    <Condition Binding="{Binding IconGlyph, Converter={StaticResource NullToVisibilityConverter}}" Value="Collapsed"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                            </Path>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Title & Subtitle -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                                        <TextBlock Text="{Binding Title}" 
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" 
+                                                   FontSize="13" 
+                                                   FontWeight="SemiBold" 
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Subtitle}" 
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" 
+                                                   FontSize="12" 
+                                                   TextTrimming="CharacterEllipsis" 
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Right Badges / Shortcut Hints -->
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <!-- Shortcut Hint Badge (e.g. Alt+1) -->
+                                        <Border CornerRadius="4" 
+                                                Padding="6,2" 
+                                                Background="{DynamicResource KbdBgBrush}" 
+                                                BorderBrush="{DynamicResource KbdBorderBrush}" 
+                                                BorderThickness="1" 
+                                                Margin="0,0,6,0" 
+                                                VerticalAlignment="Center" 
+                                                Visibility="{Binding ShortcutHint, Converter={StaticResource NullToVisibilityConverter}}">
+                                            <TextBlock Text="{Binding ShortcutHint}" 
+                                                       Foreground="{DynamicResource KbdForegroundBrush}" 
+                                                       FontSize="11" 
+                                                       FontWeight="SemiBold" 
+                                                       FontFamily="Segoe UI, Consolas, monospace"/>
+                                        </Border>
+
+                                        <!-- Category / Result Type Pill Tag (Localized Vietnamese) -->
+                                        <Border CornerRadius="5" 
+                                                Padding="6,2" 
+                                                VerticalAlignment="Center" 
+                                                Background="{Binding Type, Converter={StaticResource ResultTypeToBackgroundConverter}}" 
+                                                BorderBrush="{Binding Type, Converter={StaticResource ResultTypeToBorderConverter}}" 
+                                                BorderThickness="1">
+                                            <TextBlock Text="{Binding Type, Converter={StaticResource ResultTypeToDisplayNameConverter}}" 
+                                                       Foreground="{Binding Type, Converter={StaticResource ResultTypeToColorConverter}}" 
+                                                       FontSize="10" 
+                                                       FontWeight="SemiBold"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Modern Minimalist No Results Empty State -->
+                    <Border x:Name="NoResultsPanel" 
+                            Visibility="Collapsed" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center" 
+                            Padding="24,20" 
+                            Margin="20">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border Width="48" Height="48" 
+                                    CornerRadius="24" 
+                                    Background="{DynamicResource BadgeBgBrush}" 
+                                    BorderBrush="{DynamicResource BadgeBorderBrush}" 
+                                    BorderThickness="1" 
+                                    HorizontalAlignment="Center" 
+                                    Margin="0,0,0,12">
+                                <Path Data="{StaticResource GeoSearch}" 
+                                      Width="20" Height="20" 
+                                      Stroke="{DynamicResource EmptyStateBrush}" 
+                                      StrokeThickness="1.8" 
+                                      Stretch="Uniform" 
+                                      HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Không tìm thấy kết quả phù hợp" 
+                                       FontSize="15" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="Thử tìm kiếm với từ khóa khác hoặc sử dụng các cú pháp hỗ trợ:" 
+                                       FontSize="12" 
+                                       Foreground="{DynamicResource TextMutedBrush}" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,14"/>
+
+                            <WrapPanel HorizontalAlignment="Center" MaxWidth="520">
+                                <Border Style="{StaticResource KbdBadgeStyle}" Margin="3,3"><TextBlock Text="&gt; cmd" Style="{StaticResource KbdTextStyle}"/></Border>
+                                <TextBlock Text="lệnh shell" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                <Border Style="{StaticResource KbdBadgeStyle}" Margin="3,3"><TextBlock Text="calc 25*4" Style="{StaticResource KbdTextStyle}"/></Border>
+                                <TextBlock Text="tính toán" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                <Border Style="{StaticResource KbdBadgeStyle}" Margin="3,3"><TextBlock Text="ai tóm tắt..." Style="{StaticResource KbdTextStyle}"/></Border>
+                                <TextBlock Text="hỏi AI" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                <Border Style="{StaticResource KbdBadgeStyle}" Margin="3,3"><TextBlock Text="g từ khóa" Style="{StaticResource KbdTextStyle}"/></Border>
+                                <TextBlock Text="Google" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+                    </Grid>
+                </Grid>
+
+                <!-- Bottom Status & Raycast-Style Shortcut Bar (Exact match with web) -->
+                <Border Grid.Row="3" Margin="0,8,0,0" Padding="0,8,0,0" BorderBrush="{DynamicResource SeparatorBrush}" BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left: Raycast/Web Hotkey Legend -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Open -->
+                            <Border Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="↵" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                            <TextBlock Text="Mở" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                            <!-- Admin -->
+                            <Border Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Ctrl+Shift+↵" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                            <TextBlock Text="Admin" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                            <!-- Folder -->
+                            <Border Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Ctrl+↵" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                            <TextBlock Text="Thư mục" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                            <!-- Actions / Tab -->
+                            <Border Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Tab" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                            <TextBlock Text="Tác vụ" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                            <!-- Esc / Hide -->
+                            <Border Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Esc" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                            <TextBlock Text="Ẩn" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Right: Status Badge & Settings Button -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Background="{DynamicResource BadgeBgBrush}" BorderBrush="{DynamicResource SeparatorBrush}" BorderThickness="1" CornerRadius="6" Padding="8,3" Margin="0,0,8,0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="StatusDot" Width="7" Height="7" Fill="#10B981" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="StatusText" 
+                                               Text="Sẵn sàng" 
+                                               FontSize="11" 
+                                               FontWeight="Medium"
+                                               Foreground="{DynamicResource TextSecondaryBrush}" 
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Settings Quick Button -->
+                            <Button x:Name="SettingsButton" 
+                                    Width="26" Height="26" 
+                                    Background="Transparent" 
+                                    BorderThickness="0" 
+                                    Cursor="Hand" 
+                                    ToolTip="Cài đặt hệ thống (Ctrl+,)" 
+                                    Click="OnSettingsClicked">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="btnBorder" Background="Transparent" CornerRadius="6">
+                                            <Path Data="{StaticResource GeoSettings}" 
+                                                  Width="14" Height="14" 
+                                                  Stroke="{DynamicResource TextMutedBrush}" 
+                                                  StrokeThickness="1.5" 
+                                                  Stretch="Uniform" 
+                                                  HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ItemHoverBgBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Action Flyout Menu on Tab Key (exact match with web action-flyout-menu) -->
+            <Border x:Name="ActionFlyoutPanel" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Bottom" 
+                    Margin="0,0,24,46" 
+                    Width="315" 
+                    Background="{DynamicResource PopupBgBrush}" 
+                    BorderBrush="{DynamicResource WindowBorderBrush}" 
+                    BorderThickness="1" 
+                    CornerRadius="12" 
+                    Padding="10,8" 
+                    Visibility="Collapsed">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="24" ShadowDepth="4" Direction="270" Color="{DynamicResource ShadowColor}" Opacity="0.38"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock x:Name="FlyoutTargetTitle" Text="TÙY CHỌN TÁC VỤ" FontWeight="Bold" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" Margin="6,4,6,8" TextTrimming="CharacterEllipsis"/>
+                    
+                    <Button x:Name="FlyoutRunBtn" Click="OnActionOpenClicked" Style="{StaticResource FlyoutButtonStyle}">
+                        <Grid>
+                            <TextBlock Text="⚡ Thực thi mặc định" FontSize="12.5" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="↵" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="FlyoutAdminBtn" Click="OnActionRunAsAdminClicked" Style="{StaticResource FlyoutButtonStyle}">
+                        <Grid>
+                            <TextBlock Text="🛡️ Chạy quyền Administrator" FontSize="12.5" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Ctrl+Shift+↵" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="FlyoutFolderBtn" Click="OnActionOpenFolderClicked" Style="{StaticResource FlyoutButtonStyle}">
+                        <Grid>
+                            <TextBlock Text="📁 Mở thư mục chứa (Explorer)" FontSize="12.5" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Ctrl+↵" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="FlyoutCopyBtn" Click="OnActionCopyPathClicked" Style="{StaticResource FlyoutButtonStyle}">
+                        <Grid>
+                            <TextBlock Text="📋 Sao chép đường dẫn" FontSize="12.5" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Ctrl+C" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+
+                    <Separator Background="{DynamicResource SeparatorBrush}" Margin="2,4"/>
+
+                    <Button x:Name="FlyoutAiSummarizeBtn" Click="OnActionSummarizeFileClicked" Style="{StaticResource FlyoutButtonStyle}">
+                        <Grid>
+                            <TextBlock Text="🤖 Tóm tắt tài liệu với AI" FontSize="12.5" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Ctrl+Alt+S" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="FlyoutAiBtn" Click="OnActionAskAIClicked" Style="{StaticResource FlyoutButtonStyle}">
+                        <Grid>
+                            <TextBlock Text="✨ Hỏi AI giải thích chi tiết" FontSize="12.5" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                            <Border HorizontalAlignment="Right" Style="{StaticResource KbdBadgeStyle}">
+                                <TextBlock Text="Tab" Style="{StaticResource KbdTextStyle}"/>
+                            </Border>
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Floating Notification Toast (matching web) -->
+            <Border x:Name="ToastShelf" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Bottom" 
+                    Margin="0,0,0,44" 
+                    Background="{DynamicResource PopupBgBrush}" 
+                    BorderBrush="{DynamicResource WindowBorderBrush}" 
+                    BorderThickness="1" 
+                    CornerRadius="14" 
+                    Padding="14,6" 
+                    Opacity="0" 
+                    IsHitTestVisible="False">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="16" ShadowDepth="2" Direction="270" Color="{DynamicResource ShadowColor}" Opacity="0.18"/>
+                </Border.Effect>
+                <TextBlock x:Name="ToastMessageText" 
+                           Text="Đã chuyển sang Chế độ Sáng" 
+                           FontSize="11.5" 
+                           FontWeight="SemiBold" 
+                           Foreground="{DynamicResource TextPrimaryBrush}" 
+                           VerticalAlignment="Center"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

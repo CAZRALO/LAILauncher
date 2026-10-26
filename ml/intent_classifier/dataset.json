@@ -1,0 +1,8034 @@
+[
+  {
+    "text": "chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "open chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "launch chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "mở chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "google chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "open google chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "launch google chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "mở google chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy google chrome",
+    "intent": "APP"
+  },
+  {
+    "text": "visual studio code",
+    "intent": "APP"
+  },
+  {
+    "text": "open visual studio code",
+    "intent": "APP"
+  },
+  {
+    "text": "launch visual studio code",
+    "intent": "APP"
+  },
+  {
+    "text": "mở visual studio code",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy visual studio code",
+    "intent": "APP"
+  },
+  {
+    "text": "vscode",
+    "intent": "APP"
+  },
+  {
+    "text": "open vscode",
+    "intent": "APP"
+  },
+  {
+    "text": "launch vscode",
+    "intent": "APP"
+  },
+  {
+    "text": "mở vscode",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy vscode",
+    "intent": "APP"
+  },
+  {
+    "text": "code",
+    "intent": "APP"
+  },
+  {
+    "text": "open code",
+    "intent": "APP"
+  },
+  {
+    "text": "launch code",
+    "intent": "APP"
+  },
+  {
+    "text": "mở code",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy code",
+    "intent": "APP"
+  },
+  {
+    "text": "notepad",
+    "intent": "APP"
+  },
+  {
+    "text": "open notepad",
+    "intent": "APP"
+  },
+  {
+    "text": "launch notepad",
+    "intent": "APP"
+  },
+  {
+    "text": "mở notepad",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy notepad",
+    "intent": "APP"
+  },
+  {
+    "text": "notepad++",
+    "intent": "APP"
+  },
+  {
+    "text": "open notepad++",
+    "intent": "APP"
+  },
+  {
+    "text": "launch notepad++",
+    "intent": "APP"
+  },
+  {
+    "text": "mở notepad++",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy notepad++",
+    "intent": "APP"
+  },
+  {
+    "text": "sublime text",
+    "intent": "APP"
+  },
+  {
+    "text": "open sublime text",
+    "intent": "APP"
+  },
+  {
+    "text": "launch sublime text",
+    "intent": "APP"
+  },
+  {
+    "text": "mở sublime text",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy sublime text",
+    "intent": "APP"
+  },
+  {
+    "text": "word",
+    "intent": "APP"
+  },
+  {
+    "text": "open word",
+    "intent": "APP"
+  },
+  {
+    "text": "launch word",
+    "intent": "APP"
+  },
+  {
+    "text": "mở word",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy word",
+    "intent": "APP"
+  },
+  {
+    "text": "microsoft word",
+    "intent": "APP"
+  },
+  {
+    "text": "open microsoft word",
+    "intent": "APP"
+  },
+  {
+    "text": "launch microsoft word",
+    "intent": "APP"
+  },
+  {
+    "text": "mở microsoft word",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy microsoft word",
+    "intent": "APP"
+  },
+  {
+    "text": "excel",
+    "intent": "APP"
+  },
+  {
+    "text": "open excel",
+    "intent": "APP"
+  },
+  {
+    "text": "launch excel",
+    "intent": "APP"
+  },
+  {
+    "text": "mở excel",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy excel",
+    "intent": "APP"
+  },
+  {
+    "text": "microsoft excel",
+    "intent": "APP"
+  },
+  {
+    "text": "open microsoft excel",
+    "intent": "APP"
+  },
+  {
+    "text": "launch microsoft excel",
+    "intent": "APP"
+  },
+  {
+    "text": "mở microsoft excel",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy microsoft excel",
+    "intent": "APP"
+  },
+  {
+    "text": "powerpoint",
+    "intent": "APP"
+  },
+  {
+    "text": "open powerpoint",
+    "intent": "APP"
+  },
+  {
+    "text": "launch powerpoint",
+    "intent": "APP"
+  },
+  {
+    "text": "mở powerpoint",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy powerpoint",
+    "intent": "APP"
+  },
+  {
+    "text": "spotify",
+    "intent": "APP"
+  },
+  {
+    "text": "open spotify",
+    "intent": "APP"
+  },
+  {
+    "text": "launch spotify",
+    "intent": "APP"
+  },
+  {
+    "text": "mở spotify",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy spotify",
+    "intent": "APP"
+  },
+  {
+    "text": "discord",
+    "intent": "APP"
+  },
+  {
+    "text": "open discord",
+    "intent": "APP"
+  },
+  {
+    "text": "launch discord",
+    "intent": "APP"
+  },
+  {
+    "text": "mở discord",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy discord",
+    "intent": "APP"
+  },
+  {
+    "text": "telegram",
+    "intent": "APP"
+  },
+  {
+    "text": "open telegram",
+    "intent": "APP"
+  },
+  {
+    "text": "launch telegram",
+    "intent": "APP"
+  },
+  {
+    "text": "mở telegram",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy telegram",
+    "intent": "APP"
+  },
+  {
+    "text": "telegram desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "open telegram desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "launch telegram desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "mở telegram desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy telegram desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "slack",
+    "intent": "APP"
+  },
+  {
+    "text": "open slack",
+    "intent": "APP"
+  },
+  {
+    "text": "launch slack",
+    "intent": "APP"
+  },
+  {
+    "text": "mở slack",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy slack",
+    "intent": "APP"
+  },
+  {
+    "text": "zalo",
+    "intent": "APP"
+  },
+  {
+    "text": "open zalo",
+    "intent": "APP"
+  },
+  {
+    "text": "launch zalo",
+    "intent": "APP"
+  },
+  {
+    "text": "mở zalo",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy zalo",
+    "intent": "APP"
+  },
+  {
+    "text": "vlc",
+    "intent": "APP"
+  },
+  {
+    "text": "open vlc",
+    "intent": "APP"
+  },
+  {
+    "text": "launch vlc",
+    "intent": "APP"
+  },
+  {
+    "text": "mở vlc",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy vlc",
+    "intent": "APP"
+  },
+  {
+    "text": "vlc media player",
+    "intent": "APP"
+  },
+  {
+    "text": "open vlc media player",
+    "intent": "APP"
+  },
+  {
+    "text": "launch vlc media player",
+    "intent": "APP"
+  },
+  {
+    "text": "mở vlc media player",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy vlc media player",
+    "intent": "APP"
+  },
+  {
+    "text": "steam",
+    "intent": "APP"
+  },
+  {
+    "text": "open steam",
+    "intent": "APP"
+  },
+  {
+    "text": "launch steam",
+    "intent": "APP"
+  },
+  {
+    "text": "mở steam",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy steam",
+    "intent": "APP"
+  },
+  {
+    "text": "photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "open photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "launch photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "mở photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "adobe photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "open adobe photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "launch adobe photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "mở adobe photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy adobe photoshop",
+    "intent": "APP"
+  },
+  {
+    "text": "illustrator",
+    "intent": "APP"
+  },
+  {
+    "text": "open illustrator",
+    "intent": "APP"
+  },
+  {
+    "text": "launch illustrator",
+    "intent": "APP"
+  },
+  {
+    "text": "mở illustrator",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy illustrator",
+    "intent": "APP"
+  },
+  {
+    "text": "premiere pro",
+    "intent": "APP"
+  },
+  {
+    "text": "open premiere pro",
+    "intent": "APP"
+  },
+  {
+    "text": "launch premiere pro",
+    "intent": "APP"
+  },
+  {
+    "text": "mở premiere pro",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy premiere pro",
+    "intent": "APP"
+  },
+  {
+    "text": "figma",
+    "intent": "APP"
+  },
+  {
+    "text": "open figma",
+    "intent": "APP"
+  },
+  {
+    "text": "launch figma",
+    "intent": "APP"
+  },
+  {
+    "text": "mở figma",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy figma",
+    "intent": "APP"
+  },
+  {
+    "text": "calculator",
+    "intent": "APP"
+  },
+  {
+    "text": "open calculator",
+    "intent": "APP"
+  },
+  {
+    "text": "launch calculator",
+    "intent": "APP"
+  },
+  {
+    "text": "mở calculator",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy calculator",
+    "intent": "APP"
+  },
+  {
+    "text": "máy tính",
+    "intent": "APP"
+  },
+  {
+    "text": "open máy tính",
+    "intent": "APP"
+  },
+  {
+    "text": "launch máy tính",
+    "intent": "APP"
+  },
+  {
+    "text": "mở máy tính",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy máy tính",
+    "intent": "APP"
+  },
+  {
+    "text": "settings",
+    "intent": "APP"
+  },
+  {
+    "text": "open settings",
+    "intent": "APP"
+  },
+  {
+    "text": "launch settings",
+    "intent": "APP"
+  },
+  {
+    "text": "mở settings",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy settings",
+    "intent": "APP"
+  },
+  {
+    "text": "cài đặt",
+    "intent": "APP"
+  },
+  {
+    "text": "open cài đặt",
+    "intent": "APP"
+  },
+  {
+    "text": "launch cài đặt",
+    "intent": "APP"
+  },
+  {
+    "text": "mở cài đặt",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy cài đặt",
+    "intent": "APP"
+  },
+  {
+    "text": "control panel",
+    "intent": "APP"
+  },
+  {
+    "text": "open control panel",
+    "intent": "APP"
+  },
+  {
+    "text": "launch control panel",
+    "intent": "APP"
+  },
+  {
+    "text": "mở control panel",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy control panel",
+    "intent": "APP"
+  },
+  {
+    "text": "paint",
+    "intent": "APP"
+  },
+  {
+    "text": "open paint",
+    "intent": "APP"
+  },
+  {
+    "text": "launch paint",
+    "intent": "APP"
+  },
+  {
+    "text": "mở paint",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy paint",
+    "intent": "APP"
+  },
+  {
+    "text": "paint 3d",
+    "intent": "APP"
+  },
+  {
+    "text": "open paint 3d",
+    "intent": "APP"
+  },
+  {
+    "text": "launch paint 3d",
+    "intent": "APP"
+  },
+  {
+    "text": "mở paint 3d",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy paint 3d",
+    "intent": "APP"
+  },
+  {
+    "text": "task manager",
+    "intent": "APP"
+  },
+  {
+    "text": "open task manager",
+    "intent": "APP"
+  },
+  {
+    "text": "launch task manager",
+    "intent": "APP"
+  },
+  {
+    "text": "mở task manager",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy task manager",
+    "intent": "APP"
+  },
+  {
+    "text": "quản lý tác vụ",
+    "intent": "APP"
+  },
+  {
+    "text": "open quản lý tác vụ",
+    "intent": "APP"
+  },
+  {
+    "text": "launch quản lý tác vụ",
+    "intent": "APP"
+  },
+  {
+    "text": "mở quản lý tác vụ",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy quản lý tác vụ",
+    "intent": "APP"
+  },
+  {
+    "text": "terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "open terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "launch terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "mở terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "windows terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "open windows terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "launch windows terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "mở windows terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy windows terminal",
+    "intent": "APP"
+  },
+  {
+    "text": "cmd",
+    "intent": "APP"
+  },
+  {
+    "text": "open cmd",
+    "intent": "APP"
+  },
+  {
+    "text": "launch cmd",
+    "intent": "APP"
+  },
+  {
+    "text": "mở cmd",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy cmd",
+    "intent": "APP"
+  },
+  {
+    "text": "command prompt",
+    "intent": "APP"
+  },
+  {
+    "text": "open command prompt",
+    "intent": "APP"
+  },
+  {
+    "text": "launch command prompt",
+    "intent": "APP"
+  },
+  {
+    "text": "mở command prompt",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy command prompt",
+    "intent": "APP"
+  },
+  {
+    "text": "powershell",
+    "intent": "APP"
+  },
+  {
+    "text": "open powershell",
+    "intent": "APP"
+  },
+  {
+    "text": "launch powershell",
+    "intent": "APP"
+  },
+  {
+    "text": "mở powershell",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy powershell",
+    "intent": "APP"
+  },
+  {
+    "text": "git bash",
+    "intent": "APP"
+  },
+  {
+    "text": "open git bash",
+    "intent": "APP"
+  },
+  {
+    "text": "launch git bash",
+    "intent": "APP"
+  },
+  {
+    "text": "mở git bash",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy git bash",
+    "intent": "APP"
+  },
+  {
+    "text": "obs studio",
+    "intent": "APP"
+  },
+  {
+    "text": "open obs studio",
+    "intent": "APP"
+  },
+  {
+    "text": "launch obs studio",
+    "intent": "APP"
+  },
+  {
+    "text": "mở obs studio",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy obs studio",
+    "intent": "APP"
+  },
+  {
+    "text": "docker",
+    "intent": "APP"
+  },
+  {
+    "text": "open docker",
+    "intent": "APP"
+  },
+  {
+    "text": "launch docker",
+    "intent": "APP"
+  },
+  {
+    "text": "mở docker",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy docker",
+    "intent": "APP"
+  },
+  {
+    "text": "docker desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "open docker desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "launch docker desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "mở docker desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy docker desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "postman",
+    "intent": "APP"
+  },
+  {
+    "text": "open postman",
+    "intent": "APP"
+  },
+  {
+    "text": "launch postman",
+    "intent": "APP"
+  },
+  {
+    "text": "mở postman",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy postman",
+    "intent": "APP"
+  },
+  {
+    "text": "notion",
+    "intent": "APP"
+  },
+  {
+    "text": "open notion",
+    "intent": "APP"
+  },
+  {
+    "text": "launch notion",
+    "intent": "APP"
+  },
+  {
+    "text": "mở notion",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy notion",
+    "intent": "APP"
+  },
+  {
+    "text": "evernote",
+    "intent": "APP"
+  },
+  {
+    "text": "open evernote",
+    "intent": "APP"
+  },
+  {
+    "text": "launch evernote",
+    "intent": "APP"
+  },
+  {
+    "text": "mở evernote",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy evernote",
+    "intent": "APP"
+  },
+  {
+    "text": "onenote",
+    "intent": "APP"
+  },
+  {
+    "text": "open onenote",
+    "intent": "APP"
+  },
+  {
+    "text": "launch onenote",
+    "intent": "APP"
+  },
+  {
+    "text": "mở onenote",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy onenote",
+    "intent": "APP"
+  },
+  {
+    "text": "blender",
+    "intent": "APP"
+  },
+  {
+    "text": "open blender",
+    "intent": "APP"
+  },
+  {
+    "text": "launch blender",
+    "intent": "APP"
+  },
+  {
+    "text": "mở blender",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy blender",
+    "intent": "APP"
+  },
+  {
+    "text": "unity",
+    "intent": "APP"
+  },
+  {
+    "text": "open unity",
+    "intent": "APP"
+  },
+  {
+    "text": "launch unity",
+    "intent": "APP"
+  },
+  {
+    "text": "mở unity",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy unity",
+    "intent": "APP"
+  },
+  {
+    "text": "unity hub",
+    "intent": "APP"
+  },
+  {
+    "text": "open unity hub",
+    "intent": "APP"
+  },
+  {
+    "text": "launch unity hub",
+    "intent": "APP"
+  },
+  {
+    "text": "mở unity hub",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy unity hub",
+    "intent": "APP"
+  },
+  {
+    "text": "unreal engine",
+    "intent": "APP"
+  },
+  {
+    "text": "open unreal engine",
+    "intent": "APP"
+  },
+  {
+    "text": "launch unreal engine",
+    "intent": "APP"
+  },
+  {
+    "text": "mở unreal engine",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy unreal engine",
+    "intent": "APP"
+  },
+  {
+    "text": "edge",
+    "intent": "APP"
+  },
+  {
+    "text": "open edge",
+    "intent": "APP"
+  },
+  {
+    "text": "launch edge",
+    "intent": "APP"
+  },
+  {
+    "text": "mở edge",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy edge",
+    "intent": "APP"
+  },
+  {
+    "text": "microsoft edge",
+    "intent": "APP"
+  },
+  {
+    "text": "open microsoft edge",
+    "intent": "APP"
+  },
+  {
+    "text": "launch microsoft edge",
+    "intent": "APP"
+  },
+  {
+    "text": "mở microsoft edge",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy microsoft edge",
+    "intent": "APP"
+  },
+  {
+    "text": "brave",
+    "intent": "APP"
+  },
+  {
+    "text": "open brave",
+    "intent": "APP"
+  },
+  {
+    "text": "launch brave",
+    "intent": "APP"
+  },
+  {
+    "text": "mở brave",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy brave",
+    "intent": "APP"
+  },
+  {
+    "text": "brave browser",
+    "intent": "APP"
+  },
+  {
+    "text": "open brave browser",
+    "intent": "APP"
+  },
+  {
+    "text": "launch brave browser",
+    "intent": "APP"
+  },
+  {
+    "text": "mở brave browser",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy brave browser",
+    "intent": "APP"
+  },
+  {
+    "text": "firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "open firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "launch firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "mở firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "mozilla firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "open mozilla firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "launch mozilla firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "mở mozilla firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy mozilla firefox",
+    "intent": "APP"
+  },
+  {
+    "text": "acrobat",
+    "intent": "APP"
+  },
+  {
+    "text": "open acrobat",
+    "intent": "APP"
+  },
+  {
+    "text": "launch acrobat",
+    "intent": "APP"
+  },
+  {
+    "text": "mở acrobat",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy acrobat",
+    "intent": "APP"
+  },
+  {
+    "text": "acrobat reader",
+    "intent": "APP"
+  },
+  {
+    "text": "open acrobat reader",
+    "intent": "APP"
+  },
+  {
+    "text": "launch acrobat reader",
+    "intent": "APP"
+  },
+  {
+    "text": "mở acrobat reader",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy acrobat reader",
+    "intent": "APP"
+  },
+  {
+    "text": "unikey",
+    "intent": "APP"
+  },
+  {
+    "text": "open unikey",
+    "intent": "APP"
+  },
+  {
+    "text": "launch unikey",
+    "intent": "APP"
+  },
+  {
+    "text": "mở unikey",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy unikey",
+    "intent": "APP"
+  },
+  {
+    "text": "evkey",
+    "intent": "APP"
+  },
+  {
+    "text": "open evkey",
+    "intent": "APP"
+  },
+  {
+    "text": "launch evkey",
+    "intent": "APP"
+  },
+  {
+    "text": "mở evkey",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy evkey",
+    "intent": "APP"
+  },
+  {
+    "text": "everything",
+    "intent": "APP"
+  },
+  {
+    "text": "open everything",
+    "intent": "APP"
+  },
+  {
+    "text": "launch everything",
+    "intent": "APP"
+  },
+  {
+    "text": "mở everything",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy everything",
+    "intent": "APP"
+  },
+  {
+    "text": "file explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "open file explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "launch file explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "mở file explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy file explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "open explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "launch explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "mở explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy explorer",
+    "intent": "APP"
+  },
+  {
+    "text": "github desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "open github desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "launch github desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "mở github desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy github desktop",
+    "intent": "APP"
+  },
+  {
+    "text": "dbeaver",
+    "intent": "APP"
+  },
+  {
+    "text": "open dbeaver",
+    "intent": "APP"
+  },
+  {
+    "text": "launch dbeaver",
+    "intent": "APP"
+  },
+  {
+    "text": "mở dbeaver",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy dbeaver",
+    "intent": "APP"
+  },
+  {
+    "text": "datagrip",
+    "intent": "APP"
+  },
+  {
+    "text": "open datagrip",
+    "intent": "APP"
+  },
+  {
+    "text": "launch datagrip",
+    "intent": "APP"
+  },
+  {
+    "text": "mở datagrip",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy datagrip",
+    "intent": "APP"
+  },
+  {
+    "text": "intellij idea",
+    "intent": "APP"
+  },
+  {
+    "text": "open intellij idea",
+    "intent": "APP"
+  },
+  {
+    "text": "launch intellij idea",
+    "intent": "APP"
+  },
+  {
+    "text": "mở intellij idea",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy intellij idea",
+    "intent": "APP"
+  },
+  {
+    "text": "pycharm",
+    "intent": "APP"
+  },
+  {
+    "text": "open pycharm",
+    "intent": "APP"
+  },
+  {
+    "text": "launch pycharm",
+    "intent": "APP"
+  },
+  {
+    "text": "mở pycharm",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy pycharm",
+    "intent": "APP"
+  },
+  {
+    "text": "clion",
+    "intent": "APP"
+  },
+  {
+    "text": "open clion",
+    "intent": "APP"
+  },
+  {
+    "text": "launch clion",
+    "intent": "APP"
+  },
+  {
+    "text": "mở clion",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy clion",
+    "intent": "APP"
+  },
+  {
+    "text": "rider",
+    "intent": "APP"
+  },
+  {
+    "text": "open rider",
+    "intent": "APP"
+  },
+  {
+    "text": "launch rider",
+    "intent": "APP"
+  },
+  {
+    "text": "mở rider",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy rider",
+    "intent": "APP"
+  },
+  {
+    "text": "visual studio 2022",
+    "intent": "APP"
+  },
+  {
+    "text": "open visual studio 2022",
+    "intent": "APP"
+  },
+  {
+    "text": "launch visual studio 2022",
+    "intent": "APP"
+  },
+  {
+    "text": "mở visual studio 2022",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy visual studio 2022",
+    "intent": "APP"
+  },
+  {
+    "text": "utorrent",
+    "intent": "APP"
+  },
+  {
+    "text": "open utorrent",
+    "intent": "APP"
+  },
+  {
+    "text": "launch utorrent",
+    "intent": "APP"
+  },
+  {
+    "text": "mở utorrent",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy utorrent",
+    "intent": "APP"
+  },
+  {
+    "text": "bitcomet",
+    "intent": "APP"
+  },
+  {
+    "text": "open bitcomet",
+    "intent": "APP"
+  },
+  {
+    "text": "launch bitcomet",
+    "intent": "APP"
+  },
+  {
+    "text": "mở bitcomet",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy bitcomet",
+    "intent": "APP"
+  },
+  {
+    "text": "idm",
+    "intent": "APP"
+  },
+  {
+    "text": "open idm",
+    "intent": "APP"
+  },
+  {
+    "text": "launch idm",
+    "intent": "APP"
+  },
+  {
+    "text": "mở idm",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy idm",
+    "intent": "APP"
+  },
+  {
+    "text": "internet download manager",
+    "intent": "APP"
+  },
+  {
+    "text": "open internet download manager",
+    "intent": "APP"
+  },
+  {
+    "text": "launch internet download manager",
+    "intent": "APP"
+  },
+  {
+    "text": "mở internet download manager",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy internet download manager",
+    "intent": "APP"
+  },
+  {
+    "text": "zoom",
+    "intent": "APP"
+  },
+  {
+    "text": "open zoom",
+    "intent": "APP"
+  },
+  {
+    "text": "launch zoom",
+    "intent": "APP"
+  },
+  {
+    "text": "mở zoom",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy zoom",
+    "intent": "APP"
+  },
+  {
+    "text": "microsoft teams",
+    "intent": "APP"
+  },
+  {
+    "text": "open microsoft teams",
+    "intent": "APP"
+  },
+  {
+    "text": "launch microsoft teams",
+    "intent": "APP"
+  },
+  {
+    "text": "mở microsoft teams",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy microsoft teams",
+    "intent": "APP"
+  },
+  {
+    "text": "teams",
+    "intent": "APP"
+  },
+  {
+    "text": "open teams",
+    "intent": "APP"
+  },
+  {
+    "text": "launch teams",
+    "intent": "APP"
+  },
+  {
+    "text": "mở teams",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy teams",
+    "intent": "APP"
+  },
+  {
+    "text": "skype",
+    "intent": "APP"
+  },
+  {
+    "text": "open skype",
+    "intent": "APP"
+  },
+  {
+    "text": "launch skype",
+    "intent": "APP"
+  },
+  {
+    "text": "mở skype",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy skype",
+    "intent": "APP"
+  },
+  {
+    "text": "whatsapp",
+    "intent": "APP"
+  },
+  {
+    "text": "open whatsapp",
+    "intent": "APP"
+  },
+  {
+    "text": "launch whatsapp",
+    "intent": "APP"
+  },
+  {
+    "text": "mở whatsapp",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy whatsapp",
+    "intent": "APP"
+  },
+  {
+    "text": "capcut",
+    "intent": "APP"
+  },
+  {
+    "text": "open capcut",
+    "intent": "APP"
+  },
+  {
+    "text": "launch capcut",
+    "intent": "APP"
+  },
+  {
+    "text": "mở capcut",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy capcut",
+    "intent": "APP"
+  },
+  {
+    "text": "audacity",
+    "intent": "APP"
+  },
+  {
+    "text": "open audacity",
+    "intent": "APP"
+  },
+  {
+    "text": "launch audacity",
+    "intent": "APP"
+  },
+  {
+    "text": "mở audacity",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy audacity",
+    "intent": "APP"
+  },
+  {
+    "text": "virtualbox",
+    "intent": "APP"
+  },
+  {
+    "text": "open virtualbox",
+    "intent": "APP"
+  },
+  {
+    "text": "launch virtualbox",
+    "intent": "APP"
+  },
+  {
+    "text": "mở virtualbox",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy virtualbox",
+    "intent": "APP"
+  },
+  {
+    "text": "vmware",
+    "intent": "APP"
+  },
+  {
+    "text": "open vmware",
+    "intent": "APP"
+  },
+  {
+    "text": "launch vmware",
+    "intent": "APP"
+  },
+  {
+    "text": "mở vmware",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy vmware",
+    "intent": "APP"
+  },
+  {
+    "text": "winrar",
+    "intent": "APP"
+  },
+  {
+    "text": "open winrar",
+    "intent": "APP"
+  },
+  {
+    "text": "launch winrar",
+    "intent": "APP"
+  },
+  {
+    "text": "mở winrar",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy winrar",
+    "intent": "APP"
+  },
+  {
+    "text": "7-zip",
+    "intent": "APP"
+  },
+  {
+    "text": "open 7-zip",
+    "intent": "APP"
+  },
+  {
+    "text": "launch 7-zip",
+    "intent": "APP"
+  },
+  {
+    "text": "mở 7-zip",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy 7-zip",
+    "intent": "APP"
+  },
+  {
+    "text": "7zip",
+    "intent": "APP"
+  },
+  {
+    "text": "open 7zip",
+    "intent": "APP"
+  },
+  {
+    "text": "launch 7zip",
+    "intent": "APP"
+  },
+  {
+    "text": "mở 7zip",
+    "intent": "APP"
+  },
+  {
+    "text": "chạy 7zip",
+    "intent": "APP"
+  },
+  {
+    "text": "report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "báo cáo tài chính.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: báo cáo tài chính.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find báo cáo tài chính.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm báo cáo tài chính.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file báo cáo tài chính.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "báo cáo tài chính.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: báo cáo tài chính.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find báo cáo tài chính.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm báo cáo tài chính.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file báo cáo tài chính.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "báo cáo tài chính.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: báo cáo tài chính.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find báo cáo tài chính.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm báo cáo tài chính.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file báo cáo tài chính.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "báo cáo tài chính.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: báo cáo tài chính.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find báo cáo tài chính.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm báo cáo tài chính.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file báo cáo tài chính.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "báo cáo tài chính.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: báo cáo tài chính.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find báo cáo tài chính.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm báo cáo tài chính.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file báo cáo tài chính.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "invoice_2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: invoice_2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find invoice_2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm invoice_2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file invoice_2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "invoice_2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: invoice_2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find invoice_2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm invoice_2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file invoice_2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "invoice_2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: invoice_2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find invoice_2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm invoice_2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file invoice_2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "invoice_2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: invoice_2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find invoice_2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm invoice_2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file invoice_2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "invoice_2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: invoice_2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find invoice_2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm invoice_2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file invoice_2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "hóa đơn đỏ.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hóa đơn đỏ.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hóa đơn đỏ.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hóa đơn đỏ.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hóa đơn đỏ.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "hóa đơn đỏ.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hóa đơn đỏ.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hóa đơn đỏ.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hóa đơn đỏ.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hóa đơn đỏ.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "hóa đơn đỏ.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hóa đơn đỏ.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hóa đơn đỏ.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hóa đơn đỏ.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hóa đơn đỏ.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "hóa đơn đỏ.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hóa đơn đỏ.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hóa đơn đỏ.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hóa đơn đỏ.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hóa đơn đỏ.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "hóa đơn đỏ.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hóa đơn đỏ.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hóa đơn đỏ.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hóa đơn đỏ.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hóa đơn đỏ.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "budget_q1.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: budget_q1.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find budget_q1.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm budget_q1.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file budget_q1.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "budget_q1.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: budget_q1.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find budget_q1.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm budget_q1.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file budget_q1.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "budget_q1.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: budget_q1.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find budget_q1.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm budget_q1.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file budget_q1.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "budget_q1.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: budget_q1.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find budget_q1.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm budget_q1.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file budget_q1.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "budget_q1.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: budget_q1.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find budget_q1.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm budget_q1.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file budget_q1.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "kế hoạch năm 2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: kế hoạch năm 2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find kế hoạch năm 2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm kế hoạch năm 2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file kế hoạch năm 2026.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "kế hoạch năm 2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: kế hoạch năm 2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find kế hoạch năm 2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm kế hoạch năm 2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file kế hoạch năm 2026.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "kế hoạch năm 2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: kế hoạch năm 2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find kế hoạch năm 2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm kế hoạch năm 2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file kế hoạch năm 2026.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "kế hoạch năm 2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: kế hoạch năm 2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find kế hoạch năm 2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm kế hoạch năm 2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file kế hoạch năm 2026.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "kế hoạch năm 2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: kế hoạch năm 2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find kế hoạch năm 2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm kế hoạch năm 2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file kế hoạch năm 2026.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "presentation.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: presentation.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find presentation.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm presentation.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file presentation.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "presentation.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: presentation.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find presentation.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm presentation.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file presentation.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "presentation.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: presentation.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find presentation.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm presentation.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file presentation.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "presentation.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: presentation.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find presentation.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm presentation.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file presentation.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "presentation.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: presentation.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find presentation.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm presentation.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file presentation.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "slide thuyết trình.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: slide thuyết trình.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find slide thuyết trình.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm slide thuyết trình.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file slide thuyết trình.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "slide thuyết trình.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: slide thuyết trình.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find slide thuyết trình.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm slide thuyết trình.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file slide thuyết trình.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "slide thuyết trình.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: slide thuyết trình.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find slide thuyết trình.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm slide thuyết trình.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file slide thuyết trình.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "slide thuyết trình.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: slide thuyết trình.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find slide thuyết trình.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm slide thuyết trình.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file slide thuyết trình.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "slide thuyết trình.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: slide thuyết trình.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find slide thuyết trình.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm slide thuyết trình.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file slide thuyết trình.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "project_proposal.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: project_proposal.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find project_proposal.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm project_proposal.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file project_proposal.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "project_proposal.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: project_proposal.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find project_proposal.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm project_proposal.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file project_proposal.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "project_proposal.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: project_proposal.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find project_proposal.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm project_proposal.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file project_proposal.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "project_proposal.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: project_proposal.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find project_proposal.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm project_proposal.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file project_proposal.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "project_proposal.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: project_proposal.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find project_proposal.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm project_proposal.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file project_proposal.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "đề xuất dự án.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: đề xuất dự án.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find đề xuất dự án.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm đề xuất dự án.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file đề xuất dự án.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "đề xuất dự án.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: đề xuất dự án.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find đề xuất dự án.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm đề xuất dự án.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file đề xuất dự án.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "đề xuất dự án.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: đề xuất dự án.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find đề xuất dự án.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm đề xuất dự án.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file đề xuất dự án.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "đề xuất dự án.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: đề xuất dự án.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find đề xuất dự án.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm đề xuất dự án.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file đề xuất dự án.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "đề xuất dự án.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: đề xuất dự án.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find đề xuất dự án.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm đề xuất dự án.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file đề xuất dự án.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "meeting_notes.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: meeting_notes.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find meeting_notes.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm meeting_notes.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file meeting_notes.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "meeting_notes.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: meeting_notes.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find meeting_notes.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm meeting_notes.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file meeting_notes.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "meeting_notes.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: meeting_notes.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find meeting_notes.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm meeting_notes.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file meeting_notes.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "meeting_notes.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: meeting_notes.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find meeting_notes.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm meeting_notes.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file meeting_notes.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "meeting_notes.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: meeting_notes.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find meeting_notes.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm meeting_notes.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file meeting_notes.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "biên bản cuộc họp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: biên bản cuộc họp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find biên bản cuộc họp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm biên bản cuộc họp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file biên bản cuộc họp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "biên bản cuộc họp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: biên bản cuộc họp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find biên bản cuộc họp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm biên bản cuộc họp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file biên bản cuộc họp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "biên bản cuộc họp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: biên bản cuộc họp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find biên bản cuộc họp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm biên bản cuộc họp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file biên bản cuộc họp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "biên bản cuộc họp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: biên bản cuộc họp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find biên bản cuộc họp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm biên bản cuộc họp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file biên bản cuộc họp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "biên bản cuộc họp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: biên bản cuộc họp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find biên bản cuộc họp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm biên bản cuộc họp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file biên bản cuộc họp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "contract_signed.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: contract_signed.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find contract_signed.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm contract_signed.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file contract_signed.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "contract_signed.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: contract_signed.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find contract_signed.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm contract_signed.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file contract_signed.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "contract_signed.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: contract_signed.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find contract_signed.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm contract_signed.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file contract_signed.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "contract_signed.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: contract_signed.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find contract_signed.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm contract_signed.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file contract_signed.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "contract_signed.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: contract_signed.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find contract_signed.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm contract_signed.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file contract_signed.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "hợp đồng lao động.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hợp đồng lao động.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hợp đồng lao động.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hợp đồng lao động.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hợp đồng lao động.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "hợp đồng lao động.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hợp đồng lao động.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hợp đồng lao động.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hợp đồng lao động.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hợp đồng lao động.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "hợp đồng lao động.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hợp đồng lao động.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hợp đồng lao động.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hợp đồng lao động.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hợp đồng lao động.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "hợp đồng lao động.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hợp đồng lao động.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hợp đồng lao động.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hợp đồng lao động.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hợp đồng lao động.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "hợp đồng lao động.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: hợp đồng lao động.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find hợp đồng lao động.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm hợp đồng lao động.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file hợp đồng lao động.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "resume_cv.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: resume_cv.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find resume_cv.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm resume_cv.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file resume_cv.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "resume_cv.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: resume_cv.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find resume_cv.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm resume_cv.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file resume_cv.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "resume_cv.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: resume_cv.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find resume_cv.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm resume_cv.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file resume_cv.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "resume_cv.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: resume_cv.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find resume_cv.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm resume_cv.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file resume_cv.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "resume_cv.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: resume_cv.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find resume_cv.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm resume_cv.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file resume_cv.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "cv_xin_viec.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: cv_xin_viec.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find cv_xin_viec.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm cv_xin_viec.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file cv_xin_viec.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "cv_xin_viec.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: cv_xin_viec.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find cv_xin_viec.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm cv_xin_viec.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file cv_xin_viec.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "cv_xin_viec.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: cv_xin_viec.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find cv_xin_viec.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm cv_xin_viec.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file cv_xin_viec.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "cv_xin_viec.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: cv_xin_viec.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find cv_xin_viec.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm cv_xin_viec.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file cv_xin_viec.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "cv_xin_viec.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: cv_xin_viec.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find cv_xin_viec.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm cv_xin_viec.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file cv_xin_viec.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "thesis_final.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: thesis_final.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find thesis_final.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm thesis_final.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file thesis_final.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "thesis_final.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: thesis_final.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find thesis_final.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm thesis_final.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file thesis_final.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "thesis_final.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: thesis_final.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find thesis_final.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm thesis_final.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file thesis_final.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "thesis_final.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: thesis_final.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find thesis_final.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm thesis_final.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file thesis_final.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "thesis_final.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: thesis_final.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find thesis_final.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm thesis_final.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file thesis_final.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "luận văn tốt nghiệp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: luận văn tốt nghiệp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find luận văn tốt nghiệp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm luận văn tốt nghiệp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file luận văn tốt nghiệp.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "luận văn tốt nghiệp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: luận văn tốt nghiệp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find luận văn tốt nghiệp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm luận văn tốt nghiệp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file luận văn tốt nghiệp.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "luận văn tốt nghiệp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: luận văn tốt nghiệp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find luận văn tốt nghiệp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm luận văn tốt nghiệp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file luận văn tốt nghiệp.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "luận văn tốt nghiệp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: luận văn tốt nghiệp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find luận văn tốt nghiệp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm luận văn tốt nghiệp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file luận văn tốt nghiệp.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "luận văn tốt nghiệp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: luận văn tốt nghiệp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find luận văn tốt nghiệp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm luận văn tốt nghiệp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file luận văn tốt nghiệp.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "photo_travel.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: photo_travel.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find photo_travel.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm photo_travel.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file photo_travel.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "photo_travel.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: photo_travel.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find photo_travel.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm photo_travel.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file photo_travel.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "photo_travel.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: photo_travel.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find photo_travel.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm photo_travel.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file photo_travel.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "photo_travel.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: photo_travel.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find photo_travel.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm photo_travel.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file photo_travel.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "photo_travel.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: photo_travel.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find photo_travel.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm photo_travel.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file photo_travel.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "ảnh du lịch.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ảnh du lịch.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ảnh du lịch.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ảnh du lịch.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ảnh du lịch.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "ảnh du lịch.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ảnh du lịch.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ảnh du lịch.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ảnh du lịch.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ảnh du lịch.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "ảnh du lịch.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ảnh du lịch.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ảnh du lịch.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ảnh du lịch.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ảnh du lịch.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "ảnh du lịch.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ảnh du lịch.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ảnh du lịch.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ảnh du lịch.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ảnh du lịch.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "ảnh du lịch.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ảnh du lịch.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ảnh du lịch.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ảnh du lịch.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ảnh du lịch.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "screenshot_01.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: screenshot_01.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find screenshot_01.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm screenshot_01.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file screenshot_01.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "screenshot_01.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: screenshot_01.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find screenshot_01.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm screenshot_01.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file screenshot_01.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "screenshot_01.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: screenshot_01.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find screenshot_01.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm screenshot_01.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file screenshot_01.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "screenshot_01.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: screenshot_01.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find screenshot_01.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm screenshot_01.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file screenshot_01.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "screenshot_01.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: screenshot_01.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find screenshot_01.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm screenshot_01.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file screenshot_01.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "avatar.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: avatar.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find avatar.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm avatar.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file avatar.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "avatar.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: avatar.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find avatar.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm avatar.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file avatar.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "avatar.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: avatar.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find avatar.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm avatar.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file avatar.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "avatar.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: avatar.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find avatar.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm avatar.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file avatar.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "avatar.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: avatar.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find avatar.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm avatar.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file avatar.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "video_demo.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: video_demo.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find video_demo.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm video_demo.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file video_demo.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "video_demo.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: video_demo.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find video_demo.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm video_demo.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file video_demo.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "video_demo.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: video_demo.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find video_demo.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm video_demo.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file video_demo.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "video_demo.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: video_demo.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find video_demo.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm video_demo.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file video_demo.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "video_demo.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: video_demo.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find video_demo.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm video_demo.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file video_demo.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "audio_record.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: audio_record.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find audio_record.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm audio_record.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file audio_record.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "audio_record.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: audio_record.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find audio_record.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm audio_record.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file audio_record.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "audio_record.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: audio_record.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find audio_record.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm audio_record.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file audio_record.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "audio_record.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: audio_record.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find audio_record.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm audio_record.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file audio_record.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "audio_record.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: audio_record.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find audio_record.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm audio_record.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file audio_record.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "ghi âm.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ghi âm.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ghi âm.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ghi âm.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ghi âm.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "ghi âm.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ghi âm.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ghi âm.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ghi âm.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ghi âm.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "ghi âm.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ghi âm.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ghi âm.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ghi âm.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ghi âm.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "ghi âm.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ghi âm.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ghi âm.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ghi âm.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ghi âm.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "ghi âm.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: ghi âm.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find ghi âm.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm ghi âm.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file ghi âm.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "backup_database.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: backup_database.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find backup_database.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm backup_database.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file backup_database.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "backup_database.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: backup_database.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find backup_database.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm backup_database.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file backup_database.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "backup_database.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: backup_database.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find backup_database.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm backup_database.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file backup_database.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "backup_database.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: backup_database.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find backup_database.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm backup_database.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file backup_database.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "backup_database.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: backup_database.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find backup_database.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm backup_database.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file backup_database.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "source_code.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: source_code.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find source_code.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm source_code.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file source_code.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "source_code.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: source_code.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find source_code.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm source_code.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file source_code.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "source_code.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: source_code.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find source_code.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm source_code.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file source_code.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "source_code.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: source_code.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find source_code.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm source_code.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file source_code.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "source_code.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: source_code.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find source_code.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm source_code.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file source_code.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "data_analysis.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: data_analysis.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find data_analysis.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm data_analysis.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file data_analysis.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "data_analysis.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: data_analysis.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find data_analysis.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm data_analysis.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file data_analysis.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "data_analysis.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: data_analysis.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find data_analysis.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm data_analysis.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file data_analysis.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "data_analysis.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: data_analysis.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find data_analysis.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm data_analysis.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file data_analysis.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "data_analysis.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: data_analysis.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find data_analysis.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm data_analysis.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file data_analysis.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "bảng lương tháng 9.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: bảng lương tháng 9.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find bảng lương tháng 9.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm bảng lương tháng 9.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file bảng lương tháng 9.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "bảng lương tháng 9.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: bảng lương tháng 9.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find bảng lương tháng 9.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm bảng lương tháng 9.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file bảng lương tháng 9.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "bảng lương tháng 9.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: bảng lương tháng 9.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find bảng lương tháng 9.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm bảng lương tháng 9.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file bảng lương tháng 9.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "bảng lương tháng 9.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: bảng lương tháng 9.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find bảng lương tháng 9.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm bảng lương tháng 9.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file bảng lương tháng 9.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "bảng lương tháng 9.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: bảng lương tháng 9.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find bảng lương tháng 9.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm bảng lương tháng 9.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file bảng lương tháng 9.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "danh sách nhân viên.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: danh sách nhân viên.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find danh sách nhân viên.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm danh sách nhân viên.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file danh sách nhân viên.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "danh sách nhân viên.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: danh sách nhân viên.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find danh sách nhân viên.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm danh sách nhân viên.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file danh sách nhân viên.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "danh sách nhân viên.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: danh sách nhân viên.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find danh sách nhân viên.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm danh sách nhân viên.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file danh sách nhân viên.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "danh sách nhân viên.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: danh sách nhân viên.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find danh sách nhân viên.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm danh sách nhân viên.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file danh sách nhân viên.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "danh sách nhân viên.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: danh sách nhân viên.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find danh sách nhân viên.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm danh sách nhân viên.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file danh sách nhân viên.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tài liệu hướng dẫn.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: tài liệu hướng dẫn.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find tài liệu hướng dẫn.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm tài liệu hướng dẫn.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file tài liệu hướng dẫn.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tài liệu hướng dẫn.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: tài liệu hướng dẫn.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find tài liệu hướng dẫn.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm tài liệu hướng dẫn.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file tài liệu hướng dẫn.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tài liệu hướng dẫn.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: tài liệu hướng dẫn.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find tài liệu hướng dẫn.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm tài liệu hướng dẫn.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file tài liệu hướng dẫn.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tài liệu hướng dẫn.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: tài liệu hướng dẫn.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find tài liệu hướng dẫn.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm tài liệu hướng dẫn.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file tài liệu hướng dẫn.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tài liệu hướng dẫn.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: tài liệu hướng dẫn.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find tài liệu hướng dẫn.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm tài liệu hướng dẫn.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file tài liệu hướng dẫn.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "user_manual.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: user_manual.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find user_manual.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm user_manual.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file user_manual.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "user_manual.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: user_manual.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find user_manual.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm user_manual.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file user_manual.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "user_manual.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: user_manual.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find user_manual.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm user_manual.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file user_manual.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "user_manual.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: user_manual.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find user_manual.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm user_manual.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file user_manual.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "user_manual.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: user_manual.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find user_manual.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm user_manual.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file user_manual.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "specification.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: specification.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find specification.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm specification.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file specification.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "specification.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: specification.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find specification.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm specification.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file specification.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "specification.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: specification.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find specification.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm specification.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file specification.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "specification.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: specification.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find specification.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm specification.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file specification.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "specification.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: specification.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find specification.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm specification.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file specification.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "architecture_design.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: architecture_design.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find architecture_design.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm architecture_design.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file architecture_design.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "architecture_design.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: architecture_design.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find architecture_design.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm architecture_design.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file architecture_design.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "architecture_design.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: architecture_design.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find architecture_design.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm architecture_design.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file architecture_design.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "architecture_design.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: architecture_design.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find architecture_design.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm architecture_design.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file architecture_design.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "architecture_design.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: architecture_design.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find architecture_design.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm architecture_design.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file architecture_design.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "test_report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: test_report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find test_report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm test_report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file test_report.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "test_report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: test_report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find test_report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm test_report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file test_report.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "test_report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: test_report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find test_report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm test_report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file test_report.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "test_report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: test_report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find test_report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm test_report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file test_report.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "test_report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: test_report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find test_report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm test_report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file test_report.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "changelog.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: changelog.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find changelog.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm changelog.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file changelog.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "changelog.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: changelog.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find changelog.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm changelog.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file changelog.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "changelog.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: changelog.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find changelog.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm changelog.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file changelog.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "changelog.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: changelog.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find changelog.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm changelog.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file changelog.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "changelog.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: changelog.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find changelog.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm changelog.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file changelog.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "readme.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: readme.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find readme.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm readme.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file readme.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "readme.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: readme.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find readme.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm readme.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file readme.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "readme.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: readme.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find readme.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm readme.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file readme.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "readme.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: readme.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find readme.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm readme.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file readme.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "readme.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: readme.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find readme.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm readme.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file readme.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "license.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: license.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find license.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm license.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file license.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "license.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: license.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find license.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm license.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file license.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "license.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: license.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find license.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm license.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file license.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "license.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: license.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find license.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm license.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file license.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "license.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: license.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find license.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm license.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file license.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "config_local.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: config_local.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find config_local.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm config_local.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file config_local.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "config_local.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: config_local.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find config_local.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm config_local.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file config_local.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "config_local.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: config_local.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find config_local.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm config_local.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file config_local.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "config_local.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: config_local.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find config_local.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm config_local.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file config_local.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "config_local.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: config_local.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find config_local.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm config_local.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file config_local.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "dataset_raw.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: dataset_raw.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find dataset_raw.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm dataset_raw.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file dataset_raw.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "dataset_raw.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: dataset_raw.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find dataset_raw.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm dataset_raw.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file dataset_raw.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "dataset_raw.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: dataset_raw.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find dataset_raw.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm dataset_raw.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file dataset_raw.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "dataset_raw.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: dataset_raw.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find dataset_raw.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm dataset_raw.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file dataset_raw.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "dataset_raw.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: dataset_raw.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find dataset_raw.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm dataset_raw.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file dataset_raw.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "sales_summary.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: sales_summary.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find sales_summary.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm sales_summary.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file sales_summary.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "sales_summary.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: sales_summary.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find sales_summary.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm sales_summary.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file sales_summary.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "sales_summary.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: sales_summary.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find sales_summary.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm sales_summary.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file sales_summary.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "sales_summary.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: sales_summary.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find sales_summary.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm sales_summary.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file sales_summary.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "sales_summary.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: sales_summary.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find sales_summary.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm sales_summary.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file sales_summary.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "customer_list.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: customer_list.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find customer_list.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm customer_list.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file customer_list.docx",
+    "intent": "FILE"
+  },
+  {
+    "text": "customer_list.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: customer_list.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "find customer_list.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm customer_list.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file customer_list.pdf",
+    "intent": "FILE"
+  },
+  {
+    "text": "customer_list.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: customer_list.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find customer_list.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm customer_list.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file customer_list.xlsx",
+    "intent": "FILE"
+  },
+  {
+    "text": "customer_list.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: customer_list.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "find customer_list.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm customer_list.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file customer_list.pptx",
+    "intent": "FILE"
+  },
+  {
+    "text": "customer_list.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "file: customer_list.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "find customer_list.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "tìm customer_list.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "open file customer_list.txt",
+    "intent": "FILE"
+  },
+  {
+    "text": "25 * 4",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 25 * 4",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1200 / 12",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1200 / 12",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "(45 + 55) * 2",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc (45 + 55) * 2",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "15% of 200",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 15% of 200",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "sqrt(144)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc sqrt(144)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "500 - 128",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 500 - 128",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "2 ^ 10",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 2 ^ 10",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "sin(pi / 2)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc sin(pi / 2)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "cos(0)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc cos(0)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "tan(45)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc tan(45)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "log(100)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc log(100)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "ln(e)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc ln(e)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "abs(-99)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc abs(-99)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "100 km to miles",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 100 km to miles",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1024 mb to gb",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1024 mb to gb",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1 gb to mb",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1 gb to mb",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "37 c to f",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 37 c to f",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "100 f to c",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 100 f to c",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "2 kg to lbs",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 2 kg to lbs",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "5 lbs to kg",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 5 lbs to kg",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "60 s to min",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 60 s to min",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "120 min to hours",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 120 min to hours",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "24 hours to days",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 24 hours to days",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "0xFF to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 0xFF to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "255 to hex",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 255 to hex",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "0b1010 to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 0b1010 to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "10 to bin",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 10 to bin",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "15 + 35",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 15 + 35",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "99 * 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 99 * 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "50 USD to VND",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 50 USD to VND",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "100 EUR to USD",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 100 EUR to USD",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 50 + 50",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc: 10 * 20",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "= 100 * 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc = 100 * 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "500 * (1 + 0.1)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 500 * (1 + 0.1)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "sqrt(256) + 10",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc sqrt(256) + 10",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "2^8 + 2^4",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 2^8 + 2^4",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1500000 * 10%",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1500000 * 10%",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "20% of 5000000",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 20% of 5000000",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "tính 45 * 2 + 10",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc tính 45 * 2 + 10",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "tính 100 / 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc tính 100 / 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "tính căn bậc hai của 81",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc tính căn bậc hai của 81",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1000 m to km",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1000 m to km",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "5 feet to cm",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 5 feet to cm",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "10 inch to cm",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 10 inch to cm",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "100 cm to m",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 100 cm to m",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1 gallon to liters",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1 gallon to liters",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1000 ml to liters",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1000 ml to liters",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "0x1A to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 0x1A to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "16 to hex",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 16 to hex",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "0b1111 to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 0b1111 to dec",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "8 to bin",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 8 to bin",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1000 - 450",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1000 - 450",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "250 / 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 250 / 5",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "18 * 18",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 18 * 18",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "75 + 25 - 30",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 75 + 25 - 30",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "12 * (34 + 56)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 12 * (34 + 56)",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc: 999 / 3",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "= 45 * 2",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc = 45 * 2",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "1000 * 0.05",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "calc 1000 * 0.05",
+    "intent": "CALCULATOR"
+  },
+  {
+    "text": "https://github.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "http://github.com/dotnet",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "google.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://google.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "www.google.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://www.google.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "youtube.com/watch",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://youtube.com/watch",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://youtube.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "news.ycombinator.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://news.ycombinator.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "translate.google.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://translate.google.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "facebook.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://facebook.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "reddit.com/r/csharp",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://reddit.com/r/csharp",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "twitter.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://twitter.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "x.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://x.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "stackoverflow.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://stackoverflow.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "stackoverflow.com/questions",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://stackoverflow.com/questions",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "vnexpress.net",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://vnexpress.net",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "dantri.com.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://dantri.com.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "tuoitre.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://tuoitre.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "wikipedia.org",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://wikipedia.org",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "en.wikipedia.org/wiki/AI",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://en.wikipedia.org/wiki/AI",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "chatgpt.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://chatgpt.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "claude.ai",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://claude.ai",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "bing.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://bing.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "duckduckgo.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://duckduckgo.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "amazon.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://amazon.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "shopee.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://shopee.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "lazada.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://lazada.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "tiki.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://tiki.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "http://localhost:3000",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "http://localhost:5000",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "http://localhost:8080",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "http://127.0.0.1:8000",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "cnn.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://cnn.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "bbc.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://bbc.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "medium.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://medium.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "dev.to",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://dev.to",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "npmjs.com/package/axios",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://npmjs.com/package/axios",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "nuget.org/packages",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://nuget.org/packages",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "pypi.org/project/torch",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://pypi.org/project/torch",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "learn.microsoft.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://learn.microsoft.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "docs.docker.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://docs.docker.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "gitlab.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://gitlab.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "bitbucket.org",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://bitbucket.org",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "kaggle.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://kaggle.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "huggingface.co",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://huggingface.co",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "netflix.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://netflix.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "spotify.com/web",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://spotify.com/web",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://viblo.asia",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "tinhte.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://tinhte.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "voz.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://voz.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "genk.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://genk.vn",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "theverge.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://theverge.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "techcrunch.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://techcrunch.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://antigravity.google.com",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "vercel.app",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://vercel.app",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "pages.dev",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://pages.dev",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "github.io",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "https://github.io",
+    "intent": "URL_WEB"
+  },
+  {
+    "text": "ai: tóm tắt nội dung vừa copy",
+    "intent": "AI"
+  },
+  {
+    "text": "ai tóm tắt nội dung vừa copy",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI tóm tắt nội dung vừa copy",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: giải thích đoạn code trên",
+    "intent": "AI"
+  },
+  {
+    "text": "ai giải thích đoạn code trên",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI giải thích đoạn code trên",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: dịch sang tiếng anh",
+    "intent": "AI"
+  },
+  {
+    "text": "ai dịch sang tiếng anh",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI dịch sang tiếng anh",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: viết email xin nghỉ phép",
+    "intent": "AI"
+  },
+  {
+    "text": "ai viết email xin nghỉ phép",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI viết email xin nghỉ phép",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: giải thích thuật toán dijkstra",
+    "intent": "AI"
+  },
+  {
+    "text": "ai giải thích thuật toán dijkstra",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI giải thích thuật toán dijkstra",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: viết hàm regex email",
+    "intent": "AI"
+  },
+  {
+    "text": "ai viết hàm regex email",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI viết hàm regex email",
+    "intent": "AI"
+  },
+  {
+    "text": "ai summarize clipboard",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai summarize clipboard",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai summarize clipboard",
+    "intent": "AI"
+  },
+  {
+    "text": "ai explain code in clipboard",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai explain code in clipboard",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai explain code in clipboard",
+    "intent": "AI"
+  },
+  {
+    "text": "ai translate to vietnamese",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai translate to vietnamese",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai translate to vietnamese",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: tạo dàn ý bài thuyết trình",
+    "intent": "AI"
+  },
+  {
+    "text": "ai tạo dàn ý bài thuyết trình",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI tạo dàn ý bài thuyết trình",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: gợi ý tên cho dự án mới",
+    "intent": "AI"
+  },
+  {
+    "text": "ai gợi ý tên cho dự án mới",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI gợi ý tên cho dự án mới",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: phân tích độ phức tạp thuật toán",
+    "intent": "AI"
+  },
+  {
+    "text": "ai phân tích độ phức tạp thuật toán",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI phân tích độ phức tạp thuật toán",
+    "intent": "AI"
+  },
+  {
+    "text": "? explain quantum computing",
+    "intent": "AI"
+  },
+  {
+    "text": "ai explain quantum computing",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI explain quantum computing",
+    "intent": "AI"
+  },
+  {
+    "text": "? cách sửa lỗi null reference exception",
+    "intent": "AI"
+  },
+  {
+    "text": "ai cách sửa lỗi null reference exception",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI cách sửa lỗi null reference exception",
+    "intent": "AI"
+  },
+  {
+    "text": "? what is dependency injection",
+    "intent": "AI"
+  },
+  {
+    "text": "ai what is dependency injection",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI what is dependency injection",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI cách tối ưu truy vấn SQL",
+    "intent": "AI"
+  },
+  {
+    "text": "ai tối ưu truy vấn SQL",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI tối ưu truy vấn SQL",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI cách cấu hình nginx reverse proxy",
+    "intent": "AI"
+  },
+  {
+    "text": "ai cấu hình nginx reverse proxy",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI cấu hình nginx reverse proxy",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI cách deploy docker",
+    "intent": "AI"
+  },
+  {
+    "text": "ai deploy docker",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI deploy docker",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: hướng dẫn cài đặt python trên windows",
+    "intent": "AI"
+  },
+  {
+    "text": "ai hướng dẫn cài đặt python trên windows",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI hướng dẫn cài đặt python trên windows",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: so sánh c# và rust",
+    "intent": "AI"
+  },
+  {
+    "text": "ai so sánh c# và rust",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI so sánh c# và rust",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: viết unit test cho hàm tính tổng",
+    "intent": "AI"
+  },
+  {
+    "text": "ai viết unit test cho hàm tính tổng",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI viết unit test cho hàm tính tổng",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: kiểm tra lỗi ngữ pháp đoạn văn bản sau",
+    "intent": "AI"
+  },
+  {
+    "text": "ai kiểm tra lỗi ngữ pháp đoạn văn bản sau",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI kiểm tra lỗi ngữ pháp đoạn văn bản sau",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: viết bài đăng facebook quảng cáo sản phẩm",
+    "intent": "AI"
+  },
+  {
+    "text": "ai viết bài đăng facebook quảng cáo sản phẩm",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI viết bài đăng facebook quảng cáo sản phẩm",
+    "intent": "AI"
+  },
+  {
+    "text": "ai draft email to manager",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai draft email to manager",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai draft email to manager",
+    "intent": "AI"
+  },
+  {
+    "text": "ai rewrite professionally",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai rewrite professionally",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai rewrite professionally",
+    "intent": "AI"
+  },
+  {
+    "text": "ai review my resume",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai review my resume",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai review my resume",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: tại sao chương trình bị tràn bộ nhớ stackoverflow",
+    "intent": "AI"
+  },
+  {
+    "text": "ai tại sao chương trình bị tràn bộ nhớ stackoverflow",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI tại sao chương trình bị tràn bộ nhớ stackoverflow",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: hướng dẫn sử dụng git rebase",
+    "intent": "AI"
+  },
+  {
+    "text": "ai hướng dẫn sử dụng git rebase",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI hướng dẫn sử dụng git rebase",
+    "intent": "AI"
+  },
+  {
+    "text": "ask AI how to implement binary search",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ask AI how to implement binary search",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ask AI how to implement binary search",
+    "intent": "AI"
+  },
+  {
+    "text": "ask AI to generate mock data json",
+    "intent": "AI"
+  },
+  {
+    "text": "ai generate mock data json",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI generate mock data json",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: tóm tắt bài báo này",
+    "intent": "AI"
+  },
+  {
+    "text": "ai tóm tắt bài báo này",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI tóm tắt bài báo này",
+    "intent": "AI"
+  },
+  {
+    "text": "ai summarize this text",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai summarize this text",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai summarize this text",
+    "intent": "AI"
+  },
+  {
+    "text": "ai explain this error message",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai explain this error message",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai explain this error message",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: hướng dẫn giải bài toán quy hoạch động",
+    "intent": "AI"
+  },
+  {
+    "text": "ai hướng dẫn giải bài toán quy hoạch động",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI hướng dẫn giải bài toán quy hoạch động",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: viết thơ về mùa thu hà nội",
+    "intent": "AI"
+  },
+  {
+    "text": "ai viết thơ về mùa thu hà nội",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI viết thơ về mùa thu hà nội",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: sinh câu truy vấn mongodb",
+    "intent": "AI"
+  },
+  {
+    "text": "ai sinh câu truy vấn mongodb",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI sinh câu truy vấn mongodb",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: tạo bảng dữ liệu mẫu postgresql",
+    "intent": "AI"
+  },
+  {
+    "text": "ai tạo bảng dữ liệu mẫu postgresql",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI tạo bảng dữ liệu mẫu postgresql",
+    "intent": "AI"
+  },
+  {
+    "text": "ai translate clipboard to japanese",
+    "intent": "AI"
+  },
+  {
+    "text": "ai ai translate clipboard to japanese",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI ai translate clipboard to japanese",
+    "intent": "AI"
+  },
+  {
+    "text": "? how does transformer neural network work",
+    "intent": "AI"
+  },
+  {
+    "text": "ai how does transformer neural network work",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI how does transformer neural network work",
+    "intent": "AI"
+  },
+  {
+    "text": "? what is learning to rank",
+    "intent": "AI"
+  },
+  {
+    "text": "ai what is learning to rank",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI what is learning to rank",
+    "intent": "AI"
+  },
+  {
+    "text": "ai: viết kịch bản video youtube",
+    "intent": "AI"
+  },
+  {
+    "text": "ai viết kịch bản video youtube",
+    "intent": "AI"
+  },
+  {
+    "text": "hỏi AI viết kịch bản video youtube",
+    "intent": "AI"
+  },
+  {
+    "text": "> ipconfig",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd ipconfig",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps ipconfig",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> ipconfig /all",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd ipconfig /all",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps ipconfig /all",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> ping google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd ping google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps ping google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> ping 8.8.8.8",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd ping 8.8.8.8",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps ping 8.8.8.8",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> ping 1.1.1.1",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd ping 1.1.1.1",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps ping 1.1.1.1",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> shutdown -s -t 3600",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd shutdown -s -t 3600",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps shutdown -s -t 3600",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> shutdown /r /t 0",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd shutdown /r /t 0",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps shutdown /r /t 0",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> Get-Process",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd Get-Process",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps Get-Process",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> Get-Service",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd Get-Service",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps Get-Service",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> git status",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd git status",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps git status",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> git pull",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd git pull",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps git pull",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> git push origin main",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd git push origin main",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps git push origin main",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> git checkout -b feature",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd git checkout -b feature",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps git checkout -b feature",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> git commit -m 'update'",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd git commit -m 'update'",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps git commit -m 'update'",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> npm run dev",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd npm run dev",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps npm run dev",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> npm install",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd npm install",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps npm install",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> npm start",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd npm start",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps npm start",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> dotnet build",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd dotnet build",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps dotnet build",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> dotnet run",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd dotnet run",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps dotnet run",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> dotnet test",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd dotnet test",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps dotnet test",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> dir /s",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd dir /s",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps dir /s",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> dir /b",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd dir /b",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps dir /b",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> ls -la",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd ls -la",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps ls -la",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> netstat -ano",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd netstat -ano",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps netstat -ano",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> tasklist",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd tasklist",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps tasklist",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> taskkill /f /im notepad.exe",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd taskkill /f /im notepad.exe",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps taskkill /f /im notepad.exe",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> systeminfo",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd systeminfo",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps systeminfo",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> traceroute 8.8.8.8",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd traceroute 8.8.8.8",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps traceroute 8.8.8.8",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> tracert google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd tracert google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps tracert google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> code .",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd code .",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps code .",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> mkdir test_folder",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd mkdir test_folder",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps mkdir test_folder",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> rmdir /s /q temp",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd rmdir /s /q temp",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps rmdir /s /q temp",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> rm -rf node_modules",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd rm -rf node_modules",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps rm -rf node_modules",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> docker ps",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd docker ps",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps docker ps",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> docker compose up -d",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd docker compose up -d",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps docker compose up -d",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> docker stop $(docker ps -a -q)",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd docker stop $(docker ps -a -q)",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps docker stop $(docker ps -a -q)",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> curl https://api.github.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd curl https://api.github.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps curl https://api.github.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> curl -I google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd curl -I google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps curl -I google.com",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> chkdsk C:",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd chkdsk C:",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps chkdsk C:",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> sfc /scannow",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd sfc /scannow",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps sfc /scannow",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> cls",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd cls",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps cls",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> clear",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd clear",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps clear",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> echo hello world",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd echo hello world",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps echo hello world",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> whoami",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd whoami",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps whoami",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> hostname",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd hostname",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps hostname",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> route print",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd route print",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps route print",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> arp -a",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd arp -a",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps arp -a",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> wmic cpu get name",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd wmic cpu get name",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps wmic cpu get name",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> explorer .",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd explorer .",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps explorer .",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> start chrome",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd start chrome",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps start chrome",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> python app.py",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd python app.py",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps python app.py",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> pip install -r requirements.txt",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd pip install -r requirements.txt",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps pip install -r requirements.txt",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> uvicorn main:app --reload",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd uvicorn main:app --reload",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps uvicorn main:app --reload",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> flutter run",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd flutter run",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps flutter run",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "> cargo build",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "cmd cargo build",
+    "intent": "COMMAND"
+  },
+  {
+    "text": "ps cargo build",
+    "intent": "COMMAND"
+  }
+]
