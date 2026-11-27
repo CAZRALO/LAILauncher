@@ -1,0 +1,194 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Branding -->
+    <sys:String x:Key="Str_AppName">LAILauncher</sys:String>
+    <sys:String x:Key="Str_Version">Version 2.4.0</sys:String>
+    <sys:String x:Key="Str_SettingsTitle">LAILauncher Settings</sys:String>
+    <sys:String x:Key="Str_LangLabel">Language</sys:String>
+
+    <!-- MainWindow -->
+    <sys:String x:Key="Str_SearchPlaceholder">Search apps, files, or commands...</sys:String>
+    <sys:String x:Key="Str_ResultsHeader">SEARCH RESULTS &amp; ACTIONS</sys:String>
+    <sys:String x:Key="Str_ResultsNavHint">Use ↑ / ↓ arrow keys to select</sys:String>
+    <sys:String x:Key="Str_NoResultsTitle">No matching results found</sys:String>
+    <sys:String x:Key="Str_NoResultsSub">Try another keyword or use a quick prefix syntax:</sys:String>
+    <sys:String x:Key="Str_StatusReady">Ready</sys:String>
+    <sys:String x:Key="Str_Footer_Open">Open</sys:String>
+    <sys:String x:Key="Str_Footer_Admin">Admin</sys:String>
+    <sys:String x:Key="Str_Footer_Folder">Folder</sys:String>
+    <sys:String x:Key="Str_Footer_Actions">Actions</sys:String>
+    <sys:String x:Key="Str_Footer_Hide">Hide</sys:String>
+    <sys:String x:Key="Str_DragGripTooltip">Drag here to move LAILauncher window</sys:String>
+    <sys:String x:Key="Str_ResizeGripTooltip">Drag corner to resize LAILauncher window</sys:String>
+    <sys:String x:Key="Str_Btn_MinimizeTooltip">Minimize (hide launcher)</sys:String>
+    <sys:String x:Key="Str_Btn_MaximizeTooltip">Maximize / Restore</sys:String>
+    <sys:String x:Key="Str_Btn_CloseTooltip">Close (Esc)</sys:String>
+    <sys:String x:Key="Str_Btn_SettingsTooltip">Theme &amp; System Settings (Ctrl+,)</sys:String>
+    <sys:String x:Key="Str_Btn_ModeTooltip">Switch Light / Dark Mode (Ctrl + D)</sys:String>
+    <sys:String x:Key="Str_Btn_OsTooltip">Switch Window Style: Windows Fluent ↔ Linux GNOME (Ctrl+Alt+L)</sys:String>
+    <sys:String x:Key="Str_Btn_LayoutTooltip">Cycle window layout shape &amp; corner style</sys:String>
+
+    <!-- Quick Settings Strip -->
+    <sys:String x:Key="Str_Quick_Hotspot">Hotspot</sys:String>
+    <sys:String x:Key="Str_Quick_Battery">Battery Saver</sys:String>
+    <sys:String x:Key="Str_Quick_BatteryOn">Battery Saver: On</sys:String>
+    <sys:String x:Key="Str_Quick_TaskbarCenter">Taskbar: Center</sys:String>
+    <sys:String x:Key="Str_Quick_TaskbarLeft">Taskbar: Left</sys:String>
+    <sys:String x:Key="Str_Quick_Screenshot">Screenshot</sys:String>
+    <sys:String x:Key="Str_Quick_Processes">Processes</sys:String>
+    <sys:String x:Key="Str_Quick_Wifi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Quick_WifiOn">Wi-Fi: On</sys:String>
+    <sys:String x:Key="Str_Quick_WifiOff">Wi-Fi: Off</sys:String>
+    <sys:String x:Key="Str_Quick_Bluetooth">Bluetooth</sys:String>
+    <sys:String x:Key="Str_Quick_BluetoothOn">Bluetooth: On</sys:String>
+    <sys:String x:Key="Str_Quick_BluetoothOff">Bluetooth: Off</sys:String>
+
+    <!-- Result Types -->
+    <sys:String x:Key="Str_Type_App">Application</sys:String>
+    <sys:String x:Key="Str_Type_Calc">Calculator</sys:String>
+    <sys:String x:Key="Str_Type_AI">Local AI</sys:String>
+    <sys:String x:Key="Str_Type_Command">Shell Command</sys:String>
+    <sys:String x:Key="Str_Type_Url">Web URL</sys:String>
+    <sys:String x:Key="Str_Type_Bookmark">Bookmark</sys:String>
+    <sys:String x:Key="Str_Type_Process">Process</sys:String>
+    <sys:String x:Key="Str_Type_Setting">Setting</sys:String>
+    <sys:String x:Key="Str_Type_Folder">Folder</sys:String>
+    <sys:String x:Key="Str_Type_File">File</sys:String>
+    <sys:String x:Key="Str_Type_Clipboard">Clipboard</sys:String>
+    <sys:String x:Key="Str_Type_System">System</sys:String>
+    <sys:String x:Key="Str_Type_Plugin">Plugin</sys:String>
+
+    <!-- Wi-Fi Password Modal -->
+    <sys:String x:Key="Str_WifiModal_Title">Connect to Wi-Fi Network</sys:String>
+    <sys:String x:Key="Str_WifiModal_Desc">Enter the network security key (WPA2/WPA3) to create a profile and connect directly:</sys:String>
+    <sys:String x:Key="Str_WifiModal_Cancel">Cancel (Esc)</sys:String>
+    <sys:String x:Key="Str_WifiModal_Connect">Connect</sys:String>
+
+    <!-- Settings Sidebar Navigation -->
+    <sys:String x:Key="Str_Nav_General">General</sys:String>
+    <sys:String x:Key="Str_Nav_Appearance">Appearance &amp; Themes</sys:String>
+    <sys:String x:Key="Str_Nav_Window">Window &amp; Display</sys:String>
+    <sys:String x:Key="Str_Nav_Apps">Apps &amp; Processes</sys:String>
+    <sys:String x:Key="Str_Nav_System">Windows Controls</sys:String>
+    <sys:String x:Key="Str_Nav_AI">Local AI</sys:String>
+    <sys:String x:Key="Str_Nav_About">About</sys:String>
+
+    <!-- Settings Footer & Common -->
+    <sys:String x:Key="Str_Btn_RestartApp">Restart App</sys:String>
+    <sys:String x:Key="Str_Btn_SaveClose">Save &amp; Close</sys:String>
+    <sys:String x:Key="Str_Toggle_On">On</sys:String>
+    <sys:String x:Key="Str_Toggle_Off">Off</sys:String>
+
+    <!-- Settings: General Tab -->
+    <sys:String x:Key="Str_Gen_Header">General</sys:String>
+    <sys:String x:Key="Str_Gen_Sub">Configure your global activation hotkey and Windows startup behavior</sys:String>
+    <sys:String x:Key="Str_Gen_HotkeyGroup">Global Launcher Hotkey</sys:String>
+    <sys:String x:Key="Str_Gen_HotkeyTitle">Activation shortcut</sys:String>
+    <sys:String x:Key="Str_Gen_HotkeyDesc">Summon LAILauncher instantly from any active application</sys:String>
+    <sys:String x:Key="Str_Gen_CustomHotkeyDesc">Click the box and press your desired key combination:</sys:String>
+    <sys:String x:Key="Str_Gen_ApplyHotkey">Apply</sys:String>
+    <sys:String x:Key="Str_Gen_StartupGroup">System Startup</sys:String>
+    <sys:String x:Key="Str_Gen_StartupTitle">Launch at Windows startup</sys:String>
+    <sys:String x:Key="Str_Gen_StartupDesc">Start silently in the system tray when you sign in</sys:String>
+
+    <!-- Settings: Appearance Tab -->
+    <sys:String x:Key="Str_App_Header">Appearance &amp; Themes</sys:String>
+    <sys:String x:Key="Str_App_Sub">Customize Windows / Linux chrome style, colorful themes, glass refraction, and accent palette</sys:String>
+    <sys:String x:Key="Str_App_StyleGroup">Chrome &amp; Color Mode</sys:String>
+    <sys:String x:Key="Str_App_OsTitle">Window style</sys:String>
+    <sys:String x:Key="Str_App_OsDesc">Switch between Windows Fluent caption buttons and Linux GNOME traffic lights</sys:String>
+    <sys:String x:Key="Str_App_ModeTitle">Color mode</sys:String>
+    <sys:String x:Key="Str_App_ModeDesc">Comfortable low-glare Dark palettes or vibrant pastel Light themes preserving color identity</sys:String>
+    <sys:String x:Key="Str_App_ModeDark">Dark Mode</sys:String>
+    <sys:String x:Key="Str_App_ModeLight">Light Mode</sys:String>
+    <sys:String x:Key="Str_App_LayoutTitle">Layout &amp; Geometry</sys:String>
+    <sys:String x:Key="Str_App_LayoutDesc">Adjust corner radius, list density, and borders</sys:String>
+    <sys:String x:Key="Str_App_ThemesGroup">Theme Collection (12 Presets)</sys:String>
+    <sys:String x:Key="Str_App_GlassGroup">Translucent Glass &amp; Tint</sys:String>
+    <sys:String x:Key="Str_App_GlassEnableTitle">Enable frosted Acrylic Glass effect</sys:String>
+    <sys:String x:Key="Str_App_GlassEnableDesc">Render themed translucent surfaces with specular rim lighting</sys:String>
+    <sys:String x:Key="Str_App_OpacityTitle">Glass Opacity</sys:String>
+    <sys:String x:Key="Str_App_OpacityDesc">Adjust translucency level of launcher and settings windows</sys:String>
+    <sys:String x:Key="Str_App_TintAccentTitle">Tint glass with active Accent color</sys:String>
+    <sys:String x:Key="Str_App_TintAccentDesc">Blend the translucent backdrop using your selected theme accent</sys:String>
+    <sys:String x:Key="Str_App_TintCustomTitle">Custom glass tint</sys:String>
+    <sys:String x:Key="Str_App_ColorGroup">Color</sys:String>
+    <sys:String x:Key="Str_App_WinAccentTitle">Sync Windows accent color</sys:String>
+    <sys:String x:Key="Str_App_WinAccentDesc">Automatically follow your Windows Personalization accent color</sys:String>
+    <sys:String x:Key="Str_App_BorderAccentTitle">Accent window border</sys:String>
+    <sys:String x:Key="Str_App_BorderAccentDesc">Highlight outer window edges using your accent color</sys:String>
+    <sys:String x:Key="Str_App_CustomColorTitle">Custom color</sys:String>
+    <sys:String x:Key="Str_App_CustomColorDesc">Pick a swatch or enter a hex code</sys:String>
+    <sys:String x:Key="Str_Btn_Reset">Reset</sys:String>
+    <sys:String x:Key="Str_Btn_Apply">Apply</sys:String>
+
+    <!-- Settings: Window & Display Tab -->
+    <sys:String x:Key="Str_Win_Header">Window Size, Position &amp; Display</sys:String>
+    <sys:String x:Key="Str_Win_Sub">Resize Launcher dimensions, snap to screen anchors, or configure multi-monitor behavior</sys:String>
+    <sys:String x:Key="Str_Win_SizeGroup">Launcher Window Size</sys:String>
+    <sys:String x:Key="Str_Win_WidthTitle">Window Width</sys:String>
+    <sys:String x:Key="Str_Win_WidthDesc">Adjust horizontal width of the search window (560 – 1120 px)</sys:String>
+    <sys:String x:Key="Str_Win_HeightTitle">Window Height</sys:String>
+    <sys:String x:Key="Str_Win_HeightDesc">Adjust vertical height of the results viewport (380 – 820 px)</sys:String>
+    <sys:String x:Key="Str_Win_SizePresetTitle">Quick size presets</sys:String>
+    <sys:String x:Key="Str_Win_SizePresetDesc">Apply Compact, Standard, or Wide dimensions with one click</sys:String>
+    <sys:String x:Key="Str_Win_PosGroup">Window Position</sys:String>
+    <sys:String x:Key="Str_Win_MovePresetTitle">Move window to anchor position</sys:String>
+    <sys:String x:Key="Str_Win_MovePresetDesc">Or drag the LAILauncher titlebar anywhere to remember a custom coordinate</sys:String>
+    <sys:String x:Key="Str_Win_MonitorGroup">Monitor &amp; Multi-Display</sys:String>
+    <sys:String x:Key="Str_Win_MonitorsDetected">Connected Displays</sys:String>
+    <sys:String x:Key="Str_Btn_Refresh">Refresh</sys:String>
+
+    <!-- Settings: Apps & Background Processes Tab -->
+    <sys:String x:Key="Str_Apps_Header">Apps &amp; Background Processes</sys:String>
+    <sys:String x:Key="Str_Apps_Sub">Configure system tray, window behavior, local app/file indexing, and manage running processes</sys:String>
+    <sys:String x:Key="Str_Apps_BehaviorGroup">App &amp; System Tray Behavior</sys:String>
+    <sys:String x:Key="Str_Apps_TrayTitle">Show icon in System Tray</sys:String>
+    <sys:String x:Key="Str_Apps_TrayDesc">Keep LAILauncher accessible from the Windows notification area</sys:String>
+    <sys:String x:Key="Str_Apps_MinToTrayTitle">Minimize to Tray instead of quitting</sys:String>
+    <sys:String x:Key="Str_Apps_MinToTrayDesc">Keep background hotkey ready when you minimize or close the window</sys:String>
+    <sys:String x:Key="Str_Apps_DeactivateTitle">Auto-hide Launcher when clicking outside</sys:String>
+    <sys:String x:Key="Str_Apps_DeactivateDesc">Disable to pin the Launcher open side-by-side with other apps</sys:String>
+    <sys:String x:Key="Str_Apps_RememberTitle">Remember last search query on reopen</sys:String>
+    <sys:String x:Key="Str_Apps_RememberDesc">Preserve previous search text instead of clearing when summoned</sys:String>
+    <sys:String x:Key="Str_Apps_QuickStripTitle">Show Quick Controls bar (Wi-Fi, Bluetooth, Battery...)</sys:String>
+    <sys:String x:Key="Str_Apps_QuickStripDesc">Display inline hardware control pills below the search bar</sys:String>
+    <sys:String x:Key="Str_Apps_IndexGroup">Application &amp; File Indexer</sys:String>
+    <sys:String x:Key="Str_Apps_IndexTitle">Local SQLite Search Index</sys:String>
+    <sys:String x:Key="Str_Apps_ReindexApps">Re-index Apps</sys:String>
+    <sys:String x:Key="Str_Apps_ReindexFiles">Re-index Files</sys:String>
+    <sys:String x:Key="Str_Apps_ProcGroup">Background Processes Manager</sys:String>
+    <sys:String x:Key="Str_Apps_ProcSub">Inspect active processes by RAM usage and safely terminate unresponsive background apps</sys:String>
+
+    <!-- Settings: System Tab -->
+    <sys:String x:Key="Str_Sys_Header">Windows System Controls</sys:String>
+    <sys:String x:Key="Str_Sys_Sub">Control Wi-Fi, Bluetooth, Battery Saver, Audio Volume, Display, and Taskbar directly in-app</sys:String>
+
+    <!-- Settings: AI Tab -->
+    <sys:String x:Key="Str_AI_Header">Local AI Assistant (Ollama)</sys:String>
+    <sys:String x:Key="Str_AI_Sub">Run offline local LLM inference privately on your own GPU/CPU</sys:String>
+
+    <!-- Settings: About Tab -->
+    <sys:String x:Key="Str_About_Header">About LAILauncher</sys:String>
+    <sys:String x:Key="Str_About_Sub">Version details, architecture stack, MIT open-source license, and diagnostic tools</sys:String>
+    <sys:String x:Key="Str_About_HeroDesc">High-speed intelligent launcher with zero-NPU semantic search, local Ollama AI, and native Windows / Linux control center.</sys:String>
+    <sys:String x:Key="Str_About_EnvGroup">Environment &amp; Runtime Info</sys:String>
+    <sys:String x:Key="Str_About_TechGroup">Core Technology &amp; Capabilities</sys:String>
+    <sys:String x:Key="Str_About_LicenseTitle">License &amp; Privacy</sys:String>
+    <sys:String x:Key="Str_About_LicenseDesc">MIT Open Source License • 100% offline processing with zero telemetry</sys:String>
+    <sys:String x:Key="Str_About_ActionsTitle">Maintenance &amp; Diagnostics</sys:String>
+    <sys:String x:Key="Str_About_OpenData">Open Data Folder</sys:String>
+    <sys:String x:Key="Str_About_CopyDiag">Copy Diagnostics</sys:String>
+    <sys:String x:Key="Str_About_ResetDefaults">Reset Defaults</sys:String>
+
+    <!-- Tray -->
+    <sys:String x:Key="Str_Tray_Tooltip">LAILauncher — Fast Windows Search &amp; Control</sys:String>
+    <sys:String x:Key="Str_Tray_Open">Open LAILauncher (Alt+Space)</sys:String>
+    <sys:String x:Key="Str_Tray_Settings">Settings</sys:String>
+    <sys:String x:Key="Str_Tray_Processes">Background Processes</sys:String>
+    <sys:String x:Key="Str_Tray_SwitchLang">Chuyển sang Tiếng Việt (VI)</sys:String>
+    <sys:String x:Key="Str_Tray_Exit">Exit</sys:String>
+
+</ResourceDictionary>

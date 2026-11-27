@@ -12,6 +12,14 @@ public static class FuzzyMatcher
     /// </summary>
     public static double Score(string target, string query)
     {
+        return Score(target, query, null, null);
+    }
+
+    /// <summary>
+    /// High-throughput overload allowing precomputed diacritic-removed strings for target and query.
+    /// </summary>
+    public static double Score(string target, string query, string? unaccentQuery, string? unaccentTarget = null)
+    {
         if (string.IsNullOrWhiteSpace(target) || string.IsNullOrWhiteSpace(query))
             return 0.0;
 
@@ -19,9 +27,17 @@ public static class FuzzyMatcher
         if (rawScore >= 99.0)
             return rawScore;
 
-        // Vietnamese / Accent-insensitive evaluation
-        var unaccentTarget = VietnameseTextHelper.RemoveDiacritics(target);
-        var unaccentQuery = VietnameseTextHelper.RemoveDiacritics(query);
+        // Fast-path: If neither target nor query has non-ASCII, diacritic removal is not needed
+        bool targetHasNonAscii = VietnameseTextHelper.HasNonAscii(target.AsSpan());
+        bool queryHasNonAscii = VietnameseTextHelper.HasNonAscii(query.AsSpan());
+
+        if (!targetHasNonAscii && !queryHasNonAscii)
+        {
+            return rawScore;
+        }
+
+        unaccentTarget ??= targetHasNonAscii ? VietnameseTextHelper.RemoveDiacritics(target) : target;
+        unaccentQuery ??= queryHasNonAscii ? VietnameseTextHelper.RemoveDiacritics(query) : query;
 
         if (!string.Equals(unaccentTarget, target, StringComparison.Ordinal) ||
             !string.Equals(unaccentQuery, query, StringComparison.Ordinal))
@@ -59,7 +75,9 @@ public static class FuzzyMatcher
         if (t.StartsWith(q, StringComparison.OrdinalIgnoreCase))
             return 90.0 + Math.Max(0, 10.0 - (t.Length - q.Length) * 0.5);
 
-        var words = t.Split(WordSeparators, StringSplitOptions.RemoveEmptyEntries);
+        // Fast-path for words: only split if separators exist
+        var hasSep = t.IndexOfAny(WordSeparators) >= 0;
+        var words = hasSep ? t.Split(WordSeparators, StringSplitOptions.RemoveEmptyEntries) : [t];
 
         // 4. Exact word match (e.g. "Gemini" in "Google Gemini" matching "gemini")
         foreach (var word in words)
@@ -97,55 +115,58 @@ public static class FuzzyMatcher
         }
 
         // 7. Multi-token query match (e.g. "gg gemini", "vs code", "arc browser", "scrble ink")
-        var qTokens = q.Split(WordSeparators, StringSplitOptions.RemoveEmptyEntries);
-        if (qTokens.Length > 1)
+        if (q.IndexOfAny(WordSeparators) >= 0)
         {
-            var tokenScoreSum = 0.0;
-            var matchedTokens = 0;
-
-            foreach (var token in qTokens)
+            var qTokens = q.Split(WordSeparators, StringSplitOptions.RemoveEmptyEntries);
+            if (qTokens.Length > 1)
             {
-                var bestTokenScore = 0.0;
-                foreach (var word in words)
+                var tokenScoreSum = 0.0;
+                var matchedTokens = 0;
+
+                foreach (var token in qTokens)
                 {
-                    if (string.Equals(word, token, StringComparison.OrdinalIgnoreCase))
+                    var bestTokenScore = 0.0;
+                    foreach (var word in words)
                     {
-                        bestTokenScore = Math.Max(bestTokenScore, 95.0);
+                        if (string.Equals(word, token, StringComparison.OrdinalIgnoreCase))
+                        {
+                            bestTokenScore = Math.Max(bestTokenScore, 95.0);
+                        }
+                        else if (word.StartsWith(token, StringComparison.OrdinalIgnoreCase))
+                        {
+                            bestTokenScore = Math.Max(bestTokenScore, 85.0);
+                        }
+                        else if (word.Contains(token, StringComparison.OrdinalIgnoreCase))
+                        {
+                            bestTokenScore = Math.Max(bestTokenScore, 70.0);
+                        }
+                        else if (token.Length >= 4 && ComputeLevenshtein(word, token) <= 1)
+                        {
+                            bestTokenScore = Math.Max(bestTokenScore, 80.0);
+                        }
                     }
-                    else if (word.StartsWith(token, StringComparison.OrdinalIgnoreCase))
+
+                    if (bestTokenScore > 0.0)
                     {
-                        bestTokenScore = Math.Max(bestTokenScore, 85.0);
-                    }
-                    else if (word.Contains(token, StringComparison.OrdinalIgnoreCase))
-                    {
-                        bestTokenScore = Math.Max(bestTokenScore, 70.0);
-                    }
-                    else if (token.Length >= 4 && ComputeLevenshtein(word, token) <= 1)
-                    {
-                        bestTokenScore = Math.Max(bestTokenScore, 80.0);
+                        matchedTokens++;
+                        tokenScoreSum += bestTokenScore;
                     }
                 }
 
-                if (bestTokenScore > 0.0)
+                if (matchedTokens == qTokens.Length)
                 {
-                    matchedTokens++;
-                    tokenScoreSum += bestTokenScore;
+                    var avg = tokenScoreSum / qTokens.Length;
+                    return Math.Min(98.0, avg);
                 }
-            }
-
-            if (matchedTokens == qTokens.Length)
-            {
-                var avg = tokenScoreSum / qTokens.Length;
-                return Math.Min(98.0, avg);
-            }
-            else if (matchedTokens > 0)
-            {
-                // Partial multi-token match: at least one token matched well
-                var ratio = (double)matchedTokens / qTokens.Length;
-                var avg = (tokenScoreSum / qTokens.Length) * (0.6 + 0.4 * ratio);
-                if (avg >= 35.0)
+                else if (matchedTokens > 0)
                 {
-                    return avg;
+                    // Partial multi-token match: at least one token matched well
+                    var ratio = (double)matchedTokens / qTokens.Length;
+                    var avg = (tokenScoreSum / qTokens.Length) * (0.6 + 0.4 * ratio);
+                    if (avg >= 35.0)
+                    {
+                        return avg;
+                    }
                 }
             }
         }
@@ -153,8 +174,17 @@ public static class FuzzyMatcher
         // 8. Acronym match (e.g. "vs" for "Visual Studio", "vsc" for "Visual Studio Code")
         if (words.Length > 1 && q.Length <= words.Length)
         {
-            var acronym = new string(words.Where(w => w.Length > 0).Select(w => w[0]).ToArray());
-            if (acronym.StartsWith(q, StringComparison.OrdinalIgnoreCase))
+            Span<char> acronymChars = words.Length <= 64 ? stackalloc char[words.Length] : new char[words.Length];
+            int count = 0;
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (words[i].Length > 0)
+                {
+                    acronymChars[count++] = words[i][0];
+                }
+            }
+            ReadOnlySpan<char> acronym = acronymChars[..count];
+            if (acronym.StartsWith(q.AsSpan(), StringComparison.OrdinalIgnoreCase))
                 return 75.0 + Math.Max(0, 5.0 - (words.Length - q.Length) * 0.5);
         }
 
@@ -205,41 +235,65 @@ public static class FuzzyMatcher
 
     private static string NormalizeString(string text)
     {
-        var sb = new System.Text.StringBuilder(text.Length);
-        foreach (var c in text)
+        if (string.IsNullOrEmpty(text))
+            return string.Empty;
+
+        bool needsNorm = false;
+        for (int i = 0; i < text.Length; i++)
         {
-            if (char.IsLetterOrDigit(c))
+            char c = text[i];
+            if (char.IsUpper(c) || !char.IsLetterOrDigit(c))
             {
-                sb.Append(char.ToLowerInvariant(c));
+                needsNorm = true;
+                break;
             }
         }
-        return sb.ToString();
+
+        if (!needsNorm)
+            return text;
+
+        Span<char> buffer = text.Length <= 128 ? stackalloc char[text.Length] : new char[text.Length];
+        int len = 0;
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            if (char.IsLetterOrDigit(c))
+            {
+                buffer[len++] = char.ToLowerInvariant(c);
+            }
+        }
+        return new string(buffer[..len]);
     }
 
-    private static int ComputeLevenshtein(string s, string t)
+    private static int ComputeLevenshtein(ReadOnlySpan<char> s, ReadOnlySpan<char> t)
     {
-        if (string.IsNullOrEmpty(s)) return t?.Length ?? 0;
-        if (string.IsNullOrEmpty(t)) return s.Length;
+        if (s.IsEmpty) return t.Length;
+        if (t.IsEmpty) return s.Length;
 
         int n = s.Length;
         int m = t.Length;
-        var d = new int[n + 1, m + 1];
 
-        for (int i = 0; i <= n; i++) d[i, 0] = i;
-        for (int j = 0; j <= m; j++) d[0, j] = j;
+        // Zero heap allocation Levenshtein distance using stack memory
+        Span<int> prevRow = m + 1 <= 128 ? stackalloc int[m + 1] : new int[m + 1];
+        Span<int> currRow = m + 1 <= 128 ? stackalloc int[m + 1] : new int[m + 1];
+
+        for (int j = 0; j <= m; j++) prevRow[j] = j;
 
         for (int i = 1; i <= n; i++)
         {
+            currRow[0] = i;
+            char sChar = char.ToLowerInvariant(s[i - 1]);
             for (int j = 1; j <= m; j++)
             {
-                int cost = char.ToLowerInvariant(s[i - 1]) == char.ToLowerInvariant(t[j - 1]) ? 0 : 1;
-                d[i, j] = Math.Min(
-                    Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-                    d[i - 1, j - 1] + cost);
+                int cost = sChar == char.ToLowerInvariant(t[j - 1]) ? 0 : 1;
+                currRow[j] = Math.Min(
+                    Math.Min(prevRow[j] + 1, currRow[j - 1] + 1),
+                    prevRow[j - 1] + cost);
             }
+            currRow.CopyTo(prevRow);
         }
 
-        return d[n, m];
+        return prevRow[m];
     }
 }
 

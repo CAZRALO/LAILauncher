@@ -187,10 +187,11 @@ public static class IconExtractor
 
     private static ImageSource? ExtractShellItemImage(string path)
     {
+        IShellItemImageFactory? factory = null;
         try
         {
             var guid = new Guid("bcc18b79-ba16-442f-80c4-8a59c30c463b");
-            int hr = SHCreateItemFromParsingName(path, IntPtr.Zero, guid, out var factory);
+            int hr = SHCreateItemFromParsingName(path, IntPtr.Zero, guid, out factory);
             if (hr == 0 && factory != null)
             {
                 int imgHr = factory.GetImage(new SIZE(48, 48), 0, out var hbm);
@@ -217,6 +218,13 @@ public static class IconExtractor
         {
             // Silently fallback
         }
+        finally
+        {
+            if (factory != null)
+            {
+                try { Marshal.ReleaseComObject(factory); } catch { }
+            }
+        }
         return null;
     }
 
@@ -228,9 +236,10 @@ public static class IconExtractor
         if (!File.Exists(lnkPath))
             return null;
 
+        IShellLinkW? link = null;
         try
         {
-            var link = (IShellLinkW)new ShellLinkClass();
+            link = (IShellLinkW)new ShellLinkClass();
             var persistFile = (IPersistFile)link;
             
             // STGM_READ = 0
@@ -261,6 +270,13 @@ public static class IconExtractor
         catch
         {
             // COM resolution failed, continue to fallback
+        }
+        finally
+        {
+            if (link != null)
+            {
+                try { Marshal.ReleaseComObject(link); } catch { }
+            }
         }
 
         // Fallback to standard shell icon for the lnk

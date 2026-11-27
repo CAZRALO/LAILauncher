@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Launcher.Core.Tests;
 
+[Collection("WpfApplication")]
 public class SettingsAndHotkeyTests
 {
     [Theory]
@@ -92,25 +93,70 @@ public class SettingsAndHotkeyTests
         Assert.Null(ex);
     }
 
+    private static double RelativeLuminance(System.Windows.Media.Color c)
+        => (0.2126 * c.R + 0.7152 * c.G + 0.0722 * c.B) / 255.0;
+
     [Fact]
     public void ThemeManager_IconBrush_IsDarkOnLight_AndLightOnDark()
     {
-        var app = System.Windows.Application.Current ?? new System.Windows.Application();
-        
+        var app = WpfTestAppHelper.EnsureApplication();
+
         ThemeManager.ApplyTheme(ThemeMode.Light);
         var lightBrush = app.Resources["IconBrush"] as System.Windows.Media.SolidColorBrush;
         Assert.NotNull(lightBrush);
-        Assert.Equal(System.Windows.Media.Color.FromRgb(0x1E, 0x29, 0x3B), lightBrush.Color);
+        Assert.True(RelativeLuminance(lightBrush.Color) < 0.45, $"Expected dark ink IconBrush in Light mode, got {lightBrush.Color}");
+
+        ThemeManager.ApplyThemePreset(ThemeMode.Cyberpunk);
+        var cyberLightBrush = app.Resources["IconBrush"] as System.Windows.Media.SolidColorBrush;
+        Assert.NotNull(cyberLightBrush);
+
+        ThemeManager.ApplyThemePreset(ThemeMode.Emerald);
+        var emeraldLightBrush = app.Resources["IconBrush"] as System.Windows.Media.SolidColorBrush;
+        Assert.NotNull(emeraldLightBrush);
+        Assert.NotEqual(cyberLightBrush.Color, emeraldLightBrush.Color);
 
         ThemeManager.ApplyTheme(ThemeMode.Dark);
         var darkBrush = app.Resources["IconBrush"] as System.Windows.Media.SolidColorBrush;
         Assert.NotNull(darkBrush);
-        Assert.Equal(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF), darkBrush.Color);
+        Assert.True(RelativeLuminance(darkBrush.Color) > 0.72, $"Expected bright IconBrush in Dark mode, got {darkBrush.Color}");
 
         ThemeManager.ApplyTheme(ThemeMode.Nord);
         var nordBrush = app.Resources["IconBrush"] as System.Windows.Media.SolidColorBrush;
         Assert.NotNull(nordBrush);
-        Assert.Equal(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF), nordBrush.Color);
+        Assert.True(RelativeLuminance(nordBrush.Color) > 0.72, $"Expected bright IconBrush in Nord Dark mode, got {nordBrush.Color}");
+
+        var textPrimary = app.Resources["TextPrimaryBrush"] as System.Windows.Media.SolidColorBrush;
+        Assert.NotNull(textPrimary);
+        Assert.NotEqual(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF), textPrimary.Color);
+    }
+
+    [Fact]
+    public void ThemeManager_WindowsPresetsAndVistaAero_ApplyExpectedResources()
+    {
+        var app = WpfTestAppHelper.EnsureApplication();
+
+        ThemeManager.ApplyTheme(ThemeMode.Windows11);
+        Assert.Equal(ThemeMode.Windows11, ThemeManager.CurrentTheme);
+        Assert.NotNull(app.Resources["WindowBgBrush"]);
+
+        ThemeManager.ApplyTheme(ThemeMode.Windows10);
+        Assert.Equal(ThemeMode.Windows10, ThemeManager.CurrentTheme);
+
+        ThemeManager.ApplyTheme(ThemeMode.WindowsVista);
+        ThemeManager.SetLightMode(true);
+        Assert.True(app.Resources["WindowBgBrush"] is System.Windows.Media.LinearGradientBrush);
+    }
+
+    [Fact]
+    public void LocalizationService_SwitchesBetweenVietnameseAndEnglish()
+    {
+        LocalizationService.SetLanguage(LocalizationService.English);
+        Assert.Equal(LocalizationService.English, LocalizationService.CurrentLanguage);
+        Assert.Equal("Ready", LocalizationService.Get("Str_StatusReady"));
+
+        LocalizationService.SetLanguage(LocalizationService.Vietnamese);
+        Assert.Equal(LocalizationService.Vietnamese, LocalizationService.CurrentLanguage);
+        Assert.Equal("Sẵn sàng", LocalizationService.Get("Str_StatusReady"));
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+using Launcher.Core.Utilities;
 using Launcher.SDK;
 
 namespace Launcher.Core.Search;
@@ -6,10 +6,19 @@ namespace Launcher.Core.Search;
 /// <summary>
 /// Lightweight, zero-NPU Local Semantic Matcher.
 /// Understands natural language concepts, intent domains, and semantic synonyms for files, system controls, and tasks.
+/// Pre-compiled and optimized for high-throughput zero-latency queries.
 /// </summary>
 public static class SemanticMatcher
 {
-    private static readonly Dictionary<string, (string[] Keywords, string[] Extensions, string[] SystemActions)> SemanticTaxonomy = new(StringComparer.OrdinalIgnoreCase)
+    private record CompiledCategory(
+        string Name,
+        string[] NormalizedKeywords,
+        string[][] KeywordTokens,
+        string[] Extensions,
+        string[] SystemActions
+    );
+
+    private static readonly Dictionary<string, (string[] Keywords, string[] Extensions, string[] SystemActions)> RawTaxonomy = new(StringComparer.OrdinalIgnoreCase)
     {
         ["Financial & Reports"] = (
             Keywords: ["bao cao", "báo cáo", "tai chinh", "tài chính", "doanh thu", "loi nhuan", "lợi nhuận", "chi tieu", "chi tiêu", "ngan sach", "ngân sách", "budget", "finance", "financial", "report", "revenue", "invoice", "hoa don", "hóa đơn", "tax", "thue", "thuế", "luong", "lương"],
@@ -83,6 +92,34 @@ public static class SemanticMatcher
         )
     };
 
+    private static readonly Dictionary<string, CompiledCategory> CompiledTaxonomy;
+
+    static SemanticMatcher()
+    {
+        CompiledTaxonomy = new Dictionary<string, CompiledCategory>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (category, (keywords, extensions, actions)) in RawTaxonomy)
+        {
+            var normKwList = new List<string>(keywords.Length);
+            var tokensList = new List<string[]>(keywords.Length);
+
+            foreach (var kw in keywords)
+            {
+                var normKw = NormalizeText(kw);
+                normKwList.Add(normKw);
+                tokensList.Add(normKw.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            CompiledTaxonomy[category] = new CompiledCategory(
+                category,
+                normKwList.ToArray(),
+                tokensList.ToArray(),
+                extensions,
+                actions
+            );
+        }
+    }
+
     /// <summary>
     /// Analyzes a natural query and returns matched semantic categories, target extensions, and confidence score.
     /// </summary>
@@ -99,12 +136,12 @@ public static class SemanticMatcher
         var suggestedActions = new List<string>();
         double maxScore = 0.0;
 
-        foreach (var (category, (keywords, extensions, actions)) in SemanticTaxonomy)
+        foreach (var (category, entry) in CompiledTaxonomy)
         {
             double catScore = 0.0;
-            foreach (var kw in keywords)
+            for (int i = 0; i < entry.NormalizedKeywords.Length; i++)
             {
-                var normKw = NormalizeText(kw);
+                var normKw = entry.NormalizedKeywords[i];
                 if (normalized.Contains(normKw))
                 {
                     catScore += 35.0;
@@ -112,8 +149,12 @@ public static class SemanticMatcher
                 else
                 {
                     // Word boundary partial match
-                    var words = normKw.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                    int matchedWords = words.Count(w => normalized.Contains(w));
+                    var words = entry.KeywordTokens[i];
+                    int matchedWords = 0;
+                    for (int w = 0; w < words.Length; w++)
+                    {
+                        if (normalized.Contains(words[w])) matchedWords++;
+                    }
                     if (matchedWords > 0 && words.Length > 1)
                     {
                         catScore += (double)matchedWords / words.Length * 25.0;
@@ -124,8 +165,8 @@ public static class SemanticMatcher
             if (catScore > 20.0)
             {
                 matchedCategories.Add(category);
-                foreach (var ext in extensions) targetExtensions.Add(ext);
-                foreach (var act in actions) suggestedActions.Add(act);
+                foreach (var ext in entry.Extensions) targetExtensions.Add(ext);
+                foreach (var act in entry.SystemActions) suggestedActions.Add(act);
                 if (catScore > maxScore) maxScore = catScore;
             }
         }
@@ -143,35 +184,47 @@ public static class SemanticMatcher
     /// <summary>
     /// Computes a semantic bonus score for a candidate file given the analyzed query intent.
     /// </summary>
-    public static double EvaluateFileSemanticScore(string fileName, string? extension, string fullPath, SemanticAnalysisResult semanticIntent)
+    public static double EvaluateFileSemanticScore(
+        string fileName,
+        string? extension,
+        string fullPath,
+        SemanticAnalysisResult semanticIntent,
+        string? precomputedNormalizedName = null)
     {
         if (!semanticIntent.HasSemanticIntent)
             return 0.0;
 
         double bonus = 0.0;
-        var normName = NormalizeText(fileName);
-        var normPath = NormalizeText(fullPath);
 
-        // 1. Extension match bonus
+        // 1. Extension match bonus (Fast-path without string normalization)
         if (!string.IsNullOrEmpty(extension) && semanticIntent.TargetExtensions.Contains(extension))
         {
             bonus += 25.0;
         }
 
-        // 2. Category keyword match inside file name or path
+        if (semanticIntent.Categories.Count == 0)
+        {
+            return Math.Min(80.0, bonus);
+        }
+
+        var normName = precomputedNormalizedName ?? NormalizeText(fileName);
+        string? normPath = null;
+
+        // 2. Category keyword match inside file name or path using pre-compiled keywords
         foreach (var cat in semanticIntent.Categories)
         {
-            if (SemanticTaxonomy.TryGetValue(cat, out var entry))
+            if (CompiledTaxonomy.TryGetValue(cat, out var entry))
             {
-                foreach (var kw in entry.Keywords)
+                foreach (var normKw in entry.NormalizedKeywords)
                 {
-                    var normKw = NormalizeText(kw);
                     if (normName.Contains(normKw))
                     {
                         bonus += 40.0;
                         break;
                     }
-                    else if (normPath.Contains(normKw))
+                    
+                    normPath ??= NormalizeText(fullPath);
+                    if (normPath.Contains(normKw))
                     {
                         bonus += 15.0;
                     }
@@ -182,21 +235,11 @@ public static class SemanticMatcher
         return Math.Min(80.0, bonus);
     }
 
-    private static string NormalizeText(string input)
+    public static string NormalizeText(string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return string.Empty;
-        var s = input.ToLowerInvariant();
-        
-        // Remove common diacritics for flexible Vietnamese searching
-        s = Regex.Replace(s, @"[àáạảãâầấậẩẫăằắặẳẵ]", "a");
-        s = Regex.Replace(s, @"[èéẹẻẽêềếệểễ]", "e");
-        s = Regex.Replace(s, @"[ìíịỉĩ]", "i");
-        s = Regex.Replace(s, @"[òóọỏõôồốộổỗơờớợởỡ]", "o");
-        s = Regex.Replace(s, @"[ùúụủũưừứựửữ]", "u");
-        s = Regex.Replace(s, @"[ỳýỵỷỹ]", "y");
-        s = Regex.Replace(s, @"[đ]", "d");
-        
-        return s;
+        var unaccent = VietnameseTextHelper.RemoveDiacritics(input);
+        return unaccent.ToLowerInvariant();
     }
 }
 

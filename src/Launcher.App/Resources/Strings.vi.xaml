@@ -1,0 +1,194 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Branding -->
+    <sys:String x:Key="Str_AppName">LAILauncher</sys:String>
+    <sys:String x:Key="Str_Version">Phiên bản 2.4.0</sys:String>
+    <sys:String x:Key="Str_SettingsTitle">Cài đặt LAILauncher</sys:String>
+    <sys:String x:Key="Str_LangLabel">Ngôn ngữ</sys:String>
+
+    <!-- MainWindow -->
+    <sys:String x:Key="Str_SearchPlaceholder">Tìm ứng dụng, tệp tin hoặc nhập lệnh...</sys:String>
+    <sys:String x:Key="Str_ResultsHeader">KẾT QUẢ TÌM KIẾM &amp; HÀNH ĐỘNG</sys:String>
+    <sys:String x:Key="Str_ResultsNavHint">Sử dụng phím mũi tên ↑ / ↓ để chọn</sys:String>
+    <sys:String x:Key="Str_NoResultsTitle">Không tìm thấy kết quả phù hợp</sys:String>
+    <sys:String x:Key="Str_NoResultsSub">Thử tìm kiếm với từ khóa khác hoặc sử dụng các cú pháp hỗ trợ:</sys:String>
+    <sys:String x:Key="Str_StatusReady">Sẵn sàng</sys:String>
+    <sys:String x:Key="Str_Footer_Open">Mở</sys:String>
+    <sys:String x:Key="Str_Footer_Admin">Admin</sys:String>
+    <sys:String x:Key="Str_Footer_Folder">Thư mục</sys:String>
+    <sys:String x:Key="Str_Footer_Actions">Tác vụ</sys:String>
+    <sys:String x:Key="Str_Footer_Hide">Ẩn</sys:String>
+    <sys:String x:Key="Str_DragGripTooltip">Kéo giữ chuột để di chuyển vị trí cửa sổ LAILauncher</sys:String>
+    <sys:String x:Key="Str_ResizeGripTooltip">Kéo để chỉnh kích thước cửa sổ LAILauncher</sys:String>
+    <sys:String x:Key="Str_Btn_MinimizeTooltip">Thu nhỏ (ẩn cửa sổ)</sys:String>
+    <sys:String x:Key="Str_Btn_MaximizeTooltip">Phóng to / Khôi phục</sys:String>
+    <sys:String x:Key="Str_Btn_CloseTooltip">Đóng (Esc)</sys:String>
+    <sys:String x:Key="Str_Btn_SettingsTooltip">Cài đặt Theme &amp; Tùy biến (Ctrl+,)</sys:String>
+    <sys:String x:Key="Str_Btn_ModeTooltip">Chuyển đổi Chế độ Sáng / Tối (Ctrl + D)</sys:String>
+    <sys:String x:Key="Str_Btn_OsTooltip">Chuyển đổi phong cách: Windows Fluent ↔ Linux GNOME (Ctrl+Alt+L)</sys:String>
+    <sys:String x:Key="Str_Btn_LayoutTooltip">Đổi kiểu bố cục &amp; bo góc cửa sổ</sys:String>
+
+    <!-- Quick Settings Strip -->
+    <sys:String x:Key="Str_Quick_Hotspot">Hotspot</sys:String>
+    <sys:String x:Key="Str_Quick_Battery">Tiết kiệm pin</sys:String>
+    <sys:String x:Key="Str_Quick_BatteryOn">Tiết kiệm pin: Bật</sys:String>
+    <sys:String x:Key="Str_Quick_TaskbarCenter">Taskbar: Giữa</sys:String>
+    <sys:String x:Key="Str_Quick_TaskbarLeft">Taskbar: Trái</sys:String>
+    <sys:String x:Key="Str_Quick_Screenshot">Chụp màn hình</sys:String>
+    <sys:String x:Key="Str_Quick_Processes">Trình chạy ngầm</sys:String>
+    <sys:String x:Key="Str_Quick_Wifi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Quick_WifiOn">Wi-Fi: Bật</sys:String>
+    <sys:String x:Key="Str_Quick_WifiOff">Wi-Fi: Tắt</sys:String>
+    <sys:String x:Key="Str_Quick_Bluetooth">Bluetooth</sys:String>
+    <sys:String x:Key="Str_Quick_BluetoothOn">Bluetooth: Bật</sys:String>
+    <sys:String x:Key="Str_Quick_BluetoothOff">Bluetooth: Tắt</sys:String>
+
+    <!-- Result Types -->
+    <sys:String x:Key="Str_Type_App">Ứng dụng</sys:String>
+    <sys:String x:Key="Str_Type_Calc">Tính toán</sys:String>
+    <sys:String x:Key="Str_Type_AI">Trợ lý AI</sys:String>
+    <sys:String x:Key="Str_Type_Command">Lệnh Shell</sys:String>
+    <sys:String x:Key="Str_Type_Url">Trang web</sys:String>
+    <sys:String x:Key="Str_Type_Bookmark">Dấu trang</sys:String>
+    <sys:String x:Key="Str_Type_Process">Tiến trình</sys:String>
+    <sys:String x:Key="Str_Type_Setting">Cài đặt</sys:String>
+    <sys:String x:Key="Str_Type_Folder">Thư mục</sys:String>
+    <sys:String x:Key="Str_Type_File">Tệp tin</sys:String>
+    <sys:String x:Key="Str_Type_Clipboard">Khay nhớ tạm</sys:String>
+    <sys:String x:Key="Str_Type_System">Hệ thống</sys:String>
+    <sys:String x:Key="Str_Type_Plugin">Tiện ích</sys:String>
+
+    <!-- Wi-Fi Password Modal -->
+    <sys:String x:Key="Str_WifiModal_Title">Kết nối mạng Wi-Fi</sys:String>
+    <sys:String x:Key="Str_WifiModal_Desc">Nhập mật khẩu bảo mật (WPA2/WPA3) để tạo hồ sơ và kết nối trực tiếp:</sys:String>
+    <sys:String x:Key="Str_WifiModal_Cancel">Hủy (Esc)</sys:String>
+    <sys:String x:Key="Str_WifiModal_Connect">Kết nối</sys:String>
+
+    <!-- Settings Sidebar Navigation -->
+    <sys:String x:Key="Str_Nav_General">Chung</sys:String>
+    <sys:String x:Key="Str_Nav_Appearance">Giao diện &amp; Theme</sys:String>
+    <sys:String x:Key="Str_Nav_Window">Cửa sổ &amp; Màn hình</sys:String>
+    <sys:String x:Key="Str_Nav_Apps">Ứng dụng &amp; Chạy ngầm</sys:String>
+    <sys:String x:Key="Str_Nav_System">Hệ thống Windows</sys:String>
+    <sys:String x:Key="Str_Nav_AI">AI cục bộ</sys:String>
+    <sys:String x:Key="Str_Nav_About">Giới thiệu (About)</sys:String>
+
+    <!-- Settings Footer & Common -->
+    <sys:String x:Key="Str_Btn_RestartApp">Khởi động lại</sys:String>
+    <sys:String x:Key="Str_Btn_SaveClose">Lưu &amp; Đóng</sys:String>
+    <sys:String x:Key="Str_Toggle_On">Bật</sys:String>
+    <sys:String x:Key="Str_Toggle_Off">Tắt</sys:String>
+
+    <!-- Settings: General Tab -->
+    <sys:String x:Key="Str_Gen_Header">Cài đặt chung</sys:String>
+    <sys:String x:Key="Str_Gen_Sub">Tùy chỉnh phím tắt kích hoạt nhanh và hành vi khởi động cùng Windows</sys:String>
+    <sys:String x:Key="Str_Gen_HotkeyGroup">Phím tắt mở nhanh Launcher</sys:String>
+    <sys:String x:Key="Str_Gen_HotkeyTitle">Phím tắt toàn cục</sys:String>
+    <sys:String x:Key="Str_Gen_HotkeyDesc">Gọi cửa sổ LAILauncher từ bất kỳ ứng dụng nào</sys:String>
+    <sys:String x:Key="Str_Gen_CustomHotkeyDesc">Nhấp vào ô bên phải và nhấn tổ hợp phím mới:</sys:String>
+    <sys:String x:Key="Str_Gen_ApplyHotkey">Áp dụng</sys:String>
+    <sys:String x:Key="Str_Gen_StartupGroup">Khởi động hệ thống</sys:String>
+    <sys:String x:Key="Str_Gen_StartupTitle">Khởi động cùng Windows</sys:String>
+    <sys:String x:Key="Str_Gen_StartupDesc">Tự động chạy ngầm ở khay hệ thống khi mở máy</sys:String>
+
+    <!-- Settings: Appearance Tab -->
+    <sys:String x:Key="Str_App_Header">Giao diện &amp; Chủ đề</sys:String>
+    <sys:String x:Key="Str_App_Sub">Tùy biến phong cách Windows / Linux, màu sắc chủ đề và hiệu ứng kính</sys:String>
+    <sys:String x:Key="Str_App_StyleGroup">Phong cách &amp; Chế độ hiển thị</sys:String>
+    <sys:String x:Key="Str_App_OsTitle">Phong cách cửa sổ</sys:String>
+    <sys:String x:Key="Str_App_OsDesc">Chuyển đổi bố cục nút điều khiển tiêu đề Windows Fluent hoặc Linux GNOME</sys:String>
+    <sys:String x:Key="Str_App_ModeTitle">Chế độ Sáng / Tối</sys:String>
+    <sys:String x:Key="Str_App_ModeDesc">Theme tối dịu mắt không chói hoặc Theme sáng giữ nguyên bản sắc màu chủ đề</sys:String>
+    <sys:String x:Key="Str_App_ModeDark">Chế độ Tối (Dark)</sys:String>
+    <sys:String x:Key="Str_App_ModeLight">Chế độ Sáng (Light)</sys:String>
+    <sys:String x:Key="Str_App_LayoutTitle">Kiểu bố cục &amp; Hình dạng</sys:String>
+    <sys:String x:Key="Str_App_LayoutDesc">Điều chỉnh độ bo góc, mật độ danh sách và đường viền</sys:String>
+    <sys:String x:Key="Str_App_ThemesGroup">Bộ sưu tập chủ đề (12 Themes)</sys:String>
+    <sys:String x:Key="Str_App_GlassGroup">Hiệu ứng kính mờ &amp; Ánh sắc</sys:String>
+    <sys:String x:Key="Str_App_GlassEnableTitle">Bật hiệu ứng kính trong suốt (Acrylic Glass)</sys:String>
+    <sys:String x:Key="Str_App_GlassEnableDesc">Áp dụng độ trong suốt có sắc màu theo từng chủ đề thay vì nền đục</sys:String>
+    <sys:String x:Key="Str_App_OpacityTitle">Độ đậm nền kính (Opacity)</sys:String>
+    <sys:String x:Key="Str_App_OpacityDesc">Điều chỉnh độ trong suốt của lớp nền cửa sổ</sys:String>
+    <sys:String x:Key="Str_App_TintAccentTitle">Pha màu kính theo Accent hiện tại</sys:String>
+    <sys:String x:Key="Str_App_TintAccentDesc">Tự động đồng bộ màu nền kính với màu nhấn chủ đề</sys:String>
+    <sys:String x:Key="Str_App_TintCustomTitle">Màu nền kính tùy chỉnh</sys:String>
+    <sys:String x:Key="Str_App_ColorGroup">Màu nhấn (Accent Color)</sys:String>
+    <sys:String x:Key="Str_App_WinAccentTitle">Đồng bộ màu nhấn từ Windows</sys:String>
+    <sys:String x:Key="Str_App_WinAccentDesc">Lấy tự động màu chủ đề hiện tại trong Windows Personalization</sys:String>
+    <sys:String x:Key="Str_App_BorderAccentTitle">Dùng màu nhấn làm viền cửa sổ</sys:String>
+    <sys:String x:Key="Str_App_BorderAccentDesc">Tô đường viền phát sáng nhẹ bao quanh Launcher</sys:String>
+    <sys:String x:Key="Str_App_CustomColorTitle">Màu tùy chỉnh (Custom color)</sys:String>
+    <sys:String x:Key="Str_App_CustomColorDesc">Chọn nhanh bảng màu hoặc nhập mã Hex</sys:String>
+    <sys:String x:Key="Str_Btn_Reset">Mặc định</sys:String>
+    <sys:String x:Key="Str_Btn_Apply">Áp dụng</sys:String>
+
+    <!-- Settings: Window & Display Tab -->
+    <sys:String x:Key="Str_Win_Header">Kích thước, Vị trí &amp; Màn hình</sys:String>
+    <sys:String x:Key="Str_Win_Sub">Chỉnh kích thước Launcher, neo vị trí cố định hoặc di chuyển giữa nhiều màn hình</sys:String>
+    <sys:String x:Key="Str_Win_SizeGroup">Kích thước cửa sổ Launcher</sys:String>
+    <sys:String x:Key="Str_Win_WidthTitle">Chiều rộng (Width)</sys:String>
+    <sys:String x:Key="Str_Win_WidthDesc">Thay đổi chiều ngang của khung tìm kiếm (560 – 1120 px)</sys:String>
+    <sys:String x:Key="Str_Win_HeightTitle">Chiều cao (Height)</sys:String>
+    <sys:String x:Key="Str_Win_HeightDesc">Thay đổi chiều cao khung hiển thị kết quả (380 – 820 px)</sys:String>
+    <sys:String x:Key="Str_Win_SizePresetTitle">Kích thước mẫu nhanh</sys:String>
+    <sys:String x:Key="Str_Win_SizePresetDesc">Áp dụng nhanh bố cục Gọn, Chuẩn hoặc Rộng</sys:String>
+    <sys:String x:Key="Str_Win_PosGroup">Vị trí cửa sổ Launcher</sys:String>
+    <sys:String x:Key="Str_Win_MovePresetTitle">Di chuyển nhanh vị trí trên màn hình</sys:String>
+    <sys:String x:Key="Str_Win_MovePresetDesc">Hoặc nắm kéo thanh tiêu đề của cửa sổ Launcher để đặt vị trí bất kỳ</sys:String>
+    <sys:String x:Key="Str_Win_MonitorGroup">Màn hình hiển thị (Multi-Monitor)</sys:String>
+    <sys:String x:Key="Str_Win_MonitorsDetected">Danh sách màn hình đang kết nối</sys:String>
+    <sys:String x:Key="Str_Btn_Refresh">Làm mới</sys:String>
+
+    <!-- Settings: Apps & Background Processes Tab -->
+    <sys:String x:Key="Str_Apps_Header">Ứng dụng &amp; Trình chạy ngầm</sys:String>
+    <sys:String x:Key="Str_Apps_Sub">Cấu hình khay hệ thống, hành vi Launcher, lập chỉ mục ứng dụng và dừng tiến trình chạy ngầm</sys:String>
+    <sys:String x:Key="Str_Apps_BehaviorGroup">Hành vi ứng dụng &amp; Khay hệ thống (Tray)</sys:String>
+    <sys:String x:Key="Str_Apps_TrayTitle">Hiện biểu tượng trên khay hệ thống (System Tray)</sys:String>
+    <sys:String x:Key="Str_Apps_TrayDesc">Hiển thị icon LAILauncher góc phải taskbar để mở nhanh cài đặt &amp; launcher</sys:String>
+    <sys:String x:Key="Str_Apps_MinToTrayTitle">Thu nhỏ xuống khay hệ thống thay vì đóng</sys:String>
+    <sys:String x:Key="Str_Apps_MinToTrayDesc">Khi nhấn nút thu nhỏ (─) hoặc đóng (✕), app tiếp tục chạy ngầm chờ Alt+Space</sys:String>
+    <sys:String x:Key="Str_Apps_DeactivateTitle">Tự động ẩn Launcher khi nhấp ra ngoài</sys:String>
+    <sys:String x:Key="Str_Apps_DeactivateDesc">Tắt nếu bạn muốn ghim Launcher nổi cố định khi làm việc song song</sys:String>
+    <sys:String x:Key="Str_Apps_RememberTitle">Giữ nguyên nội dung tìm kiếm khi mở lại</sys:String>
+    <sys:String x:Key="Str_Apps_RememberDesc">Không tự động xóa từ khóa cũ mỗi lần bật Launcher</sys:String>
+    <sys:String x:Key="Str_Apps_QuickStripTitle">Hiển thị dải công cụ nhanh (Wi-Fi, Bluetooth, Pin...)</sys:String>
+    <sys:String x:Key="Str_Apps_QuickStripDesc">Thanh nút bấm bật/tắt hệ thống ngay bên dưới ô tìm kiếm</sys:String>
+    <sys:String x:Key="Str_Apps_IndexGroup">Chỉ mục ứng dụng &amp; tệp tin</sys:String>
+    <sys:String x:Key="Str_Apps_IndexTitle">Quản lý cơ sở dữ liệu tìm kiếm cục bộ</sys:String>
+    <sys:String x:Key="Str_Apps_ReindexApps">Quét lại Ứng dụng</sys:String>
+    <sys:String x:Key="Str_Apps_ReindexFiles">Quét lại Tệp tin</sys:String>
+    <sys:String x:Key="Str_Apps_ProcGroup">Trình quản lý tác vụ &amp; Tiến trình chạy ngầm</sys:String>
+    <sys:String x:Key="Str_Apps_ProcSub">Theo dõi mức tiêu thụ RAM và tắt an toàn các tiến trình đang chạy ngầm</sys:String>
+
+    <!-- Settings: System Tab -->
+    <sys:String x:Key="Str_Sys_Header">Điều khiển Hệ thống Windows</sys:String>
+    <sys:String x:Key="Str_Sys_Sub">Thao tác Wi-Fi, Bluetooth, Tiết kiệm pin, Âm lượng và Màn hình ngay trên ứng dụng</sys:String>
+
+    <!-- Settings: AI Tab -->
+    <sys:String x:Key="Str_AI_Header">Trợ lý AI Cục Bộ (Ollama)</sys:String>
+    <sys:String x:Key="Str_AI_Sub">Kết nối mô hình ngôn ngữ lớn chạy 100% offline trên GPU/CPU của bạn</sys:String>
+
+    <!-- Settings: About Tab -->
+    <sys:String x:Key="Str_About_Header">Giới thiệu (About)</sys:String>
+    <sys:String x:Key="Str_About_Sub">Thông tin phiên bản, công nghệ, giấy phép mã nguồn mở và công cụ chẩn đoán</sys:String>
+    <sys:String x:Key="Str_About_HeroDesc">Trình khởi chạy thông minh, tìm kiếm ngữ nghĩa không cần NPU và bảng điều khiển Windows / Linux trực tiếp trên desktop.</sys:String>
+    <sys:String x:Key="Str_About_EnvGroup">Thông tin môi trường &amp; Phiên bản</sys:String>
+    <sys:String x:Key="Str_About_TechGroup">Công nghệ cốt lõi &amp; Tính năng</sys:String>
+    <sys:String x:Key="Str_About_LicenseTitle">Giấy phép &amp; Mã nguồn mở</sys:String>
+    <sys:String x:Key="Str_About_LicenseDesc">Phát hành theo giấy phép MIT • Chạy 100% cục bộ, không thu thập dữ liệu người dùng</sys:String>
+    <sys:String x:Key="Str_About_ActionsTitle">Tiện ích bảo trì &amp; Chẩn đoán</sys:String>
+    <sys:String x:Key="Str_About_OpenData">Mở thư mục dữ liệu</sys:String>
+    <sys:String x:Key="Str_About_CopyDiag">Chép thông tin máy</sys:String>
+    <sys:String x:Key="Str_About_ResetDefaults">Khôi phục mặc định</sys:String>
+
+    <!-- Tray -->
+    <sys:String x:Key="Str_Tray_Tooltip">LAILauncher — Trợ lý tìm kiếm &amp; điều khiển Windows</sys:String>
+    <sys:String x:Key="Str_Tray_Open">Mở LAILauncher (Alt+Space)</sys:String>
+    <sys:String x:Key="Str_Tray_Settings">Cài đặt hệ thống</sys:String>
+    <sys:String x:Key="Str_Tray_Processes">Trình chạy ngầm</sys:String>
+    <sys:String x:Key="Str_Tray_SwitchLang">Switch to English (EN)</sys:String>
+    <sys:String x:Key="Str_Tray_Exit">Thoát hoàn toàn</sys:String>
+
+</ResourceDictionary>

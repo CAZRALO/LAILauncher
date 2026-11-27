@@ -5,13 +5,33 @@ namespace Launcher.Core.Utilities;
 
 public static class VietnameseTextHelper
 {
+    /// <summary>
+    /// Removes Vietnamese diacritics and accent marks.
+    /// Fast-paths pure ASCII text with zero allocations.
+    /// </summary>
     public static string RemoveDiacritics(string? text)
     {
         if (string.IsNullOrWhiteSpace(text))
             return string.Empty;
 
+        // Fast-path: If all characters are ASCII and neither 'đ' nor 'Đ', return original string (0 allocation)
+        bool hasNonAscii = false;
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            if (c >= 128)
+            {
+                hasNonAscii = true;
+                break;
+            }
+        }
+
+        if (!hasNonAscii)
+            return text;
+
         var normalizedString = text.Normalize(NormalizationForm.FormD);
-        var stringBuilder = new StringBuilder(normalizedString.Length);
+        Span<char> buffer = normalizedString.Length <= 256 ? stackalloc char[normalizedString.Length] : new char[normalizedString.Length];
+        int len = 0;
 
         foreach (var c in normalizedString)
         {
@@ -19,14 +39,26 @@ public static class VietnameseTextHelper
             if (unicodeCategory != UnicodeCategory.NonSpacingMark)
             {
                 if (c is 'đ')
-                    stringBuilder.Append('d');
+                    buffer[len++] = 'd';
                 else if (c is 'Đ')
-                    stringBuilder.Append('D');
+                    buffer[len++] = 'D';
                 else
-                    stringBuilder.Append(c);
+                    buffer[len++] = c;
             }
         }
 
-        return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        return new string(buffer[..len]).Normalize(NormalizationForm.FormC);
+    }
+
+    /// <summary>
+    /// Fast check if text has any non-ASCII character.
+    /// </summary>
+    public static bool HasNonAscii(ReadOnlySpan<char> text)
+    {
+        for (int i = 0; i < text.Length; i++)
+        {
+            if (text[i] >= 128) return true;
+        }
+        return false;
     }
 }

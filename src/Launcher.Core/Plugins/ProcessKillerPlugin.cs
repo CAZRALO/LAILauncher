@@ -19,6 +19,17 @@ public class ProcessKillerPlugin : ISearchProvider
         string? MainModulePath
     );
 
+    private static readonly string[] Prefixes = [
+        "trinh chay ngam ", "chay ngam ", "tien trinh ", "tat ung dung ", "dong ung dung ",
+        "tat trinh chay ngam ", "task manager ", "taskmgr ", "process ", "proc ", "kill "
+    ];
+
+    private static readonly string[] ExactKeywords = [
+        "trinh chay ngam", "chay ngam", "ngam", "tien trinh", "task manager",
+        "taskmgr", "process", "proc", "kill", "dong ung dung", "tat ung dung",
+        "tat trinh chay ngam", "quan ly tac vu"
+    ];
+
     public Task<IEnumerable<QueryResult>> QueryAsync(QueryContext context)
     {
         var raw = context.RawQuery.Trim();
@@ -28,12 +39,7 @@ public class ProcessKillerPlugin : ISearchProvider
         var query = raw;
         var isExplicitKeyword = false;
 
-        string[] prefixes = [
-            "trinh chay ngam ", "chay ngam ", "tien trinh ", "tat ung dung ", "dong ung dung ",
-            "tat trinh chay ngam ", "task manager ", "taskmgr ", "process ", "proc ", "kill "
-        ];
-
-        foreach (var prefix in prefixes)
+        foreach (var prefix in Prefixes)
         {
             if (query.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             {
@@ -45,13 +51,7 @@ public class ProcessKillerPlugin : ISearchProvider
 
         if (!isExplicitKeyword)
         {
-            string[] exactKeywords = [
-                "trinh chay ngam", "chay ngam", "ngam", "tien trinh", "task manager",
-                "taskmgr", "process", "proc", "kill", "dong ung dung", "tat ung dung",
-                "tat trinh chay ngam", "quan ly tac vu"
-            ];
-
-            foreach (var kw in exactKeywords)
+            foreach (var kw in ExactKeywords)
             {
                 if (query.Equals(kw, StringComparison.OrdinalIgnoreCase))
                 {
@@ -144,9 +144,23 @@ public class ProcessKillerPlugin : ISearchProvider
         return list;
     }
 
+    private static readonly HashSet<string> CriticalSystemProcesses = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "system", "idle", "smss", "csrss", "wininit", "winlogon", "services", "lsass", "dwm", "explorer"
+    };
+
+    private static bool IsCriticalProcess(int pid, string processName)
+    {
+        if (pid <= 4 || pid == Environment.ProcessId)
+            return true;
+
+        return CriticalSystemProcesses.Contains(processName);
+    }
+
     private static QueryResult CreateResult(ProcessInfoItem p, string memText, double score)
     {
-        var subtitle = $"PID: {p.Id} • RAM: {memText}" + (!string.IsNullOrEmpty(p.MainModulePath) ? $" • {p.MainModulePath}" : "");
+        var isCritical = IsCriticalProcess(p.Id, p.ProcessName);
+        var subtitle = $"PID: {p.Id} • RAM: {memText}" + (!string.IsNullOrEmpty(p.MainModulePath) ? $" • {p.MainModulePath}" : "") + (isCritical ? " • [Hệ thống]" : "");
         return new QueryResult
         {
             Id = $"proc_{p.Id}_{p.ProcessName}",
@@ -154,24 +168,32 @@ public class ProcessKillerPlugin : ISearchProvider
             Subtitle = subtitle,
             Score = score,
             Type = ResultType.Process,
-            IconGlyph = "🛑",
+            IconGlyph = isCritical ? "⚠️" : "🛑",
             SourcePluginId = "process_killer",
             Metadata = new Dictionary<string, string>
             {
                 ["PID"] = p.Id.ToString(),
                 ["ProcessName"] = p.ProcessName,
-                ["RAM_Bytes"] = p.WorkingSet64.ToString()
+                ["RAM_Bytes"] = p.WorkingSet64.ToString(),
+                ["IsCritical"] = isCritical.ToString()
             },
             Actions =
             [
                 new ResultAction
                 {
-                    Name = $"Kill {p.ProcessName}",
-                    Description = $"Đóng tiến trình PID {p.Id}",
-                    IconGlyph = "🛑",
+                    Name = isCritical ? $"Bảo vệ: {p.ProcessName}" : $"Kill {p.ProcessName}",
+                    Description = isCritical ? $"Tiến trình hệ thống quan trọng (Không thể đóng)" : $"Đóng tiến trình PID {p.Id}",
+                    IconGlyph = isCritical ? "⚠️" : "🛑",
                     ShortcutHint = "Enter",
+                    IsDangerous = !isCritical,
                     SyncAction = () =>
                     {
+                        if (isCritical)
+                        {
+                            Debug.WriteLine($"[ProcessKillerPlugin] Blocked attempt to kill critical process: {p.ProcessName}");
+                            return;
+                        }
+
                         try
                         {
                             using var target = Process.GetProcessById(p.Id);
@@ -185,12 +207,19 @@ public class ProcessKillerPlugin : ISearchProvider
                 },
                 new ResultAction
                 {
-                    Name = "Force Kill as Admin (taskkill /F /PID)",
-                    Description = $"Buộc đóng tiến trình PID {p.Id} với quyền quản trị",
-                    IconGlyph = "🛡️",
+                    Name = isCritical ? "Tiến trình được bảo vệ" : "Force Kill as Admin (taskkill /F /PID)",
+                    Description = isCritical ? "Không thể dùng Force Kill đối với tiến trình hệ thống quan trọng" : $"Buộc đóng tiến trình PID {p.Id} với quyền quản trị",
+                    IconGlyph = isCritical ? "⚠️" : "🛡️",
                     ShortcutHint = "Ctrl+Shift+Enter",
+                    IsDangerous = !isCritical,
                     SyncAction = () =>
                     {
+                        if (isCritical)
+                        {
+                            Debug.WriteLine($"[ProcessKillerPlugin] Blocked attempt to force kill critical process: {p.ProcessName}");
+                            return;
+                        }
+
                         try
                         {
                             Process.Start(new ProcessStartInfo
@@ -200,6 +229,10 @@ public class ProcessKillerPlugin : ISearchProvider
                                 Verb = "runas",
                                 UseShellExecute = true
                             });
+                        }
+                        catch (System.ComponentModel.Win32Exception ex) when (ex.NativeErrorCode == 1223)
+                        {
+                            // UAC canceled
                         }
                         catch (Exception ex)
                         {

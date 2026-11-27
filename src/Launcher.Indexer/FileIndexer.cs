@@ -10,8 +10,17 @@ namespace Launcher.Indexer;
 
 public class FileIndexer : ISearchProvider
 {
+    private sealed class CachedFileEntry
+    {
+        public required FileEntity File { get; init; }
+        public required string NormalizedName { get; init; }
+        public required string? UnaccentName { get; init; }
+        public required bool HasNonAscii { get; init; }
+    }
+
     private readonly IFileRepository _fileRepository;
     private readonly List<FileEntity> _cachedFiles = [];
+    private volatile CachedFileEntry[] _cachedSnapshot = [];
     private readonly object _lock = new();
     private static readonly HashSet<string> ExecutableExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -34,15 +43,31 @@ public class FileIndexer : ISearchProvider
         _fileRepository = fileRepository;
     }
 
+    private void UpdateCache(IEnumerable<FileEntity> files)
+    {
+        lock (_lock)
+        {
+            _cachedFiles.Clear();
+            _cachedFiles.AddRange(files);
+            _cachedSnapshot = _cachedFiles.Select(f =>
+            {
+                var hasNonAscii = Launcher.Core.Utilities.VietnameseTextHelper.HasNonAscii(f.Name.AsSpan());
+                return new CachedFileEntry
+                {
+                    File = f,
+                    NormalizedName = SemanticMatcher.NormalizeText(f.Name),
+                    UnaccentName = hasNonAscii ? Launcher.Core.Utilities.VietnameseTextHelper.RemoveDiacritics(f.Name) : f.Name,
+                    HasNonAscii = hasNonAscii
+                };
+            }).ToArray();
+        }
+    }
+
     public async Task InitializeAsync()
     {
         // 1. Load cached files from database
         var existing = await _fileRepository.GetRecentAsync(5000);
-        lock (_lock)
-        {
-            _cachedFiles.Clear();
-            _cachedFiles.AddRange(existing);
-        }
+        UpdateCache(existing);
 
         // 2. Scan standard user directories in background
         _ = Task.Run(async () =>
@@ -111,11 +136,7 @@ public class FileIndexer : ISearchProvider
         {
             await _fileRepository.UpsertBatchAsync(scanned);
             var updated = await _fileRepository.GetAllAsync();
-            lock (_lock)
-            {
-                _cachedFiles.Clear();
-                _cachedFiles.AddRange(updated);
-            }
+            UpdateCache(updated);
         }
     }
 
@@ -322,18 +343,19 @@ public class FileIndexer : ISearchProvider
 
         // 3. Local Semantic Analysis (Zero-NPU Natural Language File Matcher)
         var semanticIntent = SemanticMatcher.AnalyzeQuery(query);
+        bool hasSemantic = semanticIntent.HasSemanticIntent;
 
         // 4. Fuzzy & Semantic Search in cached files and folders
-        List<FileEntity> snapshot;
-        lock (_lock)
-        {
-            snapshot = [.. _cachedFiles];
-        }
-
+        var snapshot = _cachedSnapshot;
         var results = new List<QueryResult>();
+        var unaccentQuery = Launcher.Core.Utilities.VietnameseTextHelper.HasNonAscii(query.AsSpan())
+            ? Launcher.Core.Utilities.VietnameseTextHelper.RemoveDiacritics(query)
+            : query;
 
-        foreach (var file in snapshot)
+        for (int i = 0; i < snapshot.Length; i++)
         {
+            var entry = snapshot[i];
+            var file = entry.File;
             if (context.CancellationToken.IsCancellationRequested)
                 break;
 
@@ -343,8 +365,10 @@ public class FileIndexer : ISearchProvider
             if (filterExtensions != null && !filterExtensions.Contains(file.Extension ?? string.Empty))
                 continue;
 
-            var fuzzyScore = FuzzyMatcher.Score(file.Name, query);
-            var semanticScore = SemanticMatcher.EvaluateFileSemanticScore(file.Name, file.Extension, file.Path, semanticIntent);
+            var fuzzyScore = FuzzyMatcher.Score(file.Name, query, unaccentQuery, entry.UnaccentName);
+            var semanticScore = hasSemantic 
+                ? SemanticMatcher.EvaluateFileSemanticScore(file.Name, file.Extension, file.Path, semanticIntent, entry.NormalizedName)
+                : 0.0;
             var combinedScore = fuzzyScore + semanticScore;
 
             if (combinedScore >= 35.0 || semanticScore >= 35.0)
@@ -507,7 +531,7 @@ public class FileIndexer : ISearchProvider
         }
         else if (isDir)
         {
-            // Open terminal as admin in directory
+            // Open terminal as admin in directory safely without command injection
             actions.Add(new ResultAction
             {
                 Name = "Open Terminal as Admin here",
@@ -516,17 +540,29 @@ public class FileIndexer : ISearchProvider
                 ShortcutHint = "Ctrl+Shift+Enter",
                 SyncAction = () =>
                 {
-                    Process.Start(new ProcessStartInfo
+                    try
                     {
-                        FileName = "powershell.exe",
-                        Arguments = $"-NoExit -Command \"Set-Location -LiteralPath '{path}'\"",
-                        Verb = "runas",
-                        UseShellExecute = true
-                    });
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "powershell.exe",
+                            Arguments = "-NoExit",
+                            WorkingDirectory = path,
+                            Verb = "runas",
+                            UseShellExecute = true
+                        });
+                    }
+                    catch (System.ComponentModel.Win32Exception ex) when (ex.NativeErrorCode == 1223)
+                    {
+                        // User canceled UAC prompt
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[FileIndexer] Failed to start elevated terminal: {ex.Message}");
+                    }
                 }
             });
 
-            // Open normal terminal in directory
+            // Open normal terminal in directory safely without command injection
             actions.Add(new ResultAction
             {
                 Name = "Open in Terminal",
@@ -535,16 +571,24 @@ public class FileIndexer : ISearchProvider
                 ShortcutHint = "Alt+Enter",
                 SyncAction = () =>
                 {
-                    Process.Start(new ProcessStartInfo
+                    try
                     {
-                        FileName = "powershell.exe",
-                        Arguments = $"-NoExit -Command \"Set-Location -LiteralPath '{path}'\"",
-                        UseShellExecute = true
-                    });
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "powershell.exe",
+                            Arguments = "-NoExit",
+                            WorkingDirectory = path,
+                            UseShellExecute = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[FileIndexer] Failed to start terminal: {ex.Message}");
+                    }
                 }
             });
 
-            // Open in VS Code
+            // Open in VS Code safely without cmd.exe string injection
             actions.Add(new ResultAction
             {
                 Name = "Open in VS Code",
@@ -553,13 +597,35 @@ public class FileIndexer : ISearchProvider
                 ShortcutHint = "Ctrl+Shift+V",
                 SyncAction = () =>
                 {
-                    Process.Start(new ProcessStartInfo
+                    try
                     {
-                        FileName = "cmd.exe",
-                        Arguments = $"/c code \"{path}\"",
-                        CreateNoWindow = true,
-                        UseShellExecute = false
-                    });
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "code",
+                            Arguments = $"\"{path.Replace("\"", "\\\"")}\"",
+                            WorkingDirectory = path,
+                            CreateNoWindow = true,
+                            UseShellExecute = true
+                        });
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = "cmd.exe",
+                                Arguments = "/c code .",
+                                WorkingDirectory = path,
+                                CreateNoWindow = true,
+                                UseShellExecute = false
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[FileIndexer] Failed to start VS Code: {ex.Message}");
+                        }
+                    }
                 }
             });
         }

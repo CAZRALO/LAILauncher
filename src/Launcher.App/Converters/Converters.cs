@@ -326,26 +326,40 @@ public class ResultTypeToGeometryConverter : IValueConverter
 
         if (value is QueryResult item)
         {
-            var title = item.Title?.ToLowerInvariant() ?? "";
-            if (title.Contains("google")) return Application.Current.TryFindResource("GeoGoogle");
-            if (title.Contains("youtube")) return Application.Current.TryFindResource("GeoYouTube");
-            if (title.Contains("github")) return Application.Current.TryFindResource("GeoGitHub");
+            var id = item.Id?.ToLowerInvariant() ?? string.Empty;
+            var title = item.Title?.ToLowerInvariant() ?? string.Empty;
 
-            string key = item.Type switch
-            {
-                ResultType.Calculator => "GeoCalculator",
-                ResultType.AI => "GeoSparkle",
-                ResultType.Command => "GeoTerminal",
-                ResultType.Url => "GeoGlobe",
-                ResultType.Bookmark => "GeoBookmark",
-                ResultType.Process => "GeoActivity",
-                ResultType.Setting => "GeoSettings",
-                ResultType.Folder => "GeoFolder",
-                ResultType.File => "GeoCopy",
-                ResultType.Clipboard => "GeoCopy",
-                ResultType.SystemCommand => "GeoLightning",
-                _ => "GeoSparkle"
-            };
+            if (title is "g" || title.Contains("google")) return Application.Current.TryFindResource("GeoGoogle");
+            if (title is "yt" || title.Contains("youtube")) return Application.Current.TryFindResource("GeoYouTube");
+            if (title is "gh" || title.Contains("github")) return Application.Current.TryFindResource("GeoGitHub");
+            if (title is "trans" || title.Contains("translate")) return Application.Current.TryFindResource("GeoResultTranslate");
+
+            if (id.Contains("wifi_refresh") || id.Contains("bt_refresh") || title.Contains("quét lại") || title.Contains("làm mới"))
+                return Application.Current.TryFindResource("GeoResultRefresh");
+            if (id.Contains("wifi") && (title.Contains("đang kết nối") || title.Contains("connected")))
+                return Application.Current.TryFindResource("GeoResultCheck");
+            if (id.Contains("wifi") || title.Contains("wi-fi") || title.Contains("wifi"))
+                return Application.Current.TryFindResource("GeoResultWifi");
+            if (id.Contains("bluetooth") || id.Contains("_bt") || title.Contains("bluetooth"))
+                return Application.Current.TryFindResource("GeoResultBluetooth");
+            if (id.Contains("battery") || title.Contains("battery") || title.Contains("tiết kiệm pin"))
+                return Application.Current.TryFindResource("GeoResultBattery");
+            if (id.Contains("vol") || title.Contains("volume") || title.Contains("âm lượng"))
+                return Application.Current.TryFindResource("GeoResultVolume");
+            if (id.Contains("bright") || title.Contains("brightness") || title.Contains("độ sáng"))
+                return Application.Current.TryFindResource("GeoResultBrightness");
+            if (id.Contains("hotspot") || title.Contains("hotspot"))
+                return Application.Current.TryFindResource("GeoResultHotspot");
+            if (id.Contains("taskbar") || title.Contains("taskbar"))
+                return Application.Current.TryFindResource("GeoResultTaskbar");
+            if (id.Contains("lock") || title.Contains("lock workstation") || title.Contains("khóa"))
+                return Application.Current.TryFindResource("GeoResultLock");
+            if (id.Contains("screenshot") || title.Contains("screenshot") || title.Contains("chụp"))
+                return Application.Current.TryFindResource("GeoResultCamera");
+            if (id.Contains("shut") || id.Contains("restart") || id.Contains("sleep") || id.Contains("hiber") || title.Contains("shut down") || title.Contains("tắt máy"))
+                return Application.Current.TryFindResource("GeoResultPower");
+
+            string key = MapResultTypeToGeometryKey(item.Type);
 
             if (Application.Current.TryFindResource(key) is Geometry geo)
             {
@@ -354,29 +368,33 @@ public class ResultTypeToGeometryConverter : IValueConverter
         }
         else if (value is ResultType type)
         {
-            string key = type switch
-            {
-                ResultType.Calculator => "GeoCalculator",
-                ResultType.AI => "GeoSparkle",
-                ResultType.Command => "GeoTerminal",
-                ResultType.Url => "GeoGlobe",
-                ResultType.Bookmark => "GeoBookmark",
-                ResultType.Process => "GeoActivity",
-                ResultType.Setting => "GeoSettings",
-                ResultType.Folder => "GeoFolder",
-                ResultType.File => "GeoCopy",
-                ResultType.Clipboard => "GeoCopy",
-                ResultType.SystemCommand => "GeoLightning",
-                _ => "GeoSparkle"
-            };
+            string key = MapResultTypeToGeometryKey(type);
 
             if (Application.Current.TryFindResource(key) is Geometry geo)
             {
                 return geo;
             }
         }
-        return Application.Current?.TryFindResource("GeoSparkle");
+        return Application.Current?.TryFindResource("GeoResultAI");
     }
+
+    private static string MapResultTypeToGeometryKey(ResultType type) => type switch
+    {
+        ResultType.App => "GeoResultApp",
+        ResultType.Calculator => "GeoResultCalc",
+        ResultType.AI => "GeoResultAI",
+        ResultType.Command => "GeoResultTerminal",
+        ResultType.Url => "GeoResultGlobe",
+        ResultType.Bookmark => "GeoResultBookmark",
+        ResultType.Process => "GeoResultProcess",
+        ResultType.Setting => "GeoResultSetting",
+        ResultType.Plugin => "GeoResultPlugin",
+        ResultType.Folder => "GeoResultFolder",
+        ResultType.File => "GeoResultFile",
+        ResultType.Clipboard => "GeoResultFile",
+        ResultType.SystemCommand => "GeoResultSystem",
+        _ => "GeoResultAI"
+    };
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotImplementedException();
@@ -390,19 +408,19 @@ public class ResultTypeToDisplayNameConverter : IValueConverter
         {
             return type switch
             {
-                ResultType.App => "Ứng dụng",
-                ResultType.Calculator => "Tính toán",
-                ResultType.AI => "Trợ lý AI",
-                ResultType.Command => "Lệnh Shell",
-                ResultType.Url => "Trang web",
-                ResultType.Bookmark => "Dấu trang",
-                ResultType.Process => "Tiến trình",
-                ResultType.Setting => "Cài đặt",
-                ResultType.Folder => "Thư mục",
-                ResultType.File => "Tệp tin",
-                ResultType.Clipboard => "Khay nhớ tạm",
-                ResultType.SystemCommand => "Hệ thống",
-                ResultType.Plugin => "Tiện ích",
+                ResultType.App => LocalizationService.Get("Str_Type_App", "Ứng dụng"),
+                ResultType.Calculator => LocalizationService.Get("Str_Type_Calc", "Tính toán"),
+                ResultType.AI => LocalizationService.Get("Str_Type_AI", "Trợ lý AI"),
+                ResultType.Command => LocalizationService.Get("Str_Type_Command", "Lệnh Shell"),
+                ResultType.Url => LocalizationService.Get("Str_Type_Url", "Trang web"),
+                ResultType.Bookmark => LocalizationService.Get("Str_Type_Bookmark", "Dấu trang"),
+                ResultType.Process => LocalizationService.Get("Str_Type_Process", "Tiến trình"),
+                ResultType.Setting => LocalizationService.Get("Str_Type_Setting", "Cài đặt"),
+                ResultType.Folder => LocalizationService.Get("Str_Type_Folder", "Thư mục"),
+                ResultType.File => LocalizationService.Get("Str_Type_File", "Tệp tin"),
+                ResultType.Clipboard => LocalizationService.Get("Str_Type_Clipboard", "Khay nhớ tạm"),
+                ResultType.SystemCommand => LocalizationService.Get("Str_Type_System", "Hệ thống"),
+                ResultType.Plugin => LocalizationService.Get("Str_Type_Plugin", "Tiện ích"),
                 _ => type.ToString()
             };
         }

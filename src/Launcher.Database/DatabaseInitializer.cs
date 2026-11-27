@@ -40,15 +40,9 @@ public class SqliteConnectionFactory
         var connection = new SqliteConnection(_connectionString);
         connection.Open();
         
-        // Optimize SQLite performance for fast concurrent local access
+        // Fast in-memory pragmas for connection performance
         using var cmd = connection.CreateCommand();
-        cmd.CommandText = @"
-            PRAGMA journal_mode = WAL;
-            PRAGMA synchronous = NORMAL;
-            PRAGMA temp_store = MEMORY;
-            PRAGMA cache_size = -2000;
-            PRAGMA busy_timeout = 30000;
-        ";
+        cmd.CommandText = "PRAGMA synchronous = NORMAL; PRAGMA temp_store = MEMORY; PRAGMA cache_size = -2000;";
         cmd.ExecuteNonQuery();
 
         return connection;
@@ -67,6 +61,9 @@ public class DatabaseInitializer
     public void Initialize()
     {
         using var conn = _factory.CreateConnection();
+
+        // Enable WAL mode once persistently at database level
+        conn.Execute("PRAGMA journal_mode = WAL;");
 
         conn.Execute(@"
             CREATE TABLE IF NOT EXISTS Applications (
@@ -103,6 +100,7 @@ public class DatabaseInitializer
                 selected_at INTEGER NOT NULL
             );
             CREATE INDEX IF NOT EXISTS idx_history_query ON SearchHistory(query);
+            CREATE INDEX IF NOT EXISTS idx_history_query_result ON SearchHistory(query, result_id);
 
             CREATE TABLE IF NOT EXISTS Plugins (
                 id TEXT PRIMARY KEY,

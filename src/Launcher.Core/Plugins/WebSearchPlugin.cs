@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Launcher.Core.Utilities;
 using Launcher.SDK;
 
 namespace Launcher.Core.Plugins;
@@ -135,7 +136,7 @@ public class WebSearchPlugin : ISearchProvider
             ShortcutHint = "Ctrl+C",
             SyncAction = () =>
             {
-                // Action runner will copy or caller handles
+                ClipboardHelper.SetText(url);
             }
         };
     }

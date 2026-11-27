@@ -121,6 +121,23 @@ public class QueryPipelineTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_WithDoubleGreaterPrefix_ReturnsPowerShellCommandResultFirst()
+    {
+        var ranking = new RankingEngine();
+        var pipeline = new QueryPipeline(ranking);
+
+        var results = await pipeline.ExecuteAsync(">> Get-Date");
+
+        Assert.NotEmpty(results);
+        var first = results[0];
+        Assert.Equal(ResultType.Command, first.Type);
+        Assert.Equal(">> Get-Date", first.Title);
+        Assert.Equal("Get-Date", first.Metadata["Command"]);
+        Assert.Equal("powershell", first.Metadata["Shell"]);
+        Assert.Equal("Run in PowerShell", first.Actions[0].Name);
+    }
+
+    [Fact]
     public async Task ExecuteAsync_AlwaysIncludesGoogleSearchResult()
     {
         var ranking = new RankingEngine();
@@ -195,6 +212,23 @@ public class QueryPipelineTests
         Assert.NotEmpty(results);
         Assert.Equal("Google Gemini", results[0].Title);
         Assert.Equal(ResultType.App, results[0].Type);
+    }
+
+    [Theory]
+    [InlineData("sys wifi list")]
+    [InlineData("sys bluetooth list")]
+    public async Task ExecuteAsync_HardwareListQueries_SkipGoogleFallback_AndReturnSystemCommands(string query)
+    {
+        var ranking = new RankingEngine();
+        var pipeline = new QueryPipeline(ranking);
+        pipeline.RegisterProvider(new Launcher.Core.Plugins.SystemCommandsPlugin());
+        pipeline.RegisterProvider(new Launcher.Core.Plugins.WebSearchPlugin());
+
+        var results = await pipeline.ExecuteAsync(query);
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.Equal(ResultType.SystemCommand, r.Type));
+        Assert.DoesNotContain(results, r => r.Type == ResultType.Url);
     }
 
     [Theory]

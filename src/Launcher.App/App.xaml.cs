@@ -12,14 +12,16 @@ namespace Launcher.App;
 public partial class App : Application
 {
     private MainWindow? _mainWindow;
+    private TrayIconService? _trayIconService;
+    private static Mutex? _singleInstanceMutex;
+    private const string MutexName = "Local\\LAILauncher_SingleInstance_Mutex";
 
     public App()
     {
-        // Global Exception Handlers to prevent silent process crashes (0xE0434352)
         DispatcherUnhandledException += (s, e) =>
         {
             System.Diagnostics.Debug.WriteLine($"[DispatcherUnhandledException] {e.Exception}");
-            e.Handled = true; // Prevent app termination
+            e.Handled = true;
         };
 
         AppDomain.CurrentDomain.UnhandledException += (s, e) =>
@@ -34,14 +36,49 @@ public partial class App : Application
         };
     }
 
+    public void SetTrayIconVisible(bool visible)
+    {
+        if (_trayIconService == null) return;
+        if (visible) _trayIconService.Show();
+        else _trayIconService.Hide();
+    }
+
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
+        bool createdNew;
+        try
+        {
+            _singleInstanceMutex = new Mutex(true, MutexName, out createdNew);
+        }
+        catch
+        {
+            createdNew = true;
+        }
+
+        if (!createdNew)
+        {
+            Shutdown();
+            return;
+        }
+
+        Launcher.Core.Utilities.ClipboardHelper.CustomHandler = text =>
+        {
+            Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    Clipboard.SetText(text);
+                }
+                catch { }
+            });
+        };
+
         try
         {
             // Initialize default Theme Resources before UI tree instantiation
-            ThemeManager.ApplyTheme(ThemeMode.Linux);
+            ThemeManager.ApplyTheme(ThemeMode.Windows11);
 
             // 1. Initialize Database
             var connFactory = new SqliteConnectionFactory();
@@ -53,6 +90,10 @@ public partial class App : Application
             var fileRepo = new FileRepository(connFactory);
             var historyRepo = new SearchHistoryRepository(connFactory);
             var settingsRepo = new SettingsRepository(connFactory);
+
+            // Load Language before instantiating UI windows
+            var savedLang = await settingsRepo.GetAsync("AppLanguage");
+            LocalizationService.SetLanguage(savedLang ?? LocalizationService.Vietnamese);
 
             // 3. Initialize Indexers & Providers
             var appIndexer = new AppIndexer(appRepo);
@@ -74,8 +115,7 @@ public partial class App : Application
             {
                 System.Diagnostics.Debug.WriteLine($"FileIndexer init failed: {ex.Message}");
             }
-            
-            // Background pre-cache app icons
+
             _ = Task.Run(async () =>
             {
                 try
@@ -94,8 +134,7 @@ public partial class App : Application
             var pipeline = new QueryPipeline(rankingEngine);
             pipeline.RegisterProvider(appIndexer);
             pipeline.RegisterProvider(fileIndexer);
-            
-            // Flow Launcher Core Plugins
+
             var sysPlugin = new Launcher.Core.Plugins.SystemCommandsPlugin();
             var settingsPlugin = new Launcher.Core.Plugins.WindowsSettingsPlugin();
             var webSearchPlugin = new Launcher.Core.Plugins.WebSearchPlugin();
@@ -108,7 +147,6 @@ public partial class App : Application
             pipeline.RegisterProvider(bookmarksPlugin);
             pipeline.RegisterProvider(processKillerPlugin);
 
-            // Pre-scan bookmarks in background
             _ = Task.Run(async () =>
             {
                 try
@@ -132,21 +170,14 @@ public partial class App : Application
                 defaultModel: !string.IsNullOrWhiteSpace(savedAiModel) ? savedAiModel : "llama3.2:1b"
             );
             var ollamaProcessService = new OllamaProcessService(ollamaProvider);
-
             var intentClassifier = new IntentClassifier();
 
             var aiPlugin = new AIPlugin(ollamaProvider, intentClassifier)
             {
                 GetClipboardText = () =>
                 {
-                    try
-                    {
-                        return Clipboard.GetText();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
+                    try { return Clipboard.GetText(); }
+                    catch { return string.Empty; }
                 },
                 ShowNotice = msg =>
                 {
@@ -157,7 +188,17 @@ public partial class App : Application
             pipeline.RegisterProvider(aiPlugin);
 
             // 6. Launch Main Window
-            _mainWindow = new MainWindow(pipeline, actionRunner, settingsRepo, ollamaProvider, aiPlugin, ollamaProcessService);
+            _mainWindow = new MainWindow(
+                pipeline,
+                actionRunner,
+                settingsRepo,
+                ollamaProvider,
+                aiPlugin,
+                ollamaProcessService,
+                appIndexer,
+                fileIndexer,
+                appRepo,
+                fileRepo);
             MainWindow = _mainWindow;
 
             fileIndexer.OnRequestOpenAiWithFile = (prompt, model) =>
@@ -167,6 +208,28 @@ public partial class App : Application
                     _mainWindow.OpenAiStreamingWindow(prompt, model);
                 });
             };
+
+            // 7. System Tray Icon Setup
+            _trayIconService = new TrayIconService(
+                onToggleLauncher: () => _mainWindow?.ToggleVisibility(),
+                onOpenSettings: () => _mainWindow?.OpenSettingsWindow(),
+                onOpenProcesses: () => _mainWindow?.OpenWithQuery("trinh chay ngam"),
+                onSwitchLanguage: async () =>
+                {
+                    var next = LocalizationService.CurrentLanguage == LocalizationService.English
+                        ? LocalizationService.Vietnamese
+                        : LocalizationService.English;
+                    LocalizationService.SetLanguage(next);
+                    await settingsRepo.SetAsync("AppLanguage", next);
+                },
+                onExit: () => Shutdown());
+
+            var showTrayStr = await settingsRepo.GetAsync("AppShowTrayIcon");
+            bool showTray = string.IsNullOrWhiteSpace(showTrayStr) || (bool.TryParse(showTrayStr, out var st) && st);
+            if (showTray)
+            {
+                _trayIconService.Show();
+            }
 
             _mainWindow.Show();
 
@@ -185,5 +248,23 @@ public partial class App : Application
             System.Diagnostics.Debug.WriteLine($"[Fatal Startup Error] {fatalEx}");
             MessageBox.Show($"Startup Error: {fatalEx.Message}", "LAILauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        try
+        {
+            _trayIconService?.Dispose();
+        }
+        catch { }
+
+        try
+        {
+            _singleInstanceMutex?.ReleaseMutex();
+            _singleInstanceMutex?.Dispose();
+        }
+        catch { }
+
+        base.OnExit(e);
     }
 }

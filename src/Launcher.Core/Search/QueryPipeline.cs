@@ -7,7 +7,9 @@ namespace Launcher.Core.Search;
 public class QueryPipeline
 {
     private readonly List<ISearchProvider> _providers = [];
+    private volatile ISearchProvider[] _activeProviders = [];
     private readonly RankingEngine _rankingEngine;
+    private readonly object _providerLock = new();
 
     public QueryPipeline(RankingEngine rankingEngine)
     {
@@ -16,15 +18,25 @@ public class QueryPipeline
 
     public void RegisterProvider(ISearchProvider provider)
     {
-        if (!_providers.Contains(provider))
+        lock (_providerLock)
         {
-            _providers.Add(provider);
+            if (!_providers.Contains(provider))
+            {
+                _providers.Add(provider);
+                _activeProviders = _providers.OrderBy(p => p.Priority).ToArray();
+            }
         }
     }
 
     public void UnregisterProvider(ISearchProvider provider)
     {
-        _providers.Remove(provider);
+        lock (_providerLock)
+        {
+            if (_providers.Remove(provider))
+            {
+                _activeProviders = _providers.OrderBy(p => p.Priority).ToArray();
+            }
+        }
     }
 
     public async Task<List<QueryResult>> ExecuteAsync(string rawQuery, CancellationToken cancellationToken = default)
@@ -38,17 +50,21 @@ public class QueryPipeline
         var context = new QueryContext(rawQuery, cancellationToken);
         var results = new List<QueryResult>();
 
-        // 1. Command Mode: Query starts with '>'
+        // 1. Command Mode: Query starts with '>' (CMD) or '>>' (PowerShell)
         if (trimmed.StartsWith('>'))
         {
-            var commandText = trimmed.Length > 1 ? trimmed[1..].Trim() : string.Empty;
+            bool usePowerShell = trimmed.StartsWith(">>");
+            var commandText = usePowerShell
+                ? trimmed[2..].Trim()
+                : (trimmed.Length > 1 ? trimmed[1..].Trim() : string.Empty);
+
             if (string.IsNullOrEmpty(commandText))
             {
                 results.Add(new QueryResult
                 {
                     Id = "cmd_prompt",
-                    Title = "> Nhập lệnh CMD / PowerShell...",
-                    Subtitle = "Ví dụ: > ping google.com, > ipconfig /all, > code .",
+                    Title = usePowerShell ? ">> Nhập lệnh PowerShell..." : "> Nhập lệnh CMD / PowerShell...",
+                    Subtitle = "Ví dụ: > ipconfig, > ping -n 4 8.8.8.8, >> Get-Date (Enter để chạy ngay)",
                     Score = 1000.0,
                     Type = ResultType.Command,
                     IconGlyph = "💻",
@@ -57,26 +73,64 @@ public class QueryPipeline
             }
             else
             {
-                results.Add(new QueryResult
-                {
-                    Id = $"cmd_{commandText.GetHashCode()}",
-                    Title = $"> {commandText}",
-                    Subtitle = $"Thực thi '{commandText}' trong Terminal (cmd.exe /k)",
-                    Score = 1000.0,
-                    Type = ResultType.Command,
-                    IconGlyph = "💻",
-                    Metadata = new Dictionary<string, string>
+                var actions = usePowerShell
+                    ? new List<ResultAction>
                     {
-                        ["Command"] = commandText
-                    },
-                    Actions =
-                    [
+                        ActionRunner.CreateCommandAction(commandText, runAsAdmin: false, usePowerShell: true),
+                        ActionRunner.CreateCommandAction(commandText, runAsAdmin: true, usePowerShell: true),
+                        ActionRunner.CreateCommandAction(commandText, runAsAdmin: false, usePowerShell: false),
+                        ActionRunner.CreateCommandAction(commandText, runAsAdmin: true, usePowerShell: false)
+                    }
+                    : new List<ResultAction>
+                    {
                         ActionRunner.CreateCommandAction(commandText, runAsAdmin: false, usePowerShell: false),
                         ActionRunner.CreateCommandAction(commandText, runAsAdmin: true, usePowerShell: false),
                         ActionRunner.CreateCommandAction(commandText, runAsAdmin: false, usePowerShell: true),
                         ActionRunner.CreateCommandAction(commandText, runAsAdmin: true, usePowerShell: true)
-                    ]
+                    };
+
+                results.Add(new QueryResult
+                {
+                    Id = $"cmd_{commandText.GetHashCode()}",
+                    Title = usePowerShell ? $">> {commandText}" : $"> {commandText}",
+                    Subtitle = usePowerShell
+                        ? "Chạy nhanh PowerShell ngay trên LAILauncher (Enter · Ctrl+Shift+Enter: Admin)"
+                        : "Chạy nhanh ngay trên LAILauncher (Enter · Ctrl+Shift+Enter: Admin)",
+                    Score = 1000.0,
+                    Type = ResultType.Command,
+                    IconGlyph = "💻",
+                    ShortcutHint = "Enter",
+                    Metadata = new Dictionary<string, string>
+                    {
+                        ["Command"] = commandText,
+                        ["Shell"] = usePowerShell ? "powershell" : "cmd"
+                    },
+                    Actions = actions
                 });
+
+                if (!usePowerShell)
+                {
+                    results.Add(new QueryResult
+                    {
+                        Id = $"cmd_ps_{commandText.GetHashCode()}",
+                        Title = $">> {commandText}",
+                        Subtitle = "Chạy nhanh bằng PowerShell ngay trên LAILauncher",
+                        Score = 900.0,
+                        Type = ResultType.Command,
+                        IconGlyph = "💻",
+                        ShortcutHint = "Alt+2",
+                        Metadata = new Dictionary<string, string>
+                        {
+                            ["Command"] = commandText,
+                            ["Shell"] = "powershell"
+                        },
+                        Actions =
+                        [
+                            ActionRunner.CreateCommandAction(commandText, runAsAdmin: false, usePowerShell: true),
+                            ActionRunner.CreateCommandAction(commandText, runAsAdmin: true, usePowerShell: true)
+                        ]
+                    });
+                }
 
                 // In command mode, also offer Google Search as fallback
                 results.Add(CreateGoogleSearchResult(commandText, isDirectSearch: false));
@@ -128,41 +182,46 @@ public class QueryPipeline
                         Description = "Copy calculated result to clipboard",
                         IconGlyph = "📋",
                         ShortcutHint = "Enter",
-                        SyncAction = () => { /* Handled in clipboard */ }
+                        SyncAction = () => { ClipboardHelper.SetText(formattedResult); }
                     }
                 ]
             });
         }
 
-        // 3. Query all registered providers concurrently
-        var activeProviders = _providers.OrderBy(p => p.Priority).ToList();
-        var tasks = activeProviders.Select(async provider =>
+        // 3. Hardware List Fast-Path (sys wifi list / sys bluetooth list -> show directly in-app without noise)
+        var active = _activeProviders;
+        if (OperatingSystem.IsWindows() && Launcher.Core.Plugins.SystemCommandsPlugin.IsHardwareListQuery(trimmed))
         {
-            try
+            var sysProvider = active.FirstOrDefault(p => p.ProviderId == "system_commands");
+            if (sysProvider != null)
             {
-                using var timeoutCts = new CancellationTokenSource(TimeSpan.FromMilliseconds(300));
-                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
-                var providerContext = new QueryContext(rawQuery, linkedCts.Token);
-                
-                var res = await provider.QueryAsync(providerContext);
-                return res ?? [];
+                var sysResults = await QueryProviderSafeAsync(sysProvider, rawQuery, cancellationToken, timeoutMs: 1500);
+                results.AddRange(sysResults);
+                return await _rankingEngine.RankAsync(context.RawQuery, results);
             }
-            catch (OperationCanceledException)
-            {
-                return [];
-            }
-            catch (Exception ex)
-            {
-                // Isolate provider failure
-                System.Diagnostics.Debug.WriteLine($"Provider {provider.DisplayName} failed: {ex.Message}");
-                return [];
-            }
-        });
+        }
 
-        var providerResults = await Task.WhenAll(tasks);
-        foreach (var list in providerResults)
+        // 4. Query all registered providers concurrently using pre-sorted array
+        if (active.Length > 0)
         {
-            results.AddRange(list);
+            bool isSysQuery = trimmed.StartsWith("sys ", StringComparison.OrdinalIgnoreCase) ||
+                              trimmed.StartsWith("win ", StringComparison.OrdinalIgnoreCase);
+            var tasks = new Task<IEnumerable<QueryResult>>[active.Length];
+            for (int i = 0; i < active.Length; i++)
+            {
+                int timeout = (isSysQuery && active[i].ProviderId == "system_commands") ? 1200 : 300;
+                tasks[i] = QueryProviderSafeAsync(active[i], rawQuery, cancellationToken, timeout);
+            }
+
+            var providerResults = await Task.WhenAll(tasks);
+            for (int i = 0; i < providerResults.Length; i++)
+            {
+                var list = providerResults[i];
+                if (list != null)
+                {
+                    results.AddRange(list);
+                }
+            }
         }
 
         // 4. If no explicit web search keyword was matched, add Google Search row as fallback
@@ -174,13 +233,46 @@ public class QueryPipeline
             ? (trimmed.StartsWith('?') ? trimmed[1..].Trim() : (trimmed.StartsWith("g ", StringComparison.OrdinalIgnoreCase) ? trimmed[2..].Trim() : trimmed[7..].Trim()))
             : trimmed;
 
-        if (!string.IsNullOrWhiteSpace(webSearchTerm) && !results.Any(r => r.SourcePluginId == "web_search"))
+        bool hasWebSearch = false;
+        for (int i = 0; i < results.Count; i++)
+        {
+            if (results[i].SourcePluginId == "web_search")
+            {
+                hasWebSearch = true;
+                break;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(webSearchTerm) && !hasWebSearch)
         {
             results.Add(CreateGoogleSearchResult(webSearchTerm, isDirectSearch: isExplicitWebSearch));
         }
 
         // 5. Rank results
         return await _rankingEngine.RankAsync(context.RawQuery, results);
+    }
+
+    private static async Task<IEnumerable<QueryResult>> QueryProviderSafeAsync(ISearchProvider provider, string rawQuery, CancellationToken cancellationToken, int timeoutMs = 300)
+    {
+        try
+        {
+            using var timeoutCts = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeoutMs));
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+            var providerContext = new QueryContext(rawQuery, linkedCts.Token);
+
+            var res = await provider.QueryAsync(providerContext);
+            return res ?? [];
+        }
+        catch (OperationCanceledException)
+        {
+            return [];
+        }
+        catch (Exception ex)
+        {
+            // Isolate provider failure
+            System.Diagnostics.Debug.WriteLine($"Provider {provider.DisplayName} failed: {ex.Message}");
+            return [];
+        }
     }
 
     private static QueryResult CreateGoogleSearchResult(string query, bool isDirectSearch)
@@ -206,7 +298,7 @@ public class QueryPipeline
                     Name = "Copy Search URL",
                     Description = "Copy Google search URL to clipboard",
                     IconGlyph = "📋",
-                    SyncAction = () => { /* Handled in clipboard */ }
+                    SyncAction = () => { ClipboardHelper.SetText(searchUrl); }
                 }
             ]
         };

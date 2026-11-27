@@ -10,8 +10,20 @@ namespace Launcher.Indexer;
 
 public class AppIndexer : ISearchProvider
 {
+    private sealed class CachedAppEntry
+    {
+        public required AppEntity App { get; init; }
+        public required string[] Keywords { get; init; }
+        public required string Subtitle { get; init; }
+        public required string Glyph { get; init; }
+        public required double LaunchBonus { get; init; }
+        public required List<ResultAction> Actions { get; init; }
+        public required string? UnaccentName { get; init; }
+    }
+
     private readonly IAppRepository _appRepository;
     private readonly List<AppEntity> _cachedApps = [];
+    private volatile CachedAppEntry[] _cachedEntries = [];
     private readonly object _lock = new();
 
     public string ProviderId => "core.app_indexer";
@@ -23,15 +35,34 @@ public class AppIndexer : ISearchProvider
         _appRepository = appRepository;
     }
 
+    private void UpdateCache(IEnumerable<AppEntity> apps)
+    {
+        lock (_lock)
+        {
+            _cachedApps.Clear();
+            _cachedApps.AddRange(apps);
+            _cachedEntries = _cachedApps.Select(app =>
+            {
+                var hasNonAscii = Launcher.Core.Utilities.VietnameseTextHelper.HasNonAscii(app.Name.AsSpan());
+                return new CachedAppEntry
+                {
+                    App = app,
+                    Keywords = AppKeywordHelper.GetKeywords(app.Name, app.Path).ToArray(),
+                    Subtitle = FormatSubtitle(app),
+                    Glyph = GetGlyphForApp(app),
+                    LaunchBonus = Math.Min(25.0, app.LaunchCount * 3.0),
+                    Actions = BuildActions(app),
+                    UnaccentName = hasNonAscii ? Launcher.Core.Utilities.VietnameseTextHelper.RemoveDiacritics(app.Name) : app.Name
+                };
+            }).ToArray();
+        }
+    }
+
     public async Task InitializeAsync()
     {
         // 1. Load existing apps from DB cache for instant startup
         var existing = await _appRepository.GetAllAsync();
-        lock (_lock)
-        {
-            _cachedApps.Clear();
-            _cachedApps.AddRange(existing);
-        }
+        UpdateCache(existing);
 
         // 2. Scan all system apps in background without blocking startup
         _ = Task.Run(async () =>
@@ -143,11 +174,7 @@ public class AppIndexer : ISearchProvider
         {
             await _appRepository.UpsertBatchAsync(allApps);
             var updated = await _appRepository.GetAllAsync();
-            lock (_lock)
-            {
-                _cachedApps.Clear();
-                _cachedApps.AddRange(updated);
-            }
+            UpdateCache(updated);
         }
     }
 
@@ -159,24 +186,28 @@ public class AppIndexer : ISearchProvider
             return Task.FromResult<IEnumerable<QueryResult>>([]);
         }
 
-        List<AppEntity> snapshot;
-        lock (_lock)
+        var entries = _cachedEntries;
+        if (entries.Length == 0)
         {
-            snapshot = [.. _cachedApps];
+            return Task.FromResult<IEnumerable<QueryResult>>([]);
         }
 
         var results = new List<QueryResult>();
+        var unaccentQuery = Launcher.Core.Utilities.VietnameseTextHelper.HasNonAscii(query.AsSpan())
+            ? Launcher.Core.Utilities.VietnameseTextHelper.RemoveDiacritics(query)
+            : query;
 
-        foreach (var app in snapshot)
+        for (int i = 0; i < entries.Length; i++)
         {
-            var nameScore = FuzzyMatcher.Score(app.Name, query);
+            var entry = entries[i];
+            var nameScore = FuzzyMatcher.Score(entry.App.Name, query, unaccentQuery, entry.UnaccentName);
 
-            // Match against keywords, aliases, executable tokens
+            // Match against keywords, aliases, executable tokens from pre-indexed cache
             var bestKeywordScore = 0.0;
-            var keywords = AppKeywordHelper.GetKeywords(app.Name, app.Path);
-            foreach (var kw in keywords)
+            var keywords = entry.Keywords;
+            for (int k = 0; k < keywords.Length; k++)
             {
-                var kwScore = FuzzyMatcher.Score(kw, query);
+                var kwScore = FuzzyMatcher.Score(keywords[k], query, unaccentQuery);
                 if (kwScore > bestKeywordScore)
                 {
                     bestKeywordScore = kwScore;
@@ -187,22 +218,21 @@ public class AppIndexer : ISearchProvider
 
             if (finalScore >= 30.0)
             {
-                var subtitle = FormatSubtitle(app);
                 results.Add(new QueryResult
                 {
-                    Id = app.Id,
-                    Title = app.Name,
-                    Subtitle = subtitle,
-                    Score = finalScore + 20.0 + Math.Min(25.0, app.LaunchCount * 3.0),
+                    Id = entry.App.Id,
+                    Title = entry.App.Name,
+                    Subtitle = entry.Subtitle,
+                    Score = finalScore + 20.0 + entry.LaunchBonus,
                     Type = ResultType.App,
-                    IconPath = app.IconPath ?? app.Path,
-                    IconGlyph = GetGlyphForApp(app),
+                    IconPath = entry.App.IconPath ?? entry.App.Path,
+                    IconGlyph = entry.Glyph,
                     Metadata = new Dictionary<string, string>
                     {
-                        ["Path"] = app.Path,
-                        ["Arguments"] = app.Arguments ?? string.Empty
+                        ["Path"] = entry.App.Path,
+                        ["Arguments"] = entry.App.Arguments ?? string.Empty
                     },
-                    Actions = BuildActions(app)
+                    Actions = entry.Actions
                 });
             }
         }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Launcher.Core.Search;
+using Launcher.Core.Utilities;
 using Launcher.SDK;
 
 namespace Launcher.Core.Plugins;
@@ -33,7 +34,9 @@ public class SystemCommandsPlugin : ISearchProvider
         string Subtitle,
         string IconGlyph,
         string[] Keywords,
-        Action ExecuteAction
+        Action? ExecuteAction,
+        Func<Task<bool>>? ExecuteAsyncAction = null,
+        Dictionary<string, string>? ExtraMetadata = null
     );
 
     private readonly List<SystemCommandItem> _commands;
@@ -289,90 +292,165 @@ public class SystemCommandsPlugin : ISearchProvider
                 () => Launcher.Core.Utilities.WindowsControlService.SetBrightness(25)
             ),
 
-            // --- 4. Battery Saver ---
+            // --- 4. Battery Saver (100% In-App) ---
             new(
                 "sys_battery_toggle",
-                "Toggle Energy Saver (Tiết kiệm pin)",
-                "Bật / Tắt chế độ tiết kiệm pin trực tiếp không cần mở Settings",
+                "Toggle Battery / Energy Saver (Tiết kiệm pin)",
+                "Bật / Tắt chế độ tiết kiệm pin trực tiếp ngay trên ứng dụng",
                 "🍃",
-                ["toggle battery saver", "energy saver", "tiet kiem pin", "bat tat tiet kiem pin", "tiet kiem nang luong", "battery saver", "chuyen che do pin"],
-                () => Launcher.Core.Utilities.WindowsControlService.ToggleBatterySaver()
+                ["toggle battery saver", "energy saver", "tiet kiem pin", "bat tat tiet kiem pin", "tiet kiem nang luong", "battery saver", "chuyen che do pin", "battery"],
+                () => WindowsControlService.ToggleBatterySaver(),
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["RefreshBatteryUI"] = "True"
+                }
             ),
             new(
                 "sys_battery_saver_on",
                 "Enable Battery Saver",
-                "Kích hoạt chế độ tiết kiệm pin (Power Saver)",
+                "Kích hoạt chế độ tiết kiệm pin ngay trên ứng dụng (Power / Energy Saver)",
                 "🪫",
-                ["battery saver on", "bat tiet kiem pin", "power saver", "pin", "tiet kiem nang luong"],
-                () => Launcher.Core.Utilities.WindowsControlService.EnableBatterySaver()
+                ["battery saver on", "bat tiet kiem pin", "power saver", "enable battery saver", "tiet kiem nang luong"],
+                () => WindowsControlService.EnableBatterySaver(),
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["RefreshBatteryUI"] = "True",
+                    ["ToastSuccess"] = "🍃 Đã BẬT chế độ Tiết kiệm pin!"
+                }
             ),
             new(
                 "sys_battery_balanced",
-                "Balanced Power Mode",
-                "Chuyển sang chế độ nguồn điện Cân bằng (Balanced Mode)",
+                "Disable Battery Saver (Balanced Power Mode)",
+                "Tắt tiết kiệm pin và chuyển sang chế độ nguồn Cân bằng ngay trên ứng dụng",
                 "🔋",
-                ["balanced power", "che do can bang", "tat tiet kiem pin", "pin can bang", "nguon dien"],
-                () => Launcher.Core.Utilities.WindowsControlService.DisableBatterySaver()
-            ),
-            new(
-                "sys_battery_settings",
-                "Battery & Power Settings",
-                "Mở trang cài đặt Nguồn & Tiết kiệm pin Windows",
-                "⚡",
-                ["battery settings", "cai dat pin", "powersleep", "power settings", "pin"],
-                () => Launcher.Core.Utilities.WindowsControlService.OpenBatterySaverSettings()
+                ["balanced power", "che do can bang", "tat tiet kiem pin", "disable battery saver", "pin can bang", "nguon dien"],
+                () => WindowsControlService.DisableBatterySaver(),
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["RefreshBatteryUI"] = "True",
+                    ["ToastSuccess"] = "🔋 Đã TẮT Tiết kiệm pin (Chế độ Cân bằng)!"
+                }
             ),
 
-            // --- 5. Wi-Fi & Networks ---
+            // --- 5. Wi-Fi & Networks (100% In-App) ---
             new(
                 "sys_wifi_flyout",
-                "Show Available Wi-Fi Networks",
-                "Bật danh sách các mạng Wi-Fi xung quanh (Network Flyout)",
+                "Show Available Wi-Fi Networks (Danh sách Wi-Fi)",
+                "Hiển thị danh sách mạng Wi-Fi trực tiếp trên ứng dụng (sys wifi list)",
                 "📡",
-                ["wifi", "danh sach wifi", "bat danh sach wifi", "show wifi", "available networks", "ket noi wifi", "mang wifi", "wi-fi", "tim wifi"],
-                () => Launcher.Core.Utilities.WindowsControlService.ShowAvailableNetworks()
+                ["wifi list", "danh sach wifi", "bat danh sach wifi", "show wifi", "available networks", "ket noi wifi", "mang wifi", "tim wifi", "wifi"],
+                null,
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["ActionKeyword"] = "sys wifi list"
+                }
+            ),
+            new(
+                "sys_wifi_toggle",
+                "Toggle Wi-Fi (Bật / Tắt Wi-Fi)",
+                "Chuyển đổi Bật / Tắt kết nối Wi-Fi trực tiếp ngay trên ứng dụng",
+                "📶",
+                ["toggle wifi", "chuyen doi wifi", "bat tat wifi", "wifi on off", "wifi"],
+                null,
+                async () => { await WindowsControlService.ToggleWifiAsync(); return true; },
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True"
+                }
             ),
             new(
                 "sys_wifi_on",
                 "Turn On Wi-Fi",
-                "Bật card mạng không dây Wi-Fi",
+                "Bật card mạng không dây Wi-Fi trực tiếp trên ứng dụng",
                 "📶",
                 ["turn on wifi", "bat wifi", "enable wifi", "mo wifi"],
-                () => Launcher.Core.Utilities.WindowsControlService.SetWifiEnabled(true)
+                null,
+                async () => await WindowsControlService.SetWifiEnabledAsync(true),
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["ToastSuccess"] = "📶 Đã BẬT Wi-Fi!"
+                }
             ),
             new(
                 "sys_wifi_off",
                 "Turn Off Wi-Fi",
-                "Tắt card mạng không dây Wi-Fi",
+                "Tắt card mạng không dây Wi-Fi trực tiếp trên ứng dụng",
                 "📴",
                 ["turn off wifi", "tat wifi", "disable wifi", "ngat wifi"],
-                () => Launcher.Core.Utilities.WindowsControlService.SetWifiEnabled(false)
+                null,
+                async () => await WindowsControlService.SetWifiEnabledAsync(false),
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["ToastSuccess"] = "📴 Đã TẮT Wi-Fi!"
+                }
             ),
 
-            // --- 6. Bluetooth ---
+            // --- 6. Bluetooth (100% In-App) ---
             new(
-                "sys_bluetooth_settings",
-                "Bluetooth & Devices Settings",
-                "Mở danh sách kết nối thiết bị Bluetooth & Thiết bị ngoại vi",
+                "sys_bluetooth_list",
+                "Show Bluetooth Devices List (Danh sách Bluetooth)",
+                "Hiển thị danh sách thiết bị Bluetooth & trạng thái kết nối trực tiếp trên ứng dụng (sys bluetooth list)",
                 "📶",
-                ["bluetooth", "cai dat bluetooth", "bluetooth settings", "thiet bi bluetooth", "tai nghe bluetooth", "chuot bluetooth"],
-                () => Launcher.Core.Utilities.WindowsControlService.OpenBluetoothSettings()
-            ),
-            new(
-                "sys_bluetooth_add",
-                "Add Bluetooth Device",
-                "Thêm và quét thiết bị Bluetooth mới (Pair device)",
-                "➕",
-                ["add bluetooth", "them bluetooth", "pair bluetooth", "ghep noi bluetooth", "ket noi bluetooth"],
-                () => Launcher.Core.Utilities.WindowsControlService.OpenAddBluetoothDevice()
+                ["bluetooth list", "bt list", "danh sach bluetooth", "thiet bi bluetooth", "tai nghe bluetooth", "chuot bluetooth", "bluetooth"],
+                null,
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["ActionKeyword"] = "sys bluetooth list"
+                }
             ),
             new(
                 "sys_bluetooth_toggle",
-                "Toggle Bluetooth",
-                "Bật / Tắt kết nối sóng Bluetooth",
+                "Toggle Bluetooth (Bật / Tắt Bluetooth)",
+                "Bật / Tắt kết nối sóng Bluetooth trực tiếp ngay trên ứng dụng",
                 "🔄",
-                ["toggle bluetooth", "bat bluetooth", "tat bluetooth", "chuyen bluetooth", "bluetooth on off"],
-                () => Launcher.Core.Utilities.WindowsControlService.ToggleBluetooth()
+                ["toggle bluetooth", "bat tat bluetooth", "chuyen bluetooth", "chuyen doi bluetooth", "bluetooth on off", "bluetooth"],
+                null,
+                async () => { await WindowsControlService.ToggleBluetoothAsync(); return true; },
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True"
+                }
+            ),
+            new(
+                "sys_bluetooth_on",
+                "Turn On Bluetooth",
+                "Bật sóng Bluetooth trực tiếp ngay trên ứng dụng",
+                "🔵",
+                ["turn on bluetooth", "bat bluetooth", "enable bluetooth", "mo bluetooth"],
+                null,
+                async () => await WindowsControlService.SetBluetoothEnabledAsync(true),
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["ToastSuccess"] = "📶 Đã BẬT Bluetooth!"
+                }
+            ),
+            new(
+                "sys_bluetooth_off",
+                "Turn Off Bluetooth",
+                "Tắt sóng Bluetooth trực tiếp ngay trên ứng dụng",
+                "📴",
+                ["turn off bluetooth", "tat bluetooth", "disable bluetooth", "ngat bluetooth"],
+                null,
+                async () => await WindowsControlService.SetBluetoothEnabledAsync(false),
+                ExtraMetadata: new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["ToastSuccess"] = "📴 Đã TẮT Bluetooth!"
+                }
+            ),
+            new(
+                "sys_bluetooth_add",
+                "Add Bluetooth Device (Pair)",
+                "Thêm và ghép nối thiết bị Bluetooth mới",
+                "➕",
+                ["add bluetooth", "them bluetooth", "pair bluetooth", "ghep noi bluetooth", "ket noi bluetooth"],
+                () => WindowsControlService.OpenAddBluetoothDevice()
             ),
 
             // --- 7. Mobile Hotspot ---
@@ -567,6 +645,18 @@ public class SystemCommandsPlugin : ISearchProvider
             query = string.Empty;
         }
 
+        // Direct in-app Wi-Fi list (triggered by `sys wifi list`, `wifi list`, etc.)
+        if (TryExtractSubFilter(query, ["wifi list", "wi-fi list", "list wifi", "danh sach wifi", "wifi ls", "ds wifi"], out var wifiFilter))
+        {
+            return Task.FromResult<IEnumerable<QueryResult>>(BuildWifiListResults(wifiFilter, context.CancellationToken));
+        }
+
+        // Direct in-app Bluetooth list (triggered by `sys bluetooth list`, `sys bt list`, `bluetooth list`, etc.)
+        if (TryExtractSubFilter(query, ["bluetooth list", "bt list", "list bluetooth", "danh sach bluetooth", "bluetooth ls", "ds bluetooth"], out var btFilter))
+        {
+            return Task.FromResult<IEnumerable<QueryResult>>(BuildBluetoothListResults(btFilter, context.CancellationToken));
+        }
+
         var results = new List<QueryResult>();
 
         foreach (var cmd in _commands)
@@ -590,10 +680,6 @@ public class SystemCommandsPlugin : ISearchProvider
             }
 
             var matchScore = Math.Max(titleScore, bestKeywordScore);
-            if (isExplicitKeyword)
-            {
-                matchScore = Math.Max(matchScore, 50.0);
-            }
 
             if (matchScore >= 35.0)
             {
@@ -605,8 +691,407 @@ public class SystemCommandsPlugin : ISearchProvider
         return Task.FromResult<IEnumerable<QueryResult>>(results);
     }
 
+    public static bool IsHardwareListQuery(string rawQuery)
+    {
+        if (string.IsNullOrWhiteSpace(rawQuery)) return false;
+        var q = rawQuery.Trim();
+        if (q.StartsWith("sys ", StringComparison.OrdinalIgnoreCase)) q = q[4..].Trim();
+        else if (q.StartsWith("win ", StringComparison.OrdinalIgnoreCase)) q = q[4..].Trim();
+
+        return TryExtractSubFilter(q, ["wifi list", "wi-fi list", "list wifi", "danh sach wifi", "wifi ls", "ds wifi"], out _) ||
+               TryExtractSubFilter(q, ["bluetooth list", "bt list", "list bluetooth", "danh sach bluetooth", "bluetooth ls", "ds bluetooth"], out _);
+    }
+
+    private static bool TryExtractSubFilter(string query, string[] triggers, out string filter)
+    {
+        foreach (var t in triggers)
+        {
+            if (query.Equals(t, StringComparison.OrdinalIgnoreCase))
+            {
+                filter = string.Empty;
+                return true;
+            }
+            if (query.StartsWith(t + " ", StringComparison.OrdinalIgnoreCase))
+            {
+                filter = query[(t.Length + 1)..].Trim();
+                return true;
+            }
+        }
+        filter = string.Empty;
+        return false;
+    }
+
+    private static List<QueryResult> BuildWifiListResults(string filter, CancellationToken token)
+    {
+        var list = new List<QueryResult>();
+        bool wifiOn = WindowsControlService.IsWifiEnabled();
+        var networks = wifiOn ? WindowsControlService.GetAvailableWifiNetworks(triggerScan: false) : [];
+        var connectedSsid = networks.FirstOrDefault(n => n.IsConnected)?.Ssid;
+
+        // 1. Direct In-App Wi-Fi On/Off Toggle Row
+        list.Add(new QueryResult
+        {
+            Id = "sys_wifi_list_toggle",
+            Title = wifiOn
+                ? $"📶 Wi-Fi: Đang BẬT{(!string.IsNullOrWhiteSpace(connectedSsid) ? $" ({connectedSsid})" : "")} — Nhấn Enter để TẮT"
+                : "📴 Wi-Fi: Đang TẮT — Nhấn Enter để BẬT trực tiếp",
+            Subtitle = "Bật / Tắt kết nối Wi-Fi ngay trên LAILauncher không cần mở Windows Settings",
+            Score = 1200.0,
+            Type = ResultType.SystemCommand,
+            IconGlyph = wifiOn ? "📶" : "📴",
+            SourcePluginId = "system_commands",
+            Metadata = new Dictionary<string, string>
+            {
+                ["StayOpen"] = "True",
+                ["RefreshList"] = "True",
+                ["ToastSuccess"] = wifiOn ? "📴 Đã gửi lệnh TẮT Wi-Fi" : "📶 Đã gửi lệnh BẬT Wi-Fi"
+            },
+            Actions =
+            [
+                new ResultAction
+                {
+                    Name = wifiOn ? "Tắt Wi-Fi" : "Bật Wi-Fi",
+                    Description = "Chuyển đổi trạng thái Wi-Fi trực tiếp trên ứng dụng",
+                    IconGlyph = wifiOn ? "📴" : "📶",
+                    ShortcutHint = "Enter",
+                    ActionAsync = async () =>
+                    {
+                        await WindowsControlService.ToggleWifiAsync();
+                        return true;
+                    }
+                }
+            ]
+        });
+
+        // 2. Refresh / Rescan Row
+        if (wifiOn)
+        {
+            list.Add(new QueryResult
+            {
+                Id = "sys_wifi_list_refresh",
+                Title = "🔄 Quét lại các mạng Wi-Fi xung quanh (Refresh)",
+                Subtitle = "Cập nhật danh sách điểm phát Wi-Fi khả dụng mới nhất",
+                Score = 1150.0,
+                Type = ResultType.SystemCommand,
+                IconGlyph = "🔄",
+                SourcePluginId = "system_commands",
+                Metadata = new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["RefreshList"] = "True",
+                    ["ToastSuccess"] = "🔄 Đã cập nhật danh sách Wi-Fi xung quanh"
+                },
+                Actions =
+                [
+                    new ResultAction
+                    {
+                        Name = "Quét lại Wi-Fi",
+                        IconGlyph = "🔄",
+                        ShortcutHint = "Enter",
+                        ActionAsync = async () =>
+                        {
+                            WindowsControlService.TriggerWifiScan();
+                            await Task.Delay(900);
+                            return true;
+                        }
+                    }
+                ]
+            });
+        }
+
+        if (!wifiOn)
+        {
+            list.Add(new QueryResult
+            {
+                Id = "sys_wifi_list_off_notice",
+                Title = "ℹ️ Wi-Fi đang tắt — Không thể hiển thị danh sách mạng",
+                Subtitle = "Chọn dòng 'Wi-Fi: Đang TẮT' phía trên và nhấn Enter để bật lại Wi-Fi",
+                Score = 1000.0,
+                Type = ResultType.SystemCommand,
+                IconGlyph = "ℹ️",
+                SourcePluginId = "system_commands",
+                Metadata = new Dictionary<string, string> { ["StayOpen"] = "True" }
+            });
+            return list;
+        }
+
+        if (networks.Count <= 1)
+        {
+            WindowsControlService.TriggerWifiScan();
+        }
+
+        var filtered = string.IsNullOrWhiteSpace(filter)
+            ? networks
+            : networks.Where(n => n.Ssid.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        int idx = 0;
+        foreach (var net in filtered)
+        {
+            if (token.IsCancellationRequested) break;
+
+            double itemScore = (net.IsConnected ? 1140.0 : 1100.0) - idx * 3.0;
+            idx++;
+
+            string prefixGlyph = net.IsConnected ? "✅" : (net.IsSecured ? "🔒" : "📶");
+            string sigText = net.SignalQuality > 0 ? $"Tín hiệu: {net.SignalQuality}% • " : "";
+            string savedText = net.IsConnected
+                ? "Đang kết nối • Nhấn Enter để Ngắt kết nối"
+                : (net.HasProfile ? "Đã lưu • Nhấn Enter để Kết nối ngay" : (!net.IsSecured ? "Mạng mở • Nhấn Enter để Kết nối" : "Chưa lưu • Nhấn Enter để nhập mật khẩu"));
+
+            bool requiresPwd = !net.IsConnected && !net.HasProfile && net.IsSecured;
+            var capturedNet = net;
+
+            list.Add(new QueryResult
+            {
+                Id = $"sys_wifi_net_{net.Ssid}",
+                Title = $"{prefixGlyph} {net.Ssid}" + (net.IsConnected ? " (Đang kết nối)" : ""),
+                Subtitle = $"{sigText}{net.AuthAlgorithm} • {savedText}",
+                Score = itemScore,
+                Type = ResultType.SystemCommand,
+                IconGlyph = prefixGlyph,
+                SourcePluginId = "system_commands",
+                ShortcutHint = net.IsConnected ? "Ngắt" : (requiresPwd ? "Mật khẩu" : "Kết nối"),
+                Metadata = new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["RefreshList"] = "True",
+                    ["WifiSsid"] = net.Ssid,
+                    ["WifiConnected"] = net.IsConnected.ToString(),
+                    ["WifiHasProfile"] = net.HasProfile.ToString(),
+                    ["WifiSecured"] = net.IsSecured.ToString(),
+                    ["WifiProfileName"] = net.ProfileName,
+                    ["RequiresWifiPassword"] = requiresPwd.ToString(),
+                    ["ToastSuccess"] = net.IsConnected ? $"📴 Đã ngắt kết nối {net.Ssid}" : $"📶 Đang kết nối tới {net.Ssid}..."
+                },
+                Actions =
+                [
+                    new ResultAction
+                    {
+                        Name = net.IsConnected ? $"Ngắt kết nối {net.Ssid}" : $"Kết nối tới {net.Ssid}",
+                        IconGlyph = prefixGlyph,
+                        ShortcutHint = "Enter",
+                        ActionAsync = async () =>
+                        {
+                            if (capturedNet.IsConnected)
+                            {
+                                var (ok, _) = await Task.Run(() => WindowsControlService.DisconnectWifi());
+                                return ok;
+                            }
+                            var (connOk, _) = await Task.Run(() =>
+                                WindowsControlService.ConnectToWifiNetwork(capturedNet.Ssid, null, capturedNet.ProfileName));
+                            return connOk;
+                        }
+                    }
+                ]
+            });
+        }
+
+        if (filtered.Count == 0)
+        {
+            list.Add(new QueryResult
+            {
+                Id = "sys_wifi_empty",
+                Title = string.IsNullOrWhiteSpace(filter)
+                    ? "📡 Chưa tìm thấy mạng Wi-Fi xung quanh — Nhấn Refresh phía trên để quét lại"
+                    : $"🔍 Không tìm thấy mạng Wi-Fi khớp với \"{filter}\"",
+                Subtitle = "Thử quét lại hoặc kiểm tra bộ thu phát không dây",
+                Score = 900.0,
+                Type = ResultType.SystemCommand,
+                IconGlyph = "📡",
+                SourcePluginId = "system_commands",
+                Metadata = new Dictionary<string, string> { ["StayOpen"] = "True", ["RefreshList"] = "True" },
+                Actions =
+                [
+                    new ResultAction
+                    {
+                        Name = "Quét lại Wi-Fi",
+                        ActionAsync = async () => { WindowsControlService.TriggerWifiScan(); await Task.Delay(900); return true; }
+                    }
+                ]
+            });
+        }
+
+        return list;
+    }
+
+    private static List<QueryResult> BuildBluetoothListResults(string filter, CancellationToken token)
+    {
+        var list = new List<QueryResult>();
+        bool btOn = WindowsControlService.IsBluetoothEnabled();
+        var devices = btOn ? WindowsControlService.GetBluetoothDevices(forceRefreshBle: false) : [];
+        int connectedCount = devices.Count(d => d.IsConnected);
+
+        // 1. Direct In-App Bluetooth On/Off Toggle Row
+        list.Add(new QueryResult
+        {
+            Id = "sys_bt_list_toggle",
+            Title = btOn
+                ? $"📶 Bluetooth: Đang BẬT ({connectedCount} thiết bị kết nối) — Nhấn Enter để TẮT"
+                : "📴 Bluetooth: Đang TẮT — Nhấn Enter để BẬT trực tiếp",
+            Subtitle = "Bật / Tắt sóng Bluetooth trực tiếp ngay trên LAILauncher",
+            Score = 1200.0,
+            Type = ResultType.SystemCommand,
+            IconGlyph = btOn ? "📶" : "📴",
+            SourcePluginId = "system_commands",
+            Metadata = new Dictionary<string, string>
+            {
+                ["StayOpen"] = "True",
+                ["RefreshList"] = "True",
+                ["ToastSuccess"] = btOn ? "📴 Đã TẮT Bluetooth" : "📶 Đã BẬT Bluetooth"
+            },
+            Actions =
+            [
+                new ResultAction
+                {
+                    Name = btOn ? "Tắt Bluetooth" : "Bật Bluetooth",
+                    IconGlyph = btOn ? "📴" : "📶",
+                    ShortcutHint = "Enter",
+                    ActionAsync = async () =>
+                    {
+                        await WindowsControlService.ToggleBluetoothAsync();
+                        return true;
+                    }
+                }
+            ]
+        });
+
+        // 2. Refresh Bluetooth Devices Row
+        if (btOn)
+        {
+            list.Add(new QueryResult
+            {
+                Id = "sys_bt_list_refresh",
+                Title = "🔄 Làm mới danh sách thiết bị Bluetooth (Refresh)",
+                Subtitle = "Quét lại các thiết bị Classic & Bluetooth LE đã ghép nối",
+                Score = 1150.0,
+                Type = ResultType.SystemCommand,
+                IconGlyph = "🔄",
+                SourcePluginId = "system_commands",
+                Metadata = new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["RefreshList"] = "True",
+                    ["ToastSuccess"] = "🔄 Đã làm mới danh sách thiết bị Bluetooth"
+                },
+                Actions =
+                [
+                    new ResultAction
+                    {
+                        Name = "Làm mới Bluetooth",
+                        IconGlyph = "🔄",
+                        ShortcutHint = "Enter",
+                        ActionAsync = async () =>
+                        {
+                            await WindowsControlService.RefreshBluetoothDevicesAsync();
+                            return true;
+                        }
+                    }
+                ]
+            });
+        }
+
+        if (!btOn)
+        {
+            list.Add(new QueryResult
+            {
+                Id = "sys_bt_list_off_notice",
+                Title = "ℹ️ Bluetooth đang tắt — Nhấn Enter ở dòng đầu tiên để bật lại",
+                Subtitle = "Danh sách thiết bị đã ghép nối sẽ hiển thị sau khi bật Bluetooth",
+                Score = 1000.0,
+                Type = ResultType.SystemCommand,
+                IconGlyph = "ℹ️",
+                SourcePluginId = "system_commands",
+                Metadata = new Dictionary<string, string> { ["StayOpen"] = "True" }
+            });
+            return list;
+        }
+
+        var filtered = string.IsNullOrWhiteSpace(filter)
+            ? devices
+            : devices.Where(d => d.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                                 d.Category.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        int idx = 0;
+        foreach (var dev in filtered)
+        {
+            if (token.IsCancellationRequested) break;
+
+            double itemScore = (dev.IsConnected ? 1140.0 : 1100.0) - idx * 3.0;
+            idx++;
+
+            var capturedDev = dev;
+            string statusTag = dev.IsConnected ? "(Đã kết nối)" : "(Đã ghép nối)";
+            string actionHint = dev.IsConnected ? "Nhấn Enter để Ngắt kết nối" : "Nhấn Enter để Kết nối ngay";
+
+            list.Add(new QueryResult
+            {
+                Id = $"sys_bt_dev_{dev.Address}",
+                Title = $"{(dev.IsConnected ? "🟢" : "⚪")} {dev.Name} {statusTag}",
+                Subtitle = $"{dev.Category} • MAC: {dev.Address} • {actionHint}",
+                Score = itemScore,
+                Type = ResultType.SystemCommand,
+                IconGlyph = dev.IconGlyph,
+                SourcePluginId = "system_commands",
+                ShortcutHint = dev.IsConnected ? "Ngắt" : "Kết nối",
+                Metadata = new Dictionary<string, string>
+                {
+                    ["StayOpen"] = "True",
+                    ["RefreshList"] = "True",
+                    ["BluetoothAddress"] = dev.Address,
+                    ["BluetoothName"] = dev.Name,
+                    ["BluetoothConnected"] = dev.IsConnected.ToString(),
+                    ["ToastSuccess"] = dev.IsConnected ? $"⚪ Đã ngắt kết nối {dev.Name}" : $"🟢 Đã kết nối với {dev.Name}"
+                },
+                Actions =
+                [
+                    new ResultAction
+                    {
+                        Name = dev.IsConnected ? $"Ngắt kết nối {dev.Name}" : $"Kết nối {dev.Name}",
+                        IconGlyph = dev.IconGlyph,
+                        ShortcutHint = "Enter",
+                        ActionAsync = async () =>
+                        {
+                            var (ok, _) = await WindowsControlService.ToggleBluetoothDeviceConnectionAsync(capturedDev);
+                            return ok;
+                        }
+                    }
+                ]
+            });
+        }
+
+        if (filtered.Count == 0)
+        {
+            list.Add(new QueryResult
+            {
+                Id = "sys_bt_empty",
+                Title = string.IsNullOrWhiteSpace(filter)
+                    ? "🔵 Chưa có thiết bị Bluetooth nào được ghép nối"
+                    : $"🔍 Không tìm thấy thiết bị Bluetooth khớp với \"{filter}\"",
+                Subtitle = "Nhấn Enter để mở trình ghép nối thiết bị Bluetooth mới",
+                Score = 900.0,
+                Type = ResultType.SystemCommand,
+                IconGlyph = "➕",
+                SourcePluginId = "system_commands",
+                Actions =
+                [
+                    new ResultAction
+                    {
+                        Name = "Ghép nối thiết bị Bluetooth mới",
+                        SyncAction = () => WindowsControlService.OpenAddBluetoothDevice()
+                    }
+                ]
+            });
+        }
+
+        return list;
+    }
+
     private static QueryResult CreateResult(SystemCommandItem cmd, double score)
     {
+        var metadata = cmd.ExtraMetadata != null
+            ? new Dictionary<string, string>(cmd.ExtraMetadata)
+            : new Dictionary<string, string>();
+
         return new QueryResult
         {
             Id = cmd.Id,
@@ -616,6 +1101,7 @@ public class SystemCommandsPlugin : ISearchProvider
             Type = ResultType.SystemCommand,
             IconGlyph = cmd.IconGlyph,
             SourcePluginId = "system_commands",
+            Metadata = metadata,
             Actions =
             [
                 new ResultAction
@@ -624,7 +1110,8 @@ public class SystemCommandsPlugin : ISearchProvider
                     Description = cmd.Subtitle,
                     IconGlyph = cmd.IconGlyph,
                     ShortcutHint = "Enter",
-                    SyncAction = cmd.ExecuteAction
+                    SyncAction = cmd.ExecuteAction,
+                    ActionAsync = cmd.ExecuteAsyncAction
                 }
             ]
         };

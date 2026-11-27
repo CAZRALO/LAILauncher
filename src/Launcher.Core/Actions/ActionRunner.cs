@@ -1,5 +1,7 @@
 using Launcher.SDK;
 using Launcher.Database.Repositories;
+using Launcher.Core.Utilities;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Launcher.Core.Actions;
@@ -24,16 +26,43 @@ public class ActionRunner
         // Record history for ranking intelligence
         if (_historyRepository != null && !string.IsNullOrWhiteSpace(query))
         {
-            await _historyRepository.AddAsync(query, result.Id, result.Type.ToString());
+            try
+            {
+                await _historyRepository.AddAsync(query, result.Id, result.Type.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ActionRunner] Failed to record search history: {ex.Message}");
+            }
         }
 
         if (result.Type == ResultType.App && _appRepository != null)
         {
-            await _appRepository.IncrementLaunchCountAsync(result.Id);
+            try
+            {
+                await _appRepository.IncrementLaunchCountAsync(result.Id);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ActionRunner] Failed to increment app launch count: {ex.Message}");
+            }
         }
 
         // Execute action
-        return await targetAction.ExecuteAsync();
+        try
+        {
+            return await targetAction.ExecuteAsync();
+        }
+        catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
+        {
+            Debug.WriteLine("[ActionRunner] Elevation canceled by user.");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[ActionRunner] Execution failed: {ex.Message}");
+            return false;
+        }
     }
 
     public async Task<bool> ExecuteRunAsAdminAsync(string query, QueryResult result)
@@ -79,7 +108,18 @@ public class ActionRunner
                     psi.Verb = "runas";
                 }
 
-                Process.Start(psi);
+                try
+                {
+                    Process.Start(psi);
+                }
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
+                {
+                    Debug.WriteLine("[ActionRunner] Process elevation canceled by user.");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ActionRunner] Failed to start process: {ex.Message}");
+                }
             }
         };
     }
@@ -99,30 +139,19 @@ public class ActionRunner
             ShortcutHint = runAsAdmin ? "Ctrl+Shift+Enter" : "Enter",
             SyncAction = () =>
             {
-                var psi = new ProcessStartInfo
-                {
-                    UseShellExecute = true
-                };
-
-                if (usePowerShell)
-                {
-                    psi.FileName = "powershell.exe";
-                    psi.Arguments = $"-NoExit -Command \"{command}\"";
-                }
-                else
-                {
-                    psi.FileName = "cmd.exe";
-                    psi.Arguments = $"/k {command}";
-                }
-
-                if (runAsAdmin)
-                {
-                    psi.Verb = "runas";
-                }
+                var psi = ShellCommandRunner.BuildExternalStartInfo(
+                    command,
+                    workingDirectory: null,
+                    runAsAdmin: runAsAdmin,
+                    usePowerShell: usePowerShell);
 
                 try
                 {
                     Process.Start(psi);
+                }
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
+                {
+                    Debug.WriteLine("[ActionRunner] Command elevation canceled by user.");
                 }
                 catch (Exception ex)
                 {
@@ -200,7 +229,10 @@ public class ActionRunner
             ShortcutHint = "Ctrl+C",
             SyncAction = () =>
             {
-                // Action logic handled or clipboard set
+                if (!string.IsNullOrWhiteSpace(filePath))
+                {
+                    ClipboardHelper.SetText(filePath);
+                }
             }
         };
     }

@@ -11,6 +11,7 @@ public class CalculatorTests
     [InlineData("(5 + 5) * 3", 30.0)]
     [InlineData("100 / 4", 25.0)]
     [InlineData("5 / 2", 2.5)]
+    [InlineData("10 / 2 / 5", 1.0)]
     [InlineData("2 ^ 8", 256.0)]
     [InlineData("sqrt(144)", 12.0)]
     [InlineData("50 * 20%", 10.0)]

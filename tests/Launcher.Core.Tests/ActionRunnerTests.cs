@@ -133,6 +133,25 @@ public class ActionRunnerTests
     }
 
     [Fact]
+    public void CreateCopyPathAction_ExecutesClipboardCopy()
+    {
+        string? copied = null;
+        Launcher.Core.Utilities.ClipboardHelper.CustomHandler = text => copied = text;
+
+        try
+        {
+            var action = ActionRunner.CreateCopyPathAction(@"C:\Windows\System32\notepad.exe");
+            action.SyncAction?.Invoke();
+
+            Assert.Equal(@"C:\Windows\System32\notepad.exe", copied);
+        }
+        finally
+        {
+            Launcher.Core.Utilities.ClipboardHelper.CustomHandler = null;
+        }
+    }
+
+    [Fact]
     public void CreateWebSearchAction_HasCorrectProperties()
     {
         var action = ActionRunner.CreateWebSearchAction("csharp generics");

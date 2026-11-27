@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using Launcher.Core.Search;
+using Launcher.Core.Utilities;
 using Launcher.SDK;
 
 namespace Launcher.Core.Plugins;
@@ -16,6 +17,7 @@ public class BookmarksPlugin : ISearchProvider
     public record BookmarkItem(string Title, string Url, string BrowserName);
 
     private readonly List<BookmarkItem> _cachedBookmarks = [];
+    private volatile BookmarkItem[] _cachedSnapshot = [];
     private DateTime _lastScanTime = DateTime.MinValue;
     private readonly SemaphoreSlim _scanLock = new(1, 1);
 
@@ -44,15 +46,20 @@ public class BookmarksPlugin : ISearchProvider
             query = string.Empty;
         }
 
-        // Lazy reload bookmarks if not loaded or older than 10 minutes
-        if (_cachedBookmarks.Count == 0 || DateTime.UtcNow - _lastScanTime > TimeSpan.FromMinutes(10))
+        // Lazy reload bookmarks: initial load waits; periodic refresh runs in background
+        if (_cachedSnapshot.Length == 0)
         {
             await RefreshBookmarksAsync();
         }
+        else if (DateTime.UtcNow - _lastScanTime > TimeSpan.FromMinutes(10))
+        {
+            _ = Task.Run(RefreshBookmarksAsync);
+        }
 
         var results = new List<QueryResult>();
+        var snapshot = _cachedSnapshot;
 
-        foreach (var bm in _cachedBookmarks)
+        foreach (var bm in snapshot)
         {
             if (context.CancellationToken.IsCancellationRequested)
                 break;
@@ -96,6 +103,7 @@ public class BookmarksPlugin : ISearchProvider
 
             _cachedBookmarks.Clear();
             _cachedBookmarks.AddRange(bookmarks);
+            _cachedSnapshot = _cachedBookmarks.ToArray();
             _lastScanTime = DateTime.UtcNow;
         }
         catch (Exception ex)
@@ -221,7 +229,7 @@ public class BookmarksPlugin : ISearchProvider
                     Description = "Copy liên kết vào Clipboard",
                     IconGlyph = "📋",
                     ShortcutHint = "Ctrl+C",
-                    SyncAction = () => { }
+                    SyncAction = () => { ClipboardHelper.SetText(bm.Url); }
                 }
             ]
         };

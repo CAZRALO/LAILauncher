@@ -90,5 +90,19 @@ public class FuzzyMatcherTests
         var score = FuzzyMatcher.Score(target, query);
         Assert.True(score >= 35.0, $"Query '{query}' on '{target}' scored {score}, expected >= 35.0");
     }
-}
 
+    [Fact]
+    public void Score_OverloadWithPrecomputedDiacritics_ProducesIdenticalScore()
+    {
+        var target = "Báo cáo tài chính 2026.xlsx";
+        var query = "tai chinh";
+        var unaccentQuery = Launcher.Core.Utilities.VietnameseTextHelper.RemoveDiacritics(query);
+        var unaccentTarget = Launcher.Core.Utilities.VietnameseTextHelper.RemoveDiacritics(target);
+
+        var scoreDefault = FuzzyMatcher.Score(target, query);
+        var scoreOverload = FuzzyMatcher.Score(target, query, unaccentQuery, unaccentTarget);
+
+        Assert.Equal(scoreDefault, scoreOverload, 4);
+        Assert.True(scoreOverload >= 70.0);
+    }
+}

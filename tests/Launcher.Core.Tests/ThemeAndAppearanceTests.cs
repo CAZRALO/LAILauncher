@@ -6,6 +6,26 @@ using Xunit;
 
 namespace Launcher.Core.Tests;
 
+[CollectionDefinition("WpfApplication", DisableParallelization = true)]
+public sealed class WpfApplicationCollection
+{
+}
+
+internal static class WpfTestAppHelper
+{
+    private static readonly object SyncLock = new();
+
+    public static System.Windows.Application EnsureApplication()
+    {
+        lock (SyncLock)
+        {
+            return System.Windows.Application.Current
+                ?? new System.Windows.Application { ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown };
+        }
+    }
+}
+
+[Collection("WpfApplication")]
 public class ThemeAndAppearanceTests
 {
     [Fact]
@@ -143,6 +163,135 @@ public class ThemeAndAppearanceTests
             {
                 try { System.IO.File.Delete(testDbPath); } catch { }
             }
+        }
+    }
+
+    [Fact]
+    public void ThemeManager_ApplyTheme_LightAndDark_UpdatesForcedLightMode()
+    {
+        ThemeManager.ApplyTheme(ThemeMode.Light);
+        Assert.True(ThemeManager.IsLightMode);
+        Assert.True(ThemeManager.ForcedLightMode);
+
+        ThemeManager.ApplyTheme(ThemeMode.Dark);
+        Assert.False(ThemeManager.IsLightMode);
+        Assert.False(ThemeManager.ForcedLightMode);
+    }
+
+    [Fact]
+    public void ThemeManager_ApplyThemePreset_PreservesForcedLightMode_AndResetsCustomAccent()
+    {
+        ThemeManager.SetLightMode(true);
+        ThemeManager.ApplyCustomAccentColor("#EC4899");
+        ThemeManager.ApplyThemePreset(ThemeMode.Nord);
+
+        Assert.Equal(ThemeMode.Nord, ThemeManager.CurrentTheme);
+        Assert.True(ThemeManager.ForcedLightMode);
+        Assert.True(ThemeManager.IsLightMode);
+        Assert.Null(ThemeManager.CustomAccentColorHex);
+        Assert.False(ThemeManager.UseWindowsAccentColor);
+
+        ThemeManager.ApplyThemePreset(ThemeMode.Dracula);
+        Assert.Equal(ThemeMode.Dracula, ThemeManager.CurrentTheme);
+        Assert.True(ThemeManager.ForcedLightMode);
+        Assert.True(ThemeManager.IsLightMode);
+
+        ThemeManager.ApplyThemePreset(ThemeMode.System);
+        Assert.Equal(ThemeMode.System, ThemeManager.CurrentTheme);
+        Assert.Null(ThemeManager.ForcedLightMode);
+        Assert.True(ThemeManager.UseWindowsAccentColor);
+
+        ThemeManager.SetLightMode(false);
+        ThemeManager.ApplyThemePreset(ThemeMode.TokyoNight);
+        Assert.Equal(ThemeMode.TokyoNight, ThemeManager.CurrentTheme);
+        Assert.False(ThemeManager.ForcedLightMode);
+        Assert.False(ThemeManager.IsLightMode);
+    }
+
+    [Fact]
+    public void ThemeManager_ToggleLightDarkMode_InvertsIsLightMode()
+    {
+        ThemeManager.SetLightMode(false);
+        Assert.False(ThemeManager.IsLightMode);
+
+        ThemeManager.ToggleLightDarkMode();
+        Assert.True(ThemeManager.IsLightMode);
+
+        ThemeManager.ToggleLightDarkMode();
+        Assert.False(ThemeManager.IsLightMode);
+    }
+
+    [Fact]
+    public void WindowsControlService_OnDarkModeChanged_FiresOnSetWindowsDarkMode()
+    {
+        bool eventFired = false;
+        bool detectedMode = false;
+
+        Action<bool> handler = isDark =>
+        {
+            eventFired = true;
+            detectedMode = isDark;
+        };
+
+        Launcher.Core.Utilities.WindowsControlService.OnDarkModeChanged += handler;
+        try
+        {
+            Launcher.Core.Utilities.WindowsControlService.SetWindowsDarkMode(true);
+            Assert.True(eventFired);
+            Assert.True(detectedMode);
+
+            eventFired = false;
+            Launcher.Core.Utilities.WindowsControlService.SetWindowsDarkMode(false);
+            Assert.True(eventFired);
+            Assert.False(detectedMode);
+        }
+        finally
+        {
+            Launcher.Core.Utilities.WindowsControlService.OnDarkModeChanged -= handler;
+        }
+    }
+
+    [Fact]
+    public void ThemeManager_LightMode_PreservesDistinctThemeColors_AcrossPresets()
+    {
+        var app = WpfTestAppHelper.EnsureApplication();
+
+        ThemeManager.SetLightMode(true);
+        ThemeManager.SetGlassTint(null);
+
+        try
+        {
+            var presets = new[]
+            {
+                ThemeMode.Windows11,
+                ThemeMode.Cyberpunk,
+                ThemeMode.Emerald,
+                ThemeMode.Sunset
+            };
+
+            var tints = new List<string>();
+            var bgColors = new List<Color>();
+
+            foreach (var preset in presets)
+            {
+                ThemeManager.ApplyThemePreset(preset);
+                Assert.True(ThemeManager.IsLightMode);
+
+                var tintHex = ThemeManager.ActiveGlassTintHex;
+                tints.Add(tintHex);
+
+                var bgBrush = Assert.IsType<SolidColorBrush>(app.Resources["WindowBgBrush"]);
+                var c = bgBrush.Color;
+                Assert.False(c.R == 255 && c.G == 255 && c.B == 255, $"Preset {preset} collapsed to pure #FFFFFF in Light mode.");
+                bgColors.Add(c);
+            }
+
+            Assert.Equal(presets.Length, tints.Distinct(StringComparer.OrdinalIgnoreCase).Count());
+            Assert.Equal(presets.Length, bgColors.Distinct().Count());
+        }
+        finally
+        {
+            ThemeManager.SetLightMode(null);
         }
     }
 }

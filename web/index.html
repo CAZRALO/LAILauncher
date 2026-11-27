@@ -1,452 +1,1682 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="win-fluent" data-mode="dark" data-os="windows">
+<html lang="vi" data-theme="win-fluent" data-mode="dark" data-os="windows" class="landing-page">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LAILauncher — Liquid Glass OS Studio (Windows 11 & Linux GNOME)</title>
-  <meta name="description" content="Giao diện tìm kiếm LAILauncher phong cách Windows 11 Fluent Mica & Linux GNOME Adwaita. Hiệu ứng Liquid Glass mờ ảo, đa bảng màu sắc, hỗ trợ đầy đủ 2 chế độ Sáng và Tối." />
+  <title>LAILauncher — Tìm Kiếm Siêu Tốc & AI Cục Bộ 100% Offline Cho Windows</title>
+  <meta name="description" content="Local AI Launcher cho Windows: Khởi động tức thì <100ms, tìm kiếm ngữ nghĩa tiếng Việt không cần NPU Copilot+, tích hợp mô hình AI cục bộ Ollama bảo vệ quyền riêng tư 100%." />
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./landing.css" />
 </head>
-<body>
-  <!-- Ambient Desktop Viewport with Wallpaper & Glass Orbs -->
-  <div class="desktop-viewport wallpaper-aurora" id="desktop-viewport">
-    
-    <!-- Moving Aurora Light Refraction Behind Glass -->
-    <div class="ambient-aurora-mesh" aria-hidden="true">
-      <div class="aurora-orb orb-primary"></div>
-      <div class="aurora-orb orb-secondary"></div>
-      <div class="aurora-orb orb-tertiary"></div>
-    </div>
+<body class="landing-page">
 
-    <!-- Linux GNOME Top Bar (Visible in Linux Mode) -->
-    <header class="gnome-topbar" id="gnome-topbar">
-      <div class="gnome-pill gnome-activities">Activities</div>
-      <div class="gnome-pill" id="gnome-clock">Th 2, 13 Th10 11:15</div>
-      <div class="gnome-quick-icons">
-        <span class="gnome-icon" title="Mạng Wi-Fi">📶</span>
-        <span class="gnome-icon" title="Âm lượng">🔊</span>
-        <span class="gnome-icon" title="Pin 100%">🔋</span>
-        <span class="gnome-pill" id="gnome-power-btn">⏻</span>
-      </div>
-    </header>
-
-    <!-- Top Universal Desktop Dock Controls -->
-    <nav class="desktop-dock" aria-label="Quick System Switcher">
-      <button class="dock-btn dock-os-btn active" data-os="windows" title="Chuyển sang giao diện Windows 11 Fluent">
-        <span>🪟 Windows 11</span>
-      </button>
-      <button class="dock-btn dock-os-btn" data-os="linux" title="Chuyển sang giao diện Linux GNOME Adwaita">
-        <span>🐧 Linux GNOME</span>
-      </button>
-      
-      <div class="dock-divider"></div>
-
-      <button class="dock-btn" id="dock-btn-mode" title="Phím tắt: Ctrl + D">
-        <!-- Dynamic Moon / Sun Icon rendered in app.js -->
-        <span>Tối</span>
-      </button>
-
-      <button class="dock-btn" id="dock-btn-ai" title="Mở hộp thoại trợ lý AI">
-        <span>✨ Trợ lý AI</span>
-      </button>
-
-      <button class="dock-btn" id="dock-btn-settings" title="Cài đặt Theme & Hiệu ứng kính (Ctrl + ,)">
-        <span>⚙️ Tùy biến</span>
-      </button>
-
-      <button class="dock-btn" id="dock-btn-reset-pos" title="Đưa cửa sổ về vị trí trung tâm ban đầu">
-        <span>🎯 Reset Vị trí</span>
-      </button>
-    </nav>
-
-    <!-- Center Launcher Workspace -->
-    <main class="launcher-workspace">
-      
-      <!-- Liquid Glass Launcher Container -->
-      <div class="launcher-shell" id="launcher-shell" role="dialog" aria-modal="true" aria-label="LAILauncher Search Window">
-        
-        <!-- Window Titlebar / Header -->
-        <div class="window-titlebar" id="window-titlebar" title="Kéo giữ để di chuyển vị trí cửa sổ">
-          
-          <!-- Linux GNOME Window Controls (Left) -->
-          <div class="titlebar-linux-controls" aria-label="Linux Window Controls">
-            <button class="traffic-dot dot-close" id="btn-linux-close" title="Đóng cửa sổ (Linux)"></button>
-            <button class="traffic-dot dot-minimize" id="btn-linux-minimize" title="Thu nhỏ"></button>
-            <button class="traffic-dot dot-maximize" id="btn-linux-maximize" title="Phóng to"></button>
-          </div>
-
-          <!-- Titlebar Center Brand & Quick Info -->
-          <div class="titlebar-brand" title="Kéo giữ để di chuyển cửa sổ LAILauncher">
-            <span class="grip-indicator" aria-hidden="true">⋮⋮</span>
-            <div class="brand-icon">⚡</div>
-            <span>LAILauncher</span>
-            <span class="brand-version">v2.4 Pro</span>
-          </div>
-
-          <!-- Titlebar Meta (Clock & Hotkey Badge & Reset Position) -->
-          <div class="titlebar-meta">
-            <div class="meta-chip" id="clock-display" title="Ngày giờ hệ thống">13/10 • 11:15</div>
-            <div class="meta-chip hotkey-badge" title="Phím tắt gọi Launcher">Alt + Space</div>
-            <button class="meta-chip meta-btn" id="titlebar-reset-pos-btn" title="Đưa cửa sổ về vị trí trung tâm ban đầu">🎯 Vị trí</button>
-          </div>
-
-          <!-- Windows 11 Window Caption Controls (Right) -->
-          <div class="titlebar-windows-controls" aria-label="Windows Window Controls">
-            <button class="win-caption-btn" id="btn-win-minimize" title="Thu nhỏ">−</button>
-            <button class="win-caption-btn" id="btn-win-maximize" title="Phóng to">□</button>
-            <button class="win-caption-btn btn-close" id="btn-win-close" title="Đóng">✕</button>
-          </div>
-
-        </div>
-
-        <!-- Clean & Focused Search Bar Container with Horizontal Quick Settings Strip -->
-        <div class="search-container">
-          <div class="search-box-wrap">
-            <!-- Dynamic Prefix Chip (Terminal, Web, AI, Calc, Sys) -->
-            <div class="search-prefix-badge" id="search-prefix-badge"></div>
-
-            <div class="search-icon-box" id="search-icon-box">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="M21 21l-4.5-4.5"/></svg>
-            </div>
-
-            <input 
-              type="text" 
-              class="search-input" 
-              id="search-input" 
-              placeholder="Tìm ứng dụng, tệp tin, lệnh (>) hoặc tính toán..." 
-              autocomplete="off" 
-              spellcheck="false" 
-              autofocus 
-            />
-
-            <div class="search-actions-right">
-              <button class="search-clear-btn" id="search-clear-btn" title="Xóa nội dung (Esc)">✕</button>
-            </div>
-          </div>
-
-          <!-- Horizontal Quick Settings / Inline Controls Strip (Windows Search 2025 Inline Toggles) -->
-          <div class="quick-settings-strip" id="quick-settings-strip" role="toolbar" aria-label="Cài đặt hệ thống ngang">
-            <!-- Mobile Hotspot Toggle -->
-            <button type="button" class="quick-pill-btn" id="pill-hotspot" data-action="toggle-hotspot" title="Bật / Tắt Mobile Hotspot trực tiếp không cần mở Settings">
-              <span class="pill-icon" id="pill-icon-hotspot"></span>
-              <span class="pill-text">Hotspot</span>
-              <span class="pill-dot" id="dot-hotspot"></span>
-            </button>
-
-            <!-- Energy Saver / Tiết kiệm pin Toggle -->
-            <button type="button" class="quick-pill-btn" id="pill-energy" data-action="toggle-energy" title="Bật / Tắt Tiết kiệm pin (Energy Saver) trực tiếp không cần mở Settings">
-              <span class="pill-icon" id="pill-icon-energy"></span>
-              <span class="pill-text" id="pill-text-energy">Tiết kiệm pin</span>
-              <span class="pill-dot" id="dot-energy"></span>
-            </button>
-
-            <!-- Taskbar Alignment Toggle -->
-            <button type="button" class="quick-pill-btn" id="pill-taskbar" data-action="toggle-taskbar" title="Đổi vị trí thanh Taskbar (Căn Giữa ↔ Căn Trái)">
-              <span class="pill-icon" id="pill-icon-taskbar"></span>
-              <span class="pill-text" id="pill-text-taskbar">Taskbar: Giữa</span>
-            </button>
-
-            <!-- Screenshot Button -->
-            <button type="button" class="quick-pill-btn" id="pill-screenshot" data-action="take-screenshot" title="Chụp ảnh màn hình (Lưu ảnh &amp; Copy Clipboard)">
-              <span class="pill-icon" id="pill-icon-screenshot"></span>
-              <span class="pill-text">Chụp màn hình</span>
-            </button>
-
-            <!-- Background Processes Button -->
-            <button type="button" class="quick-pill-btn" id="pill-processes" data-action="view-processes" title="Xem các trình chạy ngầm và tắt">
-              <span class="pill-icon" id="pill-icon-processes"></span>
-              <span class="pill-text">Trình chạy ngầm</span>
-              <span class="pill-count-chip" id="pill-proc-count">8</span>
-            </button>
-
-            <!-- Wi-Fi Networks Toggle -->
-            <button type="button" class="quick-pill-btn" id="pill-wifi" data-action="toggle-wifi" title="Mở danh sách kết nối Wi-Fi">
-              <span class="pill-icon" id="pill-icon-wifi"></span>
-              <span class="pill-text">Wi-Fi</span>
-            </button>
-
-            <!-- Bluetooth Toggle -->
-            <button type="button" class="quick-pill-btn" id="pill-bluetooth" data-action="toggle-bluetooth" title="Bật / Tắt sóng Bluetooth">
-              <span class="pill-icon" id="pill-icon-bluetooth"></span>
-              <span class="pill-text">Bluetooth</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Search Results List Viewport -->
-        <div class="results-viewport" id="results-viewport">
-          <div class="results-section-header">
-            <span>Kết quả tìm kiếm & Hành động</span>
-            <span style="font-size: 10px; font-weight: 500; text-transform: none; opacity: 0.8;">Sử dụng phím mũi tên ↑ / ↓ để chọn</span>
-          </div>
-
-          <ul class="results-list" id="results-list" role="listbox">
-            <!-- Dynamic items rendered by app.js -->
-          </ul>
-
-          <!-- Empty State -->
-          <div class="results-empty-state" id="results-empty-state">
-            <div class="empty-icon">🔍</div>
-            <div style="font-size: 14.5px; font-weight: 600;">Không tìm thấy kết quả phù hợp</div>
-            <div style="font-size: 12.5px; margin-top: 4px; opacity: 0.8;">Thử gõ `g &lt;nội dung&gt;` để tìm trên Google hoặc `&gt; &lt;lệnh&gt;` để chạy terminal.</div>
-          </div>
-        </div>
-
-        <!-- Launcher Bottom Hint & Status Bar -->
-        <footer class="launcher-footer">
-          <div class="footer-left">
-            <div class="footer-hint-group">
-              <span class="hotkey-badge">↵</span>
-              <span class="footer-hint-label">Mở</span>
-            </div>
-            <div class="footer-hint-group">
-              <span class="hotkey-badge">Ctrl+Shift+↵</span>
-              <span class="footer-hint-label">Admin</span>
-            </div>
-            <div class="footer-hint-group">
-              <span class="hotkey-badge">Ctrl+↵</span>
-              <span class="footer-hint-label">Thư mục</span>
-            </div>
-            <div class="footer-hint-group">
-              <span class="hotkey-badge">Tab</span>
-              <span class="footer-hint-label">Tác vụ</span>
-            </div>
-            <div class="footer-hint-group">
-              <span class="hotkey-badge">Esc</span>
-              <span class="footer-hint-label">Ẩn</span>
-            </div>
-          </div>
-
-          <div class="footer-right">
-            <div class="status-badge" title="Mô hình AI cục bộ đang hoạt động">
-              <span class="status-dot"></span>
-              <span>Ollama: Llama-3-8B [Offline]</span>
-            </div>
-          </div>
-        </footer>
-
-      </div>
-
-    </main>
-
-    <!-- Context / Tab Action Flyout Menu -->
-    <div class="action-flyout-menu" id="action-flyout-menu" role="menu">
-      <div class="flyout-header" id="flyout-target-title">Tùy chọn tác vụ</div>
-      <div class="flyout-item" id="flyout-action-run">
-        <div class="flyout-item-left">⚡ Thực thi mặc định</div>
-        <span class="hotkey-badge">Enter</span>
-      </div>
-      <div class="flyout-item" id="flyout-action-admin">
-        <div class="flyout-item-left">🛡️ Chạy với quyền Administrator</div>
-        <span class="hotkey-badge">Ctrl+Shift+↵</span>
-      </div>
-      <div class="flyout-item" id="flyout-action-folder">
-        <div class="flyout-item-left">📁 Mở thư mục chứa (Explorer)</div>
-        <span class="hotkey-badge">Ctrl+↵</span>
-      </div>
-      <div class="flyout-item" id="flyout-action-copy">
-        <div class="flyout-item-left">📋 Sao chép đường dẫn</div>
-        <span class="hotkey-badge">Ctrl+C</span>
-      </div>
-      <div class="flyout-item" id="flyout-action-summarize">
-        <div class="flyout-item-left">🤖 Tóm tắt tài liệu với AI (Ollama)</div>
-        <span class="hotkey-badge">Ctrl+Alt+S</span>
-      </div>
-      <div class="flyout-item" id="flyout-action-ai">
-        <div class="flyout-item-left">✨ Hỏi AI giải thích chi tiết</div>
-        <span class="hotkey-badge">Tab</span>
-      </div>
-    </div>
-
-    <!-- Local AI Streaming Window / Drawer -->
-    <aside class="ai-stream-drawer" id="ai-stream-drawer" aria-label="Local AI Streaming Window">
-      <div class="ai-drawer-header">
-        <div class="ai-model-badge">
-          <span>✨</span>
-          <span>Ollama llama-3-8b-instruct [Local ONNX]</span>
-        </div>
-        <button class="win-caption-btn" id="ai-stream-close" title="Đóng">✕</button>
-      </div>
-
-      <div class="ai-stream-content" id="ai-stream-text">
-        <!-- Streaming content rendered here -->
-      </div>
-
-      <div class="ai-stream-meta">
-        <span id="ai-stream-latency">Tốc độ: 52 tokens/s • Latency: 18ms</span>
-        <span style="font-weight: 600; color: var(--accent-base);">Offline 100%</span>
-      </div>
-    </aside>
-
-    <!-- Settings & Theme Customizer Modal -->
-    <div class="settings-overlay" id="settings-overlay">
-      <div class="settings-modal" role="dialog" aria-modal="true">
-        <div class="settings-header">
-          <div class="settings-title">Cài Đặt & Tùy Biến Giao Diện LAILauncher</div>
-          <button class="win-caption-btn" id="settings-close-btn" title="Đóng">✕</button>
-        </div>
-
-        <!-- 1. Theme Palette Selector -->
-        <div>
-          <div class="settings-section-title">🎨 Bảng Màu &amp; Theme Đa Dạng (9 Presets Cao Cấp)</div>
-          <div class="theme-swatch-grid" id="theme-swatch-grid">
-            <!-- Dynamic swatches rendered by app.js -->
-          </div>
-
-          <!-- 1.1 Windows 11 Curated Accent Colors Palette (24 Sắc Màu) -->
-          <div class="accent-palette-section">
-            <div class="settings-section-title" style="margin-top: 18px; margin-bottom: 4px;">🌈 Bảng Màu Chuẩn Windows 11 (24 Curated Accent Colors)</div>
-            <div class="settings-section-subtitle">Chọn sắc màu yêu thích để đổi màu điểm nhấn (Accent) tức thì trên toàn giao diện:</div>
-            <div class="accent-chips-palette" id="accent-chips-palette">
-              <!-- 24 chips dynamically rendered by app.js -->
-            </div>
-
-            <div class="custom-accent-row">
-              <div class="accent-preview-swatch" id="custom-accent-preview" title="Xem trước màu Accent"></div>
-              <input type="text" id="custom-accent-hex" class="custom-hex-input" placeholder="#3B82F6" maxlength="9" spellcheck="false" />
-              <button type="button" class="accent-action-btn" id="btn-apply-accent">Áp dụng</button>
-              <button type="button" class="accent-action-btn secondary" id="btn-reset-accent">Mặc định Theme</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. Glassmorphism Sliders -->
-        <div>
-          <div class="settings-section-title">✨ Hiệu Ứng Liquid Glass, Translucent & Blur</div>
-          
-          <div class="slider-control-group">
-            <div class="slider-label-row">
-              <span>Độ trong suốt kính (Glass Opacity)</span>
-              <span id="label-opacity-val">82%</span>
-            </div>
-            <input type="range" class="custom-range-slider" id="slider-glass-opacity" min="30" max="95" value="82" />
-          </div>
-
-          <div class="slider-control-group">
-            <div class="slider-label-row">
-              <span>Độ mờ hậu cảnh (Backdrop Blur Strength)</span>
-              <span id="label-blur-val">28px</span>
-            </div>
-            <input type="range" class="custom-range-slider" id="slider-glass-blur" min="8" max="45" value="28" />
-          </div>
-        </div>
-
-        <!-- 3. Desktop Background Wallpapers -->
-        <div>
-          <div class="settings-section-title">🖼️ Hình Nền Môi Trường (Kiểm thử khúc xạ kính)</div>
-          <div class="wallpaper-grid" id="wallpaper-grid">
-            <!-- Dynamic wallpapers rendered by app.js -->
-          </div>
-        </div>
-
-        <!-- 4. Multi-Monitor Display Settings -->
-        <div>
-          <div class="settings-section-title" style="margin-top: 18px; margin-bottom: 4px;">🖥️ Hiển Thị Đa Màn Hình &amp; Vị Trí Launcher</div>
-          <div class="settings-section-subtitle">Tùy chọn màn hình xuất hiện khi gọi phím tắt (Alt + Space) cho thiết lập 2 hoặc nhiều màn hình:</div>
-          
-          <div class="monitor-mode-grid" id="monitor-mode-grid">
-            <button type="button" class="monitor-mode-card active" data-mode="cursor">
-              <div class="mon-card-header">
-                <span class="mon-icon">🖱️</span>
-                <span class="mon-title">Theo con trỏ chuột</span>
-                <span class="mon-badge">Khuyên dùng</span>
-              </div>
-              <div class="mon-desc">Tự động xuất hiện ngay trên màn hình bạn đang di chuột và làm việc</div>
-            </button>
-            <button type="button" class="monitor-mode-card" data-mode="primary">
-              <div class="mon-card-header">
-                <span class="mon-icon">🌟</span>
-                <span class="mon-title">Màn hình chính</span>
-              </div>
-              <div class="mon-desc">Luôn cố định trên màn hình chính mặc định của Windows</div>
-            </button>
-            <button type="button" class="monitor-mode-card" data-mode="active_window">
-              <div class="mon-card-header">
-                <span class="mon-icon">🪟</span>
-                <span class="mon-title">Theo cửa sổ làm việc</span>
-              </div>
-              <div class="mon-desc">Xuất hiện tại màn hình chứa ứng dụng bạn vừa tương tác trước đó</div>
-            </button>
-            <button type="button" class="monitor-mode-card" data-mode="specific">
-              <div class="mon-card-header">
-                <span class="mon-icon">🎯</span>
-                <span class="mon-title">Màn hình cụ thể</span>
-              </div>
-              <div class="mon-desc">Cố định trên một màn hình cụ thể (Màn hình 1 hoặc Màn hình 2)</div>
-            </button>
-          </div>
-
-          <div class="monitor-live-shelf" id="monitor-live-shelf" style="margin-top: 8px;">
-            <div class="mon-detected-item">
-              <div class="mon-info">
-                <span class="mon-dot"></span>
-                <strong>Màn hình 1 (Chính)</strong>: 1707 × 1067 • \\.\DISPLAY1
-              </div>
-              <span class="mon-status-pill primary">Màn hình chính</span>
-            </div>
-            <div class="mon-detected-item">
-              <div class="mon-info">
-                <span class="mon-dot green"></span>
-                <strong>Màn hình 2 (Phụ)</strong>: 1682 × 1051 • \\.\DISPLAY23
-              </div>
-              <span class="mon-status-pill active-cursor">🖱️ Vị trí con trỏ</span>
-            </div>
-          </div>
-
-          <!-- Saved Window Custom Position & Reset to Center -->
-          <div class="window-position-settings-box" style="margin-top: 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-            <div>
-              <div style="font-weight: 600; font-size: 13px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                <span>📍</span>
-                <span id="web-saved-pos-status">Vị trí cửa sổ: Mặc định (Tự động canh giữa)</span>
-              </div>
-              <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">
-                Kéo giữ thanh tiêu đề LAILauncher để di chuyển vị trí. Vị trí sẽ tự động được lưu cho các lần mở sau.
-              </div>
-            </div>
-            <button type="button" class="dock-btn" id="btn-reset-pos-settings" style="flex-shrink: 0; background: var(--accent-base); color: #fff; font-weight: 600; font-size: 11.5px; padding: 6px 14px; border-radius: 8px;">
-              <span>🎯 Đặt lại trung tâm</span>
-            </button>
-          </div>
-        </div>
-
-    <!-- Screenshot Shutter Flash Effect -->
-    <div class="screenshot-flash-overlay" id="screenshot-flash-overlay" aria-hidden="true"></div>
-
-    <!-- Screenshot Preview Toast & Actions Modal -->
-    <div class="screenshot-preview-modal" id="screenshot-preview-modal" role="dialog" aria-modal="true" aria-label="Xem trước ảnh chụp màn hình">
-      <div class="screenshot-modal-card">
-        <div class="screenshot-modal-header">
-          <div class="screenshot-modal-title">
-            <span>📸</span>
-            <strong>Ảnh chụp màn hình (Screenshot)</strong>
-          </div>
-          <button type="button" class="screenshot-modal-close" id="btn-close-screenshot-modal">✕</button>
-        </div>
-        <div class="screenshot-preview-box" id="screenshot-preview-box">
-          <canvas id="screenshot-canvas" width="640" height="360"></canvas>
-        </div>
-        <div class="screenshot-modal-actions">
-          <div class="screenshot-modal-meta" id="screenshot-modal-meta">1920 × 1080 • PNG</div>
-          <div class="screenshot-btn-group">
-            <button type="button" class="screenshot-btn" id="btn-copy-screenshot">📋 Sao chép</button>
-            <button type="button" class="screenshot-btn primary" id="btn-download-screenshot">💾 Lưu tệp ảnh</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Toast Notification Shelf -->
-    <div class="toast-shelf" id="toast-shelf" aria-live="polite"></div>
-
+  <!-- Ambient Light Mesh Background -->
+  <div class="landing-ambient-bg" aria-hidden="true">
+    <div class="landing-glow-orb landing-glow-1"></div>
+    <div class="landing-glow-orb landing-glow-2"></div>
+    <div class="landing-glow-orb landing-glow-3"></div>
   </div>
 
-  <script type="module">
-    import { initLauncher } from './app.js';
-    document.addEventListener('DOMContentLoaded', initLauncher);
-  </script>
+  <!-- ==========================================================================
+       1. NAVIGATION HEADER (Sticky Fluent Glass)
+       ========================================================================== -->
+  <header class="landing-nav">
+    <div class="landing-container">
+      <a href="#" class="nav-brand">
+        <div class="nav-brand-logo">⚡</div>
+        <span>LAILauncher</span>
+        <span class="nav-brand-pill">v2.4 Pro</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features" class="nav-link">Tính năng</a></li>
+        <li><a href="#semantic" class="nav-link">Semantic AI</a></li>
+        <li><a href="#demo" class="nav-link">Dùng thử Live</a></li>
+        <li><a href="#comparison" class="nav-link">So sánh</a></li>
+        <li><a href="#download" class="nav-link">Tải về</a></li>
+        <li><a href="#shortcuts" class="nav-link">Phím tắt</a></li>
+        <li><a href="#faq" class="nav-link">Hỏi đáp</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Theme Mode Toggle & 9-Theme Picker -->
+        <div class="nav-theme-controls">
+          <button type="button" class="nav-btn-icon" id="nav-theme-toggle" title="Đổi giao diện Sáng / Tối (Ctrl + D)" aria-label="Đổi chế độ Sáng / Tối">
+            🌙
+          </button>
+          <div class="nav-theme-picker-wrap">
+            <button type="button" class="nav-btn-pill" id="nav-theme-picker-btn" title="Chọn bảng màu Theme (9 bộ màu)" aria-haspopup="true" aria-expanded="false">
+              <span class="nav-theme-dot" id="nav-theme-dot"></span>
+              <span>Theme</span>
+              <span class="nav-caret">▾</span>
+            </button>
+            <div class="nav-theme-dropdown" id="nav-theme-dropdown" role="menu" aria-label="Chọn giao diện màu"></div>
+          </div>
+        </div>
+
+        <!-- GitHub Link -->
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="nav-btn-icon" title="Xem mã nguồn trên GitHub">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </a>
+
+        <!-- Primary CTA to Download Section -->
+        <a href="#download" class="btn-primary-cta">
+          <span>⬇ Tải về miễn phí</span>
+        </a>
+
+        <!-- Mobile Nav Hamburger -->
+        <button class="nav-mobile-toggle" id="nav-mobile-toggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       2. HERO SECTION
+       ========================================================================== -->
+  <section class="landing-hero">
+    <div class="landing-container">
+      <!-- Announcement Pill -->
+      <div class="hero-pill-badge">
+        <span class="pulse-dot"></span>
+        <span>LAILauncher v2.4.0 chính thức phát hành • Cục bộ & Bảo mật</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="hero-headline">
+        Tìm kiếm siêu tốc trên Windows.<br />
+        <span class="gradient-text">Tích hợp AI Cục bộ 100% Offline.</span>
+      </h1>
+
+      <!-- Subtitle Description -->
+      <p class="hero-description">
+        Thay thế Windows Search chậm chạp và tốn RAM bằng trải nghiệm mượt mà kiểu Raycast / Alfred:
+        Mở tức thì <strong>&lt; 100ms</strong>, tìm kiếm ngữ nghĩa thông minh không cần chip NPU đắt đỏ,
+        tích hợp mô hình ngôn ngữ lớn (Ollama) bảo vệ quyền riêng tư tuyệt đối.
+      </p>
+
+      <!-- Primary Action Buttons -->
+      <div class="hero-cta-group">
+        <a href="./downloads/LAILauncher-v2.4.0-portable.zip" download class="btn-hero-primary">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          <span>Tải về cho Windows (64-bit)</span>
+        </a>
+
+        <a href="#demo" class="btn-hero-secondary">
+          <span>⚡ Dùng thử Live Demo</span>
+        </a>
+
+        <a href="./studio.html" class="btn-hero-secondary" title="Mở phòng trải nghiệm OS Studio toàn màn hình">
+          <span>🖥️ OS Studio Fullscreen ↗</span>
+        </a>
+      </div>
+
+      <!-- Subtext / Trust signals -->
+      <div class="hero-subtext">
+        <span>✓ Hoàn toàn miễn phí (MIT License)</span>
+        <span>•</span>
+        <span>✓ Hỗ trợ Windows 10 &amp; 11</span>
+        <span>•</span>
+        <span>✓ Không chứa quảng cáo &amp; Không thu thập dữ liệu</span>
+      </div>
+
+      <!-- Key Metrics Strip -->
+      <div class="hero-metrics-strip">
+        <div class="metric-card">
+          <div class="metric-val">&lt; 50ms</div>
+          <div class="metric-label">Tốc độ tìm kiếm tức thì</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">100%</div>
+          <div class="metric-label">Cục bộ &amp; Bảo mật Offline</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">0 NPU</div>
+          <div class="metric-label">Tìm ngữ nghĩa trên mọi CPU</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">&lt; 45 MB</div>
+          <div class="metric-label">RAM chạy ngầm siêu nhẹ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. INTERACTIVE LIVE DEMO SHOWCASE SECTION
+       ========================================================================== -->
+  <section class="section-demo" id="demo">
+    <div class="landing-container">
+      <div class="section-header">
+        <span class="section-tag">Trực tiếp trên Web</span>
+        <h2 class="section-title">Trải nghiệm LAILauncher Ngay Trên Trình Duyệt</h2>
+        <p class="section-subtitle">
+          Không cần cài đặt ngay — bạn có thể click vào ô tìm kiếm bên dưới, gõ tên ứng dụng, thử tính toán số học,
+          bật/tắt thanh Quick Settings hoặc trải nghiệm khả năng tóm tắt AI.
+        </p>
+      </div>
+
+      <!-- Quick Try Interactive Prompt Chips -->
+      <div class="demo-quick-prompts" aria-label="Lệnh dùng thử nhanh">
+        <span class="demo-prompts-label">⚡ Thử nhanh:</span>
+        <button type="button" class="demo-prompt-chip" data-query="sys wifi list">📶 sys wifi list</button>
+        <button type="button" class="demo-prompt-chip" data-query="sys bluetooth list">🔵 sys bluetooth list</button>
+        <button type="button" class="demo-prompt-chip" data-query="tiet kiem pin">🍃 Tiết kiệm pin</button>
+        <button type="button" class="demo-prompt-chip" data-query="trinh chay ngam">⚡ Trình chạy ngầm</button>
+        <button type="button" class="demo-prompt-chip" data-query="báo cáo tài chính">🧠 Báo cáo tài chính</button>
+        <button type="button" class="demo-prompt-chip" data-query="pdf:">📑 pdf:</button>
+        <button type="button" class="demo-prompt-chip" data-query="256 * 18">🧮 256 * 18</button>
+        <button type="button" class="demo-prompt-chip" data-query="> ipconfig /all">💻 &gt; ipconfig</button>
+      </div>
+
+      <!-- Embedded Mockup Frame -->
+      <div class="demo-frame-container" id="demo-viewport-wrapper">
+        <div class="demo-frame-header">
+          <div class="demo-frame-dots">
+            <span class="demo-dot red"></span>
+            <span class="demo-dot yellow"></span>
+            <span class="demo-dot green"></span>
+          </div>
+          <div class="demo-frame-title">
+            <span>⚡</span>
+            <span>LAILauncher Interactive Web Studio (Windows 11 Mica &amp; Linux Adwaita)</span>
+          </div>
+          <div class="demo-frame-actions">
+            <a href="./studio.html" target="_blank" class="demo-link-studio" title="Mở trong tab mới toàn màn hình">
+              Toàn màn hình ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Re-use the existing Full Interactive Desktop Viewport -->
+        <div class="desktop-viewport wallpaper-aurora" id="desktop-viewport">
+          
+          <!-- Moving Aurora Light Refraction Behind Glass -->
+          <div class="ambient-aurora-mesh" aria-hidden="true">
+            <div class="aurora-orb orb-primary"></div>
+            <div class="aurora-orb orb-secondary"></div>
+            <div class="aurora-orb orb-tertiary"></div>
+          </div>
+
+          <!-- Linux GNOME Top Bar (Visible in Linux Mode) -->
+          <header class="gnome-topbar" id="gnome-topbar">
+            <div class="gnome-pill gnome-activities">Activities</div>
+            <div class="gnome-pill" id="gnome-clock">Th 2, 13 Th10 11:15</div>
+            <div class="gnome-quick-icons">
+              <span class="gnome-icon" title="Mạng Wi-Fi">📶</span>
+              <span class="gnome-icon" title="Âm lượng">🔊</span>
+              <span class="gnome-icon" title="Pin 100%">🔋</span>
+              <span class="gnome-pill" id="gnome-power-btn">⏻</span>
+            </div>
+          </header>
+
+          <!-- Top Universal Desktop Dock Controls -->
+          <nav class="desktop-dock" aria-label="Quick System Switcher">
+            <button class="dock-btn dock-os-btn active" data-os="windows" title="Chuyển sang giao diện Windows 11 Fluent">
+              <span>🪟 Windows 11</span>
+            </button>
+            <button class="dock-btn dock-os-btn" data-os="linux" title="Chuyển sang giao diện Linux GNOME Adwaita">
+              <span>🐧 Linux GNOME</span>
+            </button>
+            
+            <div class="dock-divider"></div>
+
+            <button class="dock-btn" id="dock-btn-mode" title="Phím tắt: Ctrl + D">
+              <span>Tối</span>
+            </button>
+
+            <button class="dock-btn" id="dock-btn-ai" title="Mở hộp thoại trợ lý AI">
+              <span>✨ Trợ lý AI</span>
+            </button>
+
+            <button class="dock-btn" id="dock-btn-settings" title="Cài đặt Theme & Hiệu ứng kính">
+              <span>⚙️ Tùy biến</span>
+            </button>
+
+            <button class="dock-btn" id="dock-btn-reset-pos" title="Đưa cửa sổ về vị trí trung tâm">
+              <span>🎯 Reset Vị trí</span>
+            </button>
+          </nav>
+
+          <!-- Center Launcher Workspace -->
+          <main class="launcher-workspace">
+            
+            <!-- Liquid Glass Launcher Container -->
+            <div class="launcher-shell" id="launcher-shell" role="dialog" aria-modal="true" aria-label="LAILauncher Search Window">
+              
+              <!-- Window Titlebar / Header -->
+              <div class="window-titlebar" id="window-titlebar" title="Kéo giữ để di chuyển vị trí cửa sổ">
+                
+                <!-- Linux GNOME Window Controls (Left) -->
+                <div class="titlebar-linux-controls" aria-label="Linux Window Controls">
+                  <button class="traffic-dot dot-close" id="btn-linux-close" title="Đóng cửa sổ"></button>
+                  <button class="traffic-dot dot-minimize" id="btn-linux-minimize" title="Thu nhỏ"></button>
+                  <button class="traffic-dot dot-maximize" id="btn-linux-maximize" title="Phóng to"></button>
+                </div>
+
+                <!-- Titlebar Center Brand & Quick Info -->
+                <div class="titlebar-brand" title="Kéo giữ để di chuyển cửa sổ LAILauncher">
+                  <span class="grip-indicator" aria-hidden="true">⋮⋮</span>
+                  <div class="brand-icon">⚡</div>
+                  <span>LAILauncher</span>
+                  <span class="brand-version">v2.4 Pro</span>
+                </div>
+
+                <!-- Titlebar Meta (Clock & Hotkey Badge & Reset Position) -->
+                <div class="titlebar-meta">
+                  <div class="meta-chip" id="clock-display" title="Ngày giờ hệ thống">13/10 • 11:15</div>
+                  <div class="meta-chip hotkey-badge" title="Phím tắt gọi Launcher">Alt + Space</div>
+                  <button class="meta-chip meta-btn" id="titlebar-reset-pos-btn" title="Đưa cửa sổ về vị trí trung tâm">🎯 Vị trí</button>
+                </div>
+
+                <!-- Windows 11 Window Caption Controls (Right) -->
+                <div class="titlebar-windows-controls" aria-label="Windows Window Controls">
+                  <button class="win-caption-btn" id="btn-win-minimize" title="Thu nhỏ">−</button>
+                  <button class="win-caption-btn" id="btn-win-maximize" title="Phóng to">□</button>
+                  <button class="win-caption-btn btn-close" id="btn-win-close" title="Đóng">✕</button>
+                </div>
+
+              </div>
+
+              <!-- Search Bar Container with Horizontal Quick Settings Strip -->
+              <div class="search-container">
+                <div class="search-box-wrap">
+                  <!-- Dynamic Prefix Chip (Terminal, Web, AI, Calc, Sys) -->
+                  <div class="search-prefix-badge" id="search-prefix-badge"></div>
+
+                  <div class="search-icon-box" id="search-icon-box">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="M21 21l-4.5-4.5"/></svg>
+                  </div>
+
+                  <input 
+                    type="text" 
+                    class="search-input" 
+                    id="search-input" 
+                    placeholder="Tìm ứng dụng, tệp tin, lệnh (>) hoặc tính toán..." 
+                    autocomplete="off" 
+                    spellcheck="false" 
+                  />
+
+                  <div class="search-actions-right">
+                    <button class="search-clear-btn" id="search-clear-btn" title="Xóa nội dung (Esc)">✕</button>
+                  </div>
+                </div>
+
+                <!-- Horizontal Quick Settings / Inline Controls Strip -->
+                <div class="quick-settings-strip" id="quick-settings-strip" role="toolbar" aria-label="Cài đặt hệ thống ngang">
+                  <!-- Mobile Hotspot Toggle -->
+                  <button type="button" class="quick-pill-btn" id="pill-hotspot" data-action="toggle-hotspot" title="Bật / Tắt Mobile Hotspot trực tiếp">
+                    <span class="pill-icon" id="pill-icon-hotspot"></span>
+                    <span class="pill-text">Hotspot</span>
+                    <span class="pill-dot" id="dot-hotspot"></span>
+                  </button>
+
+                  <!-- Energy Saver / Tiết kiệm pin Toggle -->
+                  <button type="button" class="quick-pill-btn" id="pill-energy" data-action="toggle-energy" title="Bật / Tắt Tiết kiệm pin trực tiếp">
+                    <span class="pill-icon" id="pill-icon-energy"></span>
+                    <span class="pill-text" id="pill-text-energy">Tiết kiệm pin</span>
+                    <span class="pill-dot" id="dot-energy"></span>
+                  </button>
+
+                  <!-- Taskbar Alignment Toggle -->
+                  <button type="button" class="quick-pill-btn" id="pill-taskbar" data-action="toggle-taskbar" title="Đổi vị trí thanh Taskbar (Căn Giữa ↔ Căn Trái)">
+                    <span class="pill-icon" id="pill-icon-taskbar"></span>
+                    <span class="pill-text" id="pill-text-taskbar">Taskbar: Giữa</span>
+                  </button>
+
+                  <!-- Screenshot Button -->
+                  <button type="button" class="quick-pill-btn" id="pill-screenshot" data-action="take-screenshot" title="Chụp ảnh màn hình">
+                    <span class="pill-icon" id="pill-icon-screenshot"></span>
+                    <span class="pill-text">Chụp màn hình</span>
+                  </button>
+
+                  <!-- Background Processes Button -->
+                  <button type="button" class="quick-pill-btn" id="pill-processes" data-action="view-processes" title="Xem các trình chạy ngầm và tắt">
+                    <span class="pill-icon" id="pill-icon-processes"></span>
+                    <span class="pill-text">Trình chạy ngầm</span>
+                    <span class="pill-count-chip" id="pill-proc-count">8</span>
+                  </button>
+
+                  <!-- Wi-Fi Networks Toggle & List -->
+                  <button type="button" class="quick-pill-btn active" id="pill-wifi" data-action="toggle-wifi" title="Nhấn trái: Bật / Tắt Wi-Fi | Nhấn phải: Mở danh sách Wi-Fi (sys wifi list)">
+                    <span class="pill-icon" id="pill-icon-wifi"></span>
+                    <span class="pill-text" id="pill-text-wifi">Wi-Fi: Bật</span>
+                    <span class="pill-dot" id="dot-wifi"></span>
+                  </button>
+
+                  <!-- Bluetooth Toggle & List -->
+                  <button type="button" class="quick-pill-btn active" id="pill-bluetooth" data-action="toggle-bluetooth" title="Nhấn trái: Bật / Tắt Bluetooth | Nhấn phải: Mở danh sách Bluetooth (sys bluetooth list)">
+                    <span class="pill-icon" id="pill-icon-bluetooth"></span>
+                    <span class="pill-text" id="pill-text-bluetooth">Bluetooth: Bật</span>
+                    <span class="pill-dot" id="dot-bluetooth"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Search Results List Viewport -->
+              <div class="results-viewport" id="results-viewport">
+                <div class="results-section-header">
+                  <span>Kết quả tìm kiếm &amp; Hành động</span>
+                  <span style="font-size: 10px; font-weight: 500; text-transform: none; opacity: 0.8;">Sử dụng phím mũi tên ↑ / ↓ để chọn</span>
+                </div>
+
+                <ul class="results-list" id="results-list" role="listbox">
+                  <!-- Dynamic items rendered by app.js -->
+                </ul>
+
+                <!-- Empty State -->
+                <div class="results-empty-state" id="results-empty-state">
+                  <div class="empty-icon">🔍</div>
+                  <div style="font-size: 14.5px; font-weight: 600;">Không tìm thấy kết quả phù hợp</div>
+                  <div style="font-size: 12.5px; margin-top: 4px; opacity: 0.8;">Thử gõ `g &lt;nội dung&gt;` để tìm trên Google hoặc `&gt; &lt;lệnh&gt;` để chạy terminal.</div>
+                </div>
+              </div>
+
+              <!-- Launcher Bottom Hint & Status Bar -->
+              <footer class="launcher-footer">
+                <div class="footer-left">
+                  <div class="footer-hint-group">
+                    <span class="hotkey-badge">↵</span>
+                    <span class="footer-hint-label">Mở</span>
+                  </div>
+                  <div class="footer-hint-group">
+                    <span class="hotkey-badge">Ctrl+Shift+↵</span>
+                    <span class="footer-hint-label">Admin</span>
+                  </div>
+                  <div class="footer-hint-group">
+                    <span class="hotkey-badge">Ctrl+↵</span>
+                    <span class="footer-hint-label">Thư mục</span>
+                  </div>
+                  <div class="footer-hint-group">
+                    <span class="hotkey-badge">Tab</span>
+                    <span class="footer-hint-label">Tác vụ</span>
+                  </div>
+                  <div class="footer-hint-group">
+                    <span class="hotkey-badge">Esc</span>
+                    <span class="footer-hint-label">Ẩn</span>
+                  </div>
+                </div>
+
+                <div class="footer-right">
+                  <div class="status-badge" title="Mô hình AI cục bộ đang hoạt động">
+                    <span class="status-dot"></span>
+                    <span>Ollama: Llama-3-8B [Offline]</span>
+                  </div>
+                </div>
+              </footer>
+
+            </div>
+
+          </main>
+
+          <!-- Context / Tab Action Flyout Menu -->
+          <div class="action-flyout-menu" id="action-flyout-menu" role="menu">
+            <div class="flyout-header" id="flyout-target-title">Tùy chọn tác vụ</div>
+            <div class="flyout-item" id="flyout-action-run">
+              <div class="flyout-item-left">⚡ Thực thi mặc định</div>
+              <span class="hotkey-badge">Enter</span>
+            </div>
+            <div class="flyout-item" id="flyout-action-admin">
+              <div class="flyout-item-left">🛡️ Chạy với quyền Administrator</div>
+              <span class="hotkey-badge">Ctrl+Shift+↵</span>
+            </div>
+            <div class="flyout-item" id="flyout-action-folder">
+              <div class="flyout-item-left">📁 Mở thư mục chứa (Explorer)</div>
+              <span class="hotkey-badge">Ctrl+↵</span>
+            </div>
+            <div class="flyout-item" id="flyout-action-copy">
+              <div class="flyout-item-left">📋 Sao chép đường dẫn</div>
+              <span class="hotkey-badge">Ctrl+C</span>
+            </div>
+            <div class="flyout-item" id="flyout-action-summarize">
+              <div class="flyout-item-left">🤖 Tóm tắt tài liệu với AI (Ollama)</div>
+              <span class="hotkey-badge">Ctrl+Alt+S</span>
+            </div>
+            <div class="flyout-item" id="flyout-action-ai">
+              <div class="flyout-item-left">✨ Hỏi AI giải thích chi tiết</div>
+              <span class="hotkey-badge">Tab</span>
+            </div>
+          </div>
+
+          <!-- Local AI Streaming Window / Drawer -->
+          <aside class="ai-stream-drawer" id="ai-stream-drawer" aria-label="Local AI Streaming Window">
+            <div class="ai-drawer-header">
+              <div class="ai-model-badge">
+                <span>✨</span>
+                <span>Ollama llama-3-8b-instruct [Local ONNX]</span>
+              </div>
+              <button class="win-caption-btn" id="ai-stream-close" title="Đóng">✕</button>
+            </div>
+
+            <div class="ai-stream-content" id="ai-stream-text"></div>
+
+            <div class="ai-stream-meta">
+              <span id="ai-stream-latency">Tốc độ: 52 tokens/s • Latency: 18ms</span>
+              <span style="font-weight: 600; color: var(--accent-base);">Offline 100%</span>
+            </div>
+          </aside>
+
+          <!-- Floating Interactive Tip -->
+          <div class="demo-interactive-hint">
+            <span>💡</span>
+            <span>Mẹo: Thử gõ <strong>"sys wifi list"</strong>, <strong>"sys bluetooth list"</strong>, <strong>"excel"</strong>, <strong>"pdf:"</strong> hoặc <strong>"&gt; ipconfig"</strong></span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       4. KEY FEATURES SECTION
+       ========================================================================== -->
+  <section class="landing-section" id="features">
+    <div class="landing-container">
+      <div class="section-header">
+        <span class="section-tag">Sức Mạnh Vượt Trội</span>
+        <h2 class="section-title">Tại Sao Nên Sử Dụng LAILauncher?</h2>
+        <p class="section-subtitle">
+          Kết hợp hoàn hảo giữa hiệu năng xử lý native bằng C# .NET 8 và trí tuệ nhân tạo cục bộ,
+          mang lại trải nghiệm làm việc liền mạch và riêng tư.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1: Semantic Search Zero NPU -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🧠</div>
+          <span class="feature-pill">Độc quyền</span>
+          <h3 class="feature-title">Zero-NPU Semantic Search</h3>
+          <p class="feature-desc">
+            Tìm kiếm bằng câu nói tự nhiên tiếng Việt và tiếng Anh ("báo cáo tài chính", "hợp đồng", "ảnh hoàng hôn").
+            Hoạt động 100% mượt mà trên mọi CPU thông thường mà không cần chip NPU 40 TOPS đắt đỏ.
+          </p>
+          <ul class="feature-perk-list">
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Nhận diện ý định và ngữ nghĩa thông minh</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Hỗ trợ bộ lọc mở rộng: pdf:, doc:, sheet:, img:</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Không phụ thuộc phần cứng Copilot+ PC</li>
+          </ul>
+        </div>
+
+        <!-- Feature 2: Local AI & RAG -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🤖</div>
+          <span class="feature-pill">Ollama &amp; ONNX</span>
+          <h3 class="feature-title">Trợ Lý AI &amp; Local RAG</h3>
+          <p class="feature-desc">
+            Tích hợp liền mạch với Ollama và mô hình ONNX Runtime cục bộ.
+            Nhấn <kbd>Ctrl + Alt + S</kbd> để tóm tắt tài liệu PDF/Word tức thì, hoặc mở Action Menu để chat hỏi đáp trực tiếp với tệp.
+          </p>
+          <ul class="feature-perk-list">
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Tóm tắt nội dung tài liệu trong 1 giây</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Dữ liệu không bao giờ rời khỏi máy tính</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Tương thích Llama 3, Phi-3, Qwen, Mistral</li>
+          </ul>
+        </div>
+
+        <!-- Feature 3: Inline Quick Settings Strip -->
+        <div class="feature-card">
+          <div class="feature-icon-box">⚙️</div>
+          <span class="feature-pill">Thời gian thực</span>
+          <h3 class="feature-title">Inline Quick Settings</h3>
+          <p class="feature-desc">
+            Điều khiển các tính năng cốt lõi của Windows ngay trên thanh tìm kiếm mà không cần mở Settings:
+            Bật/tắt Mobile Hotspot, Tiết kiệm pin (Energy Saver), đổi vị trí Taskbar, chụp màn hình.
+          </p>
+          <ul class="feature-perk-list">
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Bật/tắt Hotspot &amp; Energy Saver 1 click</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Căn giữa hoặc căn trái thanh Taskbar tức thì</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Theo dõi và dọn dẹp các ứng dụng chạy ngầm</li>
+          </ul>
+        </div>
+
+        <!-- Feature 4: Terminal Direct & Web Shortcuts -->
+        <div class="feature-card">
+          <div class="feature-icon-box">💻</div>
+          <span class="feature-pill">Developer Friendly</span>
+          <h3 class="feature-title">Terminal &amp; Web Shortcuts</h3>
+          <p class="feature-desc">
+            Thực thi trực tiếp lệnh Command Prompt / PowerShell với tiền tố <code>&gt;</code> (vd: <code>&gt; ping 8.8.8.8</code>, <code>&gt; code .</code>).
+            Tìm kiếm web siêu nhanh với <code>g</code> (Google), <code>yt</code> (YouTube), <code>gh</code> (GitHub).
+          </p>
+          <ul class="feature-perk-list">
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Chạy lệnh quyền Admin bằng <kbd>Ctrl+Shift+Enter</kbd></li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Điều hướng thư mục trực tiếp: <code>C:\</code>, <code>D:\</code></li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Máy tính số học và chuyển đổi đơn vị tích hợp</li>
+          </ul>
+        </div>
+
+        <!-- Feature 5: Liquid Glass & Fluent UI -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🎨</div>
+          <span class="feature-pill">Đa phong cách</span>
+          <h3 class="feature-title">Liquid Glass &amp; 9 Bảng Màu</h3>
+          <p class="feature-desc">
+            Thiết kế theo ngôn ngữ Windows 11 Fluent 2 Mica kết hợp hiệu ứng khúc xạ kính mờ Liquid Glass sang trọng.
+            Hỗ trợ 9 bảng màu preset độc đáo cùng 24 màu điểm nhấn chuẩn Windows.
+          </p>
+          <ul class="feature-perk-list">
+            <li class="feature-perk-item"><span class="perk-check">✓</span> 9 Theme: Fluent Blue, Yaru, Cyberpunk, Dracula...</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Tùy chỉnh độ mờ kính (Blur) &amp; Độ trong suốt</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Hỗ trợ chuyển đổi giao diện Windows 11 &amp; Linux GNOME</li>
+          </ul>
+        </div>
+
+        <!-- Feature 6: Smart Multi-Monitor -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🖥️</div>
+          <span class="feature-pill">Thông minh</span>
+          <h3 class="feature-title">Đa Màn Hình Theo Con Trỏ</h3>
+          <p class="feature-desc">
+            Khi làm việc với 2 hoặc 3 màn hình, launcher sẽ tự động phát hiện màn hình bạn đang di chuột
+            và xuất hiện ngay tại đó khi nhấn <kbd>Alt + Space</kbd>.
+          </p>
+          <ul class="feature-perk-list">
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Xuất hiện theo con trỏ chuột (Cursor Track)</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Ghi nhớ vị trí kéo thả riêng cho từng màn hình</li>
+            <li class="feature-perk-item"><span class="perk-check">✓</span> Tự động căn giữa màn hình với 1 phím bấm</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       5. SEMANTIC SEARCH DEEP DIVE SHOWCASE
+       ========================================================================== -->
+  <section class="landing-section landing-section-band" id="semantic">
+    <div class="landing-container">
+      <div class="semantic-showcase-box">
+        <div class="semantic-showcase-text">
+          <span class="section-tag">Công Nghệ AI Tiên Tiến</span>
+          <h3>Tìm Tệp Tin Bằng Ngữ Nghĩa Tự Nhiên, Không Cần Nhớ Tên Tệp</h3>
+          <p>
+            Bạn có bao giờ quên tên file báo cáo tài chính mình đã lưu là gì không?
+            Với LAILauncher, thuật toán phân loại ý định (Zero-NPU Intent Classifier) sẽ tự động liên kết ngữ nghĩa câu truy vấn
+            của bạn với các tệp tin liên quan trong ổ đĩa ngay tức khắc.
+          </p>
+
+          <div class="semantic-pill-group">
+            <div class="semantic-chip"><code>pdf:</code> Tài liệu PDF</div>
+            <div class="semantic-chip"><code>doc:</code> Văn bản Word/MD</div>
+            <div class="semantic-chip"><code>sheet:</code> Bảng tính Excel/CSV</div>
+            <div class="semantic-chip"><code>slide:</code> Slide thuyết trình</div>
+            <div class="semantic-chip"><code>img:</code> Hình ảnh &amp; Screenshot</div>
+            <div class="semantic-chip"><code>code:</code> Mã nguồn lập trình</div>
+          </div>
+
+          <a href="#demo" class="btn-primary-cta" style="display:inline-flex;">
+            <span>Thử tìm kiếm ngữ nghĩa ngay ➔</span>
+          </a>
+        </div>
+
+        <div class="comparison-duo">
+          <!-- Traditional Windows Search -->
+          <div class="comparison-card bad">
+            <div class="comparison-card-header">
+              <span>❌ Windows Search Truyền Thống</span>
+              <span>Tìm kiếm từ khóa cứng</span>
+            </div>
+            <div class="comparison-query-box">
+              🔍 "báo cáo tài chính"
+            </div>
+            <div class="comparison-result-item">
+              <span>🚫 Không tìm thấy kết quả nào khớp chính xác</span>
+            </div>
+          </div>
+
+          <!-- LAILauncher Semantic Search -->
+          <div class="comparison-card good">
+            <div class="comparison-card-header">
+              <span>⚡ LAILauncher Zero-NPU Semantic Search</span>
+              <span>Hiểu ngữ nghĩa 98%</span>
+            </div>
+            <div class="comparison-query-box">
+              🧠 "báo cáo tài chính"
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div class="comparison-result-item comparison-result-match">
+                <span>📊</span>
+                <strong>Q3_Revenue_Statement_2026.xlsx</strong>
+                <span class="semantic-match-badge">Khớp ngữ nghĩa</span>
+              </div>
+              <div class="comparison-result-item comparison-result-match">
+                <span>📑</span>
+                <strong>Bao_Cao_Kiem_Toan_Nam.pdf</strong>
+                <span class="semantic-match-badge">Khớp ngữ nghĩa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       6. COMPARISON MATRIX
+       ========================================================================== -->
+  <section class="landing-section" id="comparison">
+    <div class="landing-container">
+      <div class="section-header">
+        <span class="section-tag">So Sánh Trực Quan</span>
+        <h2 class="section-title">Bảng So Sánh Với Các Công Cụ Khác</h2>
+        <p class="section-subtitle">
+          Xem sự khác biệt rõ rệt giữa LAILauncher so với Windows Search mặc định, Flow Launcher và Raycast.
+        </p>
+      </div>
+
+      <div class="comparison-table-wrapper">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Tính Năng / Tiêu Chí</th>
+              <th class="highlight-col">⚡ LAILauncher</th>
+              <th>Windows 11 Search</th>
+              <th>Flow Launcher</th>
+              <th>Raycast (macOS)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Tốc độ mở phím tắt</strong></td>
+              <td class="highlight-col"><span class="check-yes">⚡ &lt; 100ms</span></td>
+              <td><span class="check-no">⚠️ 400 - 900ms</span></td>
+              <td><span class="check-yes">&lt; 120ms</span></td>
+              <td><span class="check-yes">&lt; 100ms</span></td>
+            </tr>
+            <tr>
+              <td><strong>AI Cục Bộ (Offline 100%)</strong></td>
+              <td class="highlight-col"><span class="check-yes">✓ Có (Ollama &amp; ONNX)</span></td>
+              <td><span class="check-no">✗ Bắt buộc Internet</span></td>
+              <td><span class="check-warn">⚠️ Cần cài Plugin phụ</span></td>
+              <td><span class="check-warn">⚠️ Cloud AI có phí ($8/tháng)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Tìm kiếm ngữ nghĩa không cần NPU</strong></td>
+              <td class="highlight-col"><span class="check-yes">✓ Chạy trên mọi CPU</span></td>
+              <td><span class="check-no">✗ Bắt buộc Copilot+ PC</span></td>
+              <td><span class="check-no">✗ Không hỗ trợ</span></td>
+              <td><span class="check-no">✗ Không hỗ trợ</span></td>
+            </tr>
+            <tr>
+              <td><strong>Thanh Inline Quick Settings</strong></td>
+              <td class="highlight-col"><span class="check-yes">✓ Tích hợp sẵn trực tiếp</span></td>
+              <td><span class="check-no">✗ Phải mở Action Center</span></td>
+              <td><span class="check-no">✗ Không có</span></td>
+              <td><span class="check-warn">⚠️ Cần cài Extension</span></td>
+            </tr>
+            <tr>
+              <td><strong>Giao diện Liquid Glass &amp; 9 Themes</strong></td>
+              <td class="highlight-col"><span class="check-yes">✓ 9 Presets + 24 Accents</span></td>
+              <td><span class="check-no">✗ Cố định</span></td>
+              <td><span class="check-warn">⚠️ Theme cơ bản</span></td>
+              <td><span class="check-yes">✓ Giao diện Mac</span></td>
+            </tr>
+            <tr>
+              <td><strong>Mức tiêu thụ RAM chạy ngầm</strong></td>
+              <td class="highlight-col"><span class="check-yes">🪶 &lt; 45 MB</span></td>
+              <td><span class="check-no">⚠️ 150 - 350 MB</span></td>
+              <td><span class="check-yes">~50 MB</span></td>
+              <td><span class="check-yes">~60 MB</span></td>
+            </tr>
+            <tr>
+              <td><strong>Đa màn hình theo con trỏ chuột</strong></td>
+              <td class="highlight-col"><span class="check-yes">✓ Tự động nhận diện</span></td>
+              <td><span class="check-no">✗ Chỉ mở trên Taskbar chính</span></td>
+              <td><span class="check-warn">⚠️ Cấu hình thủ công</span></td>
+              <td><span class="check-yes">✓ Hỗ trợ</span></td>
+            </tr>
+            <tr>
+              <td><strong>Giá thành &amp; Giấy phép</strong></td>
+              <td class="highlight-col"><span class="check-yes">🎉 Miễn phí 100% (MIT)</span></td>
+              <td><span class="check-warn">⚠️ Chứa quảng cáo Bing</span></td>
+              <td><span class="check-yes">Miễn phí (MIT)</span></td>
+              <td><span class="check-warn">⚠️ Tính phí cho tính năng AI</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       7. DOWNLOAD HUB SECTION
+       ========================================================================== -->
+  <section class="section-download" id="download">
+    <div class="landing-container">
+      <div class="section-header">
+        <span class="section-tag">Tải Về &amp; Cài Đặt</span>
+        <h2 class="section-title">Tải Về LAILauncher Ngay Hôm Nay</h2>
+        <p class="section-subtitle">
+          Lựa chọn phiên bản phù hợp nhất với máy tính của bạn. Hoàn toàn miễn phí, an toàn và sạch mã độc.
+        </p>
+      </div>
+
+      <div class="download-cards-grid">
+        <!-- Card 1: Portable (.zip) -->
+        <div class="dl-card featured">
+          <span class="dl-badge-top">⭐ KHUYÊN DÙNG • CHẠY NGAY</span>
+          <div class="dl-icon-wrap">📦</div>
+          <h3 class="dl-title">Bản Portable (.zip)</h3>
+          <div class="dl-meta">Phiên bản v2.4.0 • Dung lượng ~166 MB</div>
+          <p class="dl-desc">
+            Bao gồm đầy đủ các mô hình ONNX, runtime .NET 8 và thư viện cần thiết.
+            Chỉ cần giải nén và nhấp đúp vào <code>Launcher.App.exe</code> để chạy. Không cần quyền Admin, không ghi Registry.
+          </p>
+          <a href="./downloads/LAILauncher-v2.4.0-portable.zip" download class="dl-btn primary">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <span>Tải Bản Portable (.zip)</span>
+          </a>
+        </div>
+
+        <!-- Card 2: Standalone Light (.exe) -->
+        <div class="dl-card">
+          <div class="dl-icon-wrap">⚡</div>
+          <h3 class="dl-title">Bản Standalone (.exe)</h3>
+          <div class="dl-meta">Phiên bản v2.4.0 • Siêu nhẹ ~150 KB</div>
+          <p class="dl-desc">
+            Tập tin thực thi trực tiếp siêu nhẹ dành cho máy đã cài sẵn .NET 8 Desktop Runtime.
+            Tải về và chạy tức thì trong 1 giây mà không tốn dung lượng ổ đĩa.
+          </p>
+          <a href="./downloads/LAILauncher-v2.4.0-standalone.exe" download class="dl-btn outline">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <span>Tải Bản Standalone (.exe)</span>
+          </a>
+        </div>
+
+        <!-- Card 3: CLI Package Manager -->
+        <div class="dl-card">
+          <div class="dl-icon-wrap">⌨️</div>
+          <h3 class="dl-title">Cài Bằng Dòng Lệnh (CLI)</h3>
+          <div class="dl-meta">Dành cho Developers &amp; Power Users</div>
+          <p class="dl-desc">
+            Cài đặt và tự động cập nhật dễ dàng thông qua Windows Package Manager (winget) hoặc .NET Global Tools.
+          </p>
+          
+          <div class="cli-code-box">
+            <span class="cli-code-text">winget install LAILauncher</span>
+            <button type="button" class="cli-copy-btn" data-copy="winget install LAILauncher.LocalAI" title="Sao chép lệnh">📋</button>
+          </div>
+
+          <div class="cli-code-box" style="margin-top: 8px;">
+            <span class="cli-code-text">dotnet tool install -g lailauncher</span>
+            <button type="button" class="cli-copy-btn" data-copy="dotnet tool install --global LAILauncher" title="Sao chép lệnh">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security & Requirements Info -->
+      <div class="download-footer-info">
+        <div class="checksum-info">
+          <span class="checksum-label">🔒 SHA-256 Checksum (Xác thực an toàn):</span>
+          <div class="checksum-row">
+            <span class="checksum-val">70A4BEF8C8732B357D6741E4EAFEFAEC2913AD704534616B67A7A83A60A4A5AF</span>
+            <button type="button" class="checksum-copy-btn" data-copy="70A4BEF8C8732B357D6741E4EAFEFAEC2913AD704534616B67A7A83A60A4A5AF" title="Sao chép SHA-256">📋 Chép</button>
+          </div>
+        </div>
+
+        <div class="sysreq-pills">
+          <div class="sysreq-chip">🪟 Windows 10/11 (64-bit)</div>
+          <div class="sysreq-chip">⚡ RAM tối thiểu 4GB</div>
+          <div class="sysreq-chip">⚙️ CPU 2 nhân trở lên</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       8. QUICK START GUIDE (3 STEPS)
+       ========================================================================== -->
+  <section class="landing-section landing-section-band">
+    <div class="landing-container">
+      <div class="section-header">
+        <span class="section-tag">Bắt Đầu Nhanh</span>
+        <h2 class="section-title">3 Bước Để Sử Dụng LAILauncher</h2>
+        <p class="section-subtitle">Đơn giản, tiện lợi, bạn có thể bắt đầu sử dụng chỉ trong vòng 60 giây.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">⬇️</div>
+          <h3 class="step-title">Tải Về &amp; Giải Nén</h3>
+          <p class="step-desc">
+            Tải tệp <code>LAILauncher-v2.4.0-portable.zip</code> về máy và giải nén vào bất kỳ thư mục nào bạn muốn (ví dụ <code>D:\Tools\LAILauncher</code>).
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">🚀</div>
+          <h3 class="step-title">Khởi Động Ứng Dụng</h3>
+          <p class="step-desc">
+            Nhấp đúp chuột vào file <code>Launcher.App.exe</code>. Biểu tượng tia sét nhỏ sẽ xuất hiện ngay tại khay hệ thống (System Tray).
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">✨</div>
+          <h3 class="step-title">Bấm Phím Alt + Space</h3>
+          <p class="step-desc">
+            Bất cứ khi nào cần tìm kiếm, tính toán hoặc ra lệnh cho AI, chỉ cần nhấn <kbd>Alt + Space</kbd>. Cửa sổ Liquid Glass sẽ xuất hiện ngay lập tức!
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       9. SHORTCUTS CHEAT SHEET
+       ========================================================================== -->
+  <section class="landing-section" id="shortcuts">
+    <div class="landing-container">
+      <div class="section-header">
+        <span class="section-tag">Phím Tắt Tiện Dụng</span>
+        <h2 class="section-title">Bảng Phím Tắt Thao Tác Nhanh</h2>
+        <p class="section-subtitle">Làm chủ mọi thao tác trên bàn phím mà không cần rời tay khỏi chuột.</p>
+      </div>
+
+      <div class="shortcuts-grid">
+        <div class="shortcut-row">
+          <span class="shortcut-label">Mở hoặc Ẩn thanh Launcher</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Alt</span> + <span class="shortcut-key">Space</span></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Mở / Thực thi kết quả đang chọn</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Enter</span></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Chạy với quyền Quản trị viên (Admin)</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Ctrl</span> + <span class="shortcut-key">Shift</span> + <span class="shortcut-key">Enter</span></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Mở thư mục chứa tệp tin trong Explorer</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Ctrl</span> + <span class="shortcut-key">Enter</span></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Sao chép đường dẫn tệp vào Clipboard</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Ctrl</span> + <span class="shortcut-key">C</span></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Tóm tắt nội dung tài liệu bằng AI</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Ctrl</span> + <span class="shortcut-key">Alt</span> + <span class="shortcut-key">S</span></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Mở Menu Tác vụ chi tiết (Action Flyout)</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Tab</span></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Đóng hoặc xóa nhanh ô tìm kiếm</span>
+          <span class="shortcut-kbd"><span class="shortcut-key">Esc</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       10. FAQ ACCORDION SECTION
+       ========================================================================== -->
+  <section class="landing-section" id="faq">
+    <div class="landing-container">
+      <div class="section-header">
+        <span class="section-tag">Giải Đáp Thắc Mắc</span>
+        <h2 class="section-title">Câu Hỏi Thường Gặp (FAQ)</h2>
+        <p class="section-subtitle">Những thắc mắc phổ biến nhất của người dùng về LAILauncher.</p>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item active">
+          <button type="button" class="faq-trigger">
+            <span>LAILauncher có thực sự miễn phí và an toàn không?</span>
+            <span class="faq-icon-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Hoàn toàn miễn phí 100%! Dự án được phát triển theo giấy phép mã nguồn mở MIT License. Không có quảng cáo, không có gói đăng ký ngầm, và hoàn toàn không gửi bất kỳ dữ liệu cá nhân nào của bạn lên mạng internet.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-trigger">
+            <span>Máy tính tôi không có card màn hình rời (GPU) hay chip NPU thì có dùng được không?</span>
+            <span class="faq-icon-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Được hoàn toàn! Kiến trúc Zero-NPU của LAILauncher được tối ưu hóa đặc biệt với ONNX Runtime và lượng tử hóa (Quantization) siêu nhẹ, cho phép tìm kiếm ngữ nghĩa và phân loại ý định mượt mà trên mọi CPU Intel/AMD thông thường chỉ trong vài mili-giây.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-trigger">
+            <span>Làm thế nào để kết nối LAILauncher với Ollama trên máy tính?</span>
+            <span class="faq-icon-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Rất đơn giản! Chỉ cần bạn đã cài đặt Ollama (tại ollama.com) và chạy mô hình (ví dụ <code>ollama run llama3</code> hoặc <code>ollama run qwen2.5</code>). LAILauncher sẽ tự động kết nối qua cổng mặc định <code>http://localhost:11434</code> để thực hiện các tác vụ tóm tắt và chat với tài liệu.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-trigger">
+            <span>Tôi có thể đổi phím tắt Alt + Space thành phím tắt khác không?</span>
+            <span class="faq-icon-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Có! Bạn có thể nhấn vào biểu tượng bánh răng Cài đặt (Settings) trên thanh Launcher hoặc click chuột phải vào biểu tượng khay Tray để tùy chỉnh phím nóng theo ý thích (ví dụ Ctrl + Space, Win + Space, hoặc phím CapsLock).
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-trigger">
+            <span>LAILauncher có thể tự khởi động cùng Windows không?</span>
+            <span class="faq-icon-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Có! Bạn chỉ cần vào mục Cài đặt &gt; Chung và bật tùy chọn "Khởi động cùng Windows". Ứng dụng sẽ tự động thu nhỏ xuống khay hệ thống khi bạn bật máy tính, sẵn sàng phục vụ bất cứ lúc nào bạn nhấn phím tắt.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       11. FOOTER
+       ========================================================================== -->
+  <footer class="landing-footer">
+    <div class="landing-container">
+      <div class="footer-top">
+        <div>
+          <a href="#" class="nav-brand">
+            <div class="nav-brand-logo">⚡</div>
+            <span>LAILauncher</span>
+          </a>
+          <p class="footer-brand-desc">
+            Ứng dụng tìm kiếm siêu tốc và trợ lý AI cục bộ cho Windows. Nhanh hơn, thông minh hơn, hoàn toàn offline và tôn trọng quyền riêng tư của bạn.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Sản Phẩm</div>
+          <ul class="footer-links">
+            <li><a href="#features" class="footer-link">Tính năng nổi bật</a></li>
+            <li><a href="#semantic" class="footer-link">Zero-NPU Semantic Search</a></li>
+            <li><a href="#demo" class="footer-link">Trải nghiệm Live Demo</a></li>
+            <li><a href="./studio.html" class="footer-link">OS Studio Sandbox</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Tải Về &amp; Hỗ Trợ</div>
+          <ul class="footer-links">
+            <li><a href="#download" class="footer-link">Bản Portable (.zip)</a></li>
+            <li><a href="#download" class="footer-link">Bản Standalone (.exe)</a></li>
+            <li><a href="#shortcuts" class="footer-link">Bảng phím tắt</a></li>
+            <li><a href="#faq" class="footer-link">Câu hỏi thường gặp</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Cộng Đồng</div>
+          <ul class="footer-links">
+            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub Repository</a></li>
+            <li><a href="#docs" class="footer-link">Tài liệu kỹ thuật</a></li>
+            <li><a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="footer-link">Discord Community</a></li>
+            <li><a href="LICENSE" class="footer-link">Giấy phép MIT</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 LAILauncher Team • Phát triển với mã nguồn mở theo giấy phép MIT.</div>
+        <div style="display:flex; gap:16px;">
+          <span>Windows-native</span>
+          <span>•</span>
+          <span>Offline-first</span>
+          <span>•</span>
+          <span>High Performance</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Settings & Theme Customizer Modal (Authentic Windows 11 Fluent Settings Window) -->
+  <div class="settings-overlay" id="settings-overlay">
+    <div class="settings-modal win11-settings-window" role="dialog" aria-modal="true" aria-label="Cài đặt Windows 11">
+      
+      <!-- 1. Window Title Bar (Windows 11 Mica / Acrylic Titlebar) -->
+      <div class="win-settings-titlebar">
+        <div class="win-titlebar-left">
+          <svg class="win-settings-logo" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+          <span class="win-titlebar-title">Cài đặt</span>
+        </div>
+        <div class="win-caption-controls">
+          <button type="button" class="win-caption-btn" id="settings-min-btn" title="Thu nhỏ">─</button>
+          <button type="button" class="win-caption-btn" id="settings-max-btn" title="Phóng to">◻</button>
+          <button type="button" class="win-caption-btn win-caption-close" id="settings-close-btn" title="Đóng (Esc)">✕</button>
+        </div>
+      </div>
+
+      <!-- 2. Window Body (Sidebar Rail + Content Pane) -->
+      <div class="win-settings-body">
+        <!-- Left Sidebar Navigation Rail -->
+        <aside class="win-settings-sidebar">
+          <!-- User / Device Profile Card -->
+          <div class="win-profile-card">
+            <div class="win-profile-avatar">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
+              </svg>
+            </div>
+            <div class="win-profile-info">
+              <div class="win-profile-name">LAILauncher PC</div>
+              <div class="win-profile-sub">Windows 11 • Local AI Engine</div>
+              <span class="win-profile-status-badge">Đang hoạt động</span>
+            </div>
+          </div>
+
+          <!-- Search Box -->
+          <div class="win-settings-search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="win-settings-search" class="win-settings-search-input" placeholder="Tìm kiếm một cài đặt..." autocomplete="off" spellcheck="false" />
+          </div>
+
+          <!-- Navigation Category List -->
+          <nav class="win-settings-nav" aria-label="Danh mục cài đặt">
+            <button type="button" class="win-nav-item active" data-tab="personalization">
+              <div class="win-nav-indicator"></div>
+              <span class="win-nav-icon">🎨</span>
+              <span class="win-nav-label">Cá nhân hóa</span>
+            </button>
+            
+            <button type="button" class="win-nav-item" data-tab="system">
+              <div class="win-nav-indicator"></div>
+              <span class="win-nav-icon">🖥️</span>
+              <span class="win-nav-label">Màn hình &amp; Hệ thống</span>
+            </button>
+
+            <button type="button" class="win-nav-item" data-tab="shortcuts">
+              <div class="win-nav-indicator"></div>
+              <span class="win-nav-icon">⌨️</span>
+              <span class="win-nav-label">Phím tắt &amp; Thao tác</span>
+            </button>
+
+            <button type="button" class="win-nav-item" data-tab="ai">
+              <div class="win-nav-indicator"></div>
+              <span class="win-nav-icon">🧠</span>
+              <span class="win-nav-label">AI Cục bộ (Ollama)</span>
+            </button>
+
+            <button type="button" class="win-nav-item" data-tab="startup">
+              <div class="win-nav-indicator"></div>
+              <span class="win-nav-icon">🚀</span>
+              <span class="win-nav-label">Khởi động &amp; Khay Tray</span>
+            </button>
+
+            <button type="button" class="win-nav-item" data-tab="about">
+              <div class="win-nav-indicator"></div>
+              <span class="win-nav-icon">ℹ️</span>
+              <span class="win-nav-label">Thông tin hệ thống</span>
+            </button>
+          </nav>
+        </aside>
+
+        <!-- Right Content View Area -->
+        <main class="win-settings-content" id="win-settings-content">
+
+          <!-- ================= TAB 1: CÁ NHÂN HÓA (PERSONALIZATION) ================= -->
+          <section class="win-tab-pane active" id="tab-personalization">
+            <!-- Page Header & Breadcrumb -->
+            <div class="win-page-header">
+              <div class="win-breadcrumb">Trang chủ &gt; Cá nhân hóa</div>
+              <h2 class="win-page-title">Cá nhân hóa</h2>
+              <p class="win-page-desc">Chủ đề giao diện, bảng màu điểm nhấn Windows 11, hiệu ứng kính mờ Mica &amp; Acrylic</p>
+            </div>
+
+            <!-- Hero Personalization Preview Banner -->
+            <div class="win-hero-card">
+              <div class="win-hero-preview">
+                <div class="win-hero-mini-launcher" id="win-hero-mini-launcher">
+                  <span class="mini-chip">LAI</span>
+                  <span class="mini-text">Tìm kiếm ứng dụng hoặc tệp tin...</span>
+                  <span class="mini-badge">Alt + Space</span>
+                </div>
+              </div>
+              <div class="win-hero-info">
+                <div class="win-hero-title" id="win-hero-theme-title">Theme: Windows 11 Fluent</div>
+                <div class="win-hero-subtitle">Giao diện hiện đại tối ưu cho trải nghiệm người dùng</div>
+                <div class="win-hero-actions">
+                  <label class="win-toggle-wrap" title="Bật/Tắt chế độ tối">
+                    <span class="win-toggle-text">Nền tối (Dark Glass)</span>
+                    <input type="checkbox" id="win-toggle-mode" class="win-toggle-input" checked />
+                    <span class="win-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 1: Theme Presets -->
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Chủ đề giao diện (Theme Presets)</div>
+                <div class="win-group-sub">Chọn 1 trong 9 bộ theme phong cách Liquid Glass độc quyền</div>
+              </div>
+              <div class="win-settings-card no-padding">
+                <div class="theme-swatch-grid" id="theme-swatch-grid"></div>
+              </div>
+            </div>
+
+            <!-- Group 2: Accent Colors -->
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Màu sắc điểm nhấn Windows (Accent Color)</div>
+                <div class="win-group-sub">24 sắc màu chuẩn xác theo Windows 11 Settings kết hợp bộ chọn mã màu HEX tùy biến</div>
+              </div>
+              <div class="win-settings-card">
+                <div class="accent-chips-palette" id="accent-chips-palette"></div>
+                
+                <div class="custom-accent-row">
+                  <div class="accent-preview-swatch" id="custom-accent-preview" title="Xem trước màu Accent"></div>
+                  <input type="text" id="custom-accent-hex" class="custom-hex-input" placeholder="#3B82F6" maxlength="9" spellcheck="false" />
+                  <button type="button" class="win-btn-accent" id="btn-apply-accent">Áp dụng</button>
+                  <button type="button" class="win-btn-secondary" id="btn-reset-accent">Mặc định Theme</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 3: Glass Transparency & Sliders -->
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Hiệu ứng trong suốt &amp; Khúc xạ kính (Transparency &amp; Blur)</div>
+                <div class="win-group-sub">Tùy biến độ sâu của lớp kính mờ Liquid Glass, Acrylic và Mica</div>
+              </div>
+              
+              <!-- Transparency Toggle Card -->
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">✨</div>
+                  <div>
+                    <div class="win-row-title">Hiệu ứng trong suốt (Transparency effects)</div>
+                    <div class="win-row-sub">Làm mờ nền và tạo hiệu ứng chiều sâu cho thanh tìm kiếm và cửa sổ</div>
+                  </div>
+                </div>
+                <label class="win-toggle-wrap">
+                  <input type="checkbox" id="win-toggle-transparency" class="win-toggle-input" checked />
+                  <span class="win-toggle-slider"></span>
+                </label>
+              </div>
+
+              <!-- Slider 1: Opacity -->
+              <div class="win-settings-card win-slider-card">
+                <div class="win-slider-header">
+                  <div class="win-row-left">
+                    <div class="win-row-icon">💧</div>
+                    <div>
+                      <div class="win-row-title">Độ trong suốt kính (Glass Opacity)</div>
+                      <div class="win-row-sub">Điều chỉnh độ đặc hoặc trong của nền giao diện</div>
+                    </div>
+                  </div>
+                  <span class="win-badge-val" id="label-opacity-val">82%</span>
+                </div>
+                <input type="range" class="custom-range-slider win-fluent-slider" id="slider-glass-opacity" min="30" max="95" value="82" />
+              </div>
+
+              <!-- Slider 2: Blur -->
+              <div class="win-settings-card win-slider-card">
+                <div class="win-slider-header">
+                  <div class="win-row-left">
+                    <div class="win-row-icon">🌫️</div>
+                    <div>
+                      <div class="win-row-title">Độ mờ hậu cảnh (Backdrop Blur Strength)</div>
+                      <div class="win-row-sub">Độ khuếch tán ánh sáng các nội dung phía sau bề mặt kính</div>
+                    </div>
+                  </div>
+                  <span class="win-badge-val" id="label-blur-val">28px</span>
+                </div>
+                <input type="range" class="custom-range-slider win-fluent-slider" id="slider-glass-blur" min="8" max="45" value="28" />
+              </div>
+            </div>
+
+            <!-- Group 4: Wallpaper -->
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Hình nền môi trường thử nghiệm (Desktop Wallpapers)</div>
+                <div class="win-group-sub">Kiểm tra khả năng khúc xạ ánh sáng và độ tương phản chữ trên nền thực tế</div>
+              </div>
+              <div class="win-settings-card no-padding">
+                <div class="wallpaper-grid" id="wallpaper-grid"></div>
+              </div>
+            </div>
+          </section>
+
+
+          <!-- ================= TAB 2: MÀN HÌNH & HỆ THỐNG (SYSTEM & DISPLAY) ================= -->
+          <section class="win-tab-pane" id="tab-system">
+            <div class="win-page-header">
+              <div class="win-breadcrumb">Trang chủ &gt; Hệ thống &gt; Màn hình</div>
+              <h2 class="win-page-title">Màn hình &amp; Vị trí hiển thị</h2>
+              <p class="win-page-desc">Tùy chọn hiển thị đa màn hình, căn chỉnh vị trí xuất hiện của thanh tìm kiếm</p>
+            </div>
+
+            <!-- Multi-Monitor Selection -->
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Vị trí màn hình xuất hiện khi gọi phím tắt (Alt + Space)</div>
+                <div class="win-group-sub">Tự động điều hướng hiển thị tới màn hình làm việc tối ưu</div>
+              </div>
+              <div class="monitor-mode-grid" id="monitor-mode-grid">
+                <button type="button" class="monitor-mode-card active" data-mode="cursor">
+                  <div class="mon-card-header">
+                    <span class="mon-icon">🖱️</span>
+                    <span class="mon-title">Theo con trỏ chuột</span>
+                    <span class="mon-badge">Khuyên dùng</span>
+                  </div>
+                  <div class="mon-desc">Tự động xuất hiện ngay trên màn hình bạn đang di chuột làm việc</div>
+                </button>
+                <button type="button" class="monitor-mode-card" data-mode="primary">
+                  <div class="mon-card-header">
+                    <span class="mon-icon">🌟</span>
+                    <span class="mon-title">Màn hình chính Windows</span>
+                  </div>
+                  <div class="mon-desc">Luôn cố định trên màn hình chính mặc định của Windows</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Alignment & Spacing -->
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Căn chỉnh vị trí dọc (Vertical Placement)</div>
+                <div class="win-group-sub">Vị trí neo thanh tìm kiếm trên màn hình</div>
+              </div>
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">📐</div>
+                  <div>
+                    <div class="win-row-title">Vị trí thanh Launcher</div>
+                    <div class="win-row-sub">Khoảng cách tương đối so với cạnh trên của màn hình</div>
+                  </div>
+                </div>
+                <select class="win-select" id="win-select-placement">
+                  <option value="center">Chính giữa màn hình (Center • Mặc định)</option>
+                  <option value="top-20">20% từ cạnh trên (Kiểu macOS Spotlight)</option>
+                  <option value="top-15">15% từ cạnh trên (Gọn gàng)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Animation & Performance -->
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Hiệu năng &amp; Chuyển động (Animations)</div>
+                <div class="win-group-sub">Tốc độ mở rộng kết quả và độ mượt khi gõ phím</div>
+              </div>
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">⚡</div>
+                  <div>
+                    <div class="win-row-title">Tốc độ chuyển cảnh mượt mà (Fluent Motion)</div>
+                    <div class="win-row-sub">Thời gian trễ khi bung danh sách gợi ý tìm kiếm</div>
+                  </div>
+                </div>
+                <select class="win-select" id="win-select-animation">
+                  <option value="fast">Siêu tốc 120ms (Tối ưu phản hồi)</option>
+                  <option value="smooth" selected>Mượt mà 240ms (Chuẩn Windows 11)</option>
+                  <option value="off">Tắt hoạt ảnh (Tiết kiệm GPU)</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+
+          <!-- ================= TAB 3: PHÍM TẮT & THAO TÁC (SHORTCUTS) ================= -->
+          <section class="win-tab-pane" id="tab-shortcuts">
+            <div class="win-page-header">
+              <div class="win-breadcrumb">Trang chủ &gt; Phím tắt &amp; Thao tác</div>
+              <h2 class="win-page-title">Phím tắt toàn cục (Global Hotkeys)</h2>
+              <p class="win-page-desc">Gọi nhanh LAILauncher và kích hoạt tức thì các chế độ tìm kiếm chuyên biệt</p>
+            </div>
+
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Phím tắt kích hoạt chính</div>
+                <div class="win-group-sub">Đăng ký phím tắt toàn hệ thống với Windows Hook API</div>
+              </div>
+              
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🚀</div>
+                  <div>
+                    <div class="win-row-title">Mở / Đóng LAILauncher</div>
+                    <div class="win-row-sub">Phím tắt mặc định toàn cục, mở tức thì &lt;100ms</div>
+                  </div>
+                </div>
+                <div class="win-shortcut-badge">
+                  <kbd class="win-kbd">Alt</kbd>
+                  <span class="win-kbd-plus">+</span>
+                  <kbd class="win-kbd">Space</kbd>
+                </div>
+              </div>
+            </div>
+
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Ký tự tiền tố tìm kiếm nhanh (Prefix Modifiers)</div>
+                <div class="win-group-sub">Gõ ký tự đầu tiên để kích hoạt ngay chức năng mong muốn</div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">💻</div>
+                  <div>
+                    <div class="win-row-title">Terminal / Chạy lệnh Shell</div>
+                    <div class="win-row-sub">Ví dụ: <code>~ ping google.com</code> hoặc <code>~ ipconfig</code></div>
+                  </div>
+                </div>
+                <div class="win-shortcut-badge">
+                  <kbd class="win-kbd">~</kbd>
+                </div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">✨</div>
+                  <div>
+                    <div class="win-row-title">Hỏi đáp AI Cục bộ (Ollama)</div>
+                    <div class="win-row-sub">Ví dụ: <code>@ tóm tắt bài viết này</code> hoặc <code>@ viết email xin nghỉ phép</code></div>
+                  </div>
+                </div>
+                <div class="win-shortcut-badge">
+                  <kbd class="win-kbd">@</kbd>
+                </div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🧮</div>
+                  <div>
+                    <div class="win-row-title">Máy tính số học &amp; Lượng giác</div>
+                    <div class="win-row-sub">Ví dụ: <code>= 1500 * 25 + sin(30)</code> hoặc <code>= sqrt(144)</code></div>
+                  </div>
+                </div>
+                <div class="win-shortcut-badge">
+                  <kbd class="win-kbd">=</kbd>
+                </div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">⚙️</div>
+                  <div>
+                    <div class="win-row-title">Quản lý tiến trình &amp; Lệnh hệ thống</div>
+                    <div class="win-row-sub">Ví dụ: <code>&gt; kill chrome</code> hoặc <code>&gt; restart audio</code></div>
+                  </div>
+                </div>
+                <div class="win-shortcut-badge">
+                  <kbd class="win-kbd">&gt;</kbd>
+                </div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🌐</div>
+                  <div>
+                    <div class="win-row-title">Tìm kiếm Web bảo mật (DuckDuckGo / Google)</div>
+                    <div class="win-row-sub">Ví dụ: <code>? tin tức thời sự hôm nay</code></div>
+                  </div>
+                </div>
+                <div class="win-shortcut-badge">
+                  <kbd class="win-kbd">?</kbd>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+          <!-- ================= TAB 4: AI CỤC BỘ (LOCAL AI) ================= -->
+          <section class="win-tab-pane" id="tab-ai">
+            <div class="win-page-header">
+              <div class="win-breadcrumb">Trang chủ &gt; Trí tuệ nhân tạo &gt; AI Cục bộ</div>
+              <h2 class="win-page-title">Mô hình AI Cục bộ (Local AI Engine)</h2>
+              <p class="win-page-desc">Tích hợp mô hình ngôn ngữ lớn (Ollama) bảo vệ quyền riêng tư 100% offline</p>
+            </div>
+
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Trạng thái máy chủ Ollama</div>
+                <div class="win-group-sub">Kết nối API cục bộ không gửi dữ liệu ra ngoài Internet</div>
+              </div>
+              
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🟢</div>
+                  <div>
+                    <div class="win-row-title">Máy chủ Ollama Cục bộ (localhost:11434)</div>
+                    <div class="win-row-sub">Trạng thái: Đang kết nối • Phản hồi &lt;25ms • Bộ nhớ: 1.2 GB RAM</div>
+                  </div>
+                </div>
+                <button type="button" class="win-btn-secondary" id="btn-check-ollama">Kiểm tra kết nối</button>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🤖</div>
+                  <div>
+                    <div class="win-row-title">Mô hình ngôn ngữ mặc định (Active LLM)</div>
+                    <div class="win-row-sub">Lựa chọn mô hình đã tải về trên máy</div>
+                  </div>
+                </div>
+                <select class="win-select" id="win-select-model">
+                  <option value="llama3.2:1b" selected>Llama 3.2 1B (Khuyên dùng • Nhanh &amp; Tiết kiệm RAM)</option>
+                  <option value="qwen2.5:1.5b">Qwen 2.5 1.5B (Hiểu tiếng Việt rất tốt)</option>
+                  <option value="gemma2:2b">Gemma 2 2B (Google DeepMind)</option>
+                  <option value="mistral:7b">Mistral 7B (Chất lượng cao)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Tìm kiếm ngữ nghĩa (Semantic Vector Search)</div>
+                <div class="win-group-sub">Sử dụng mô hình ONNX nhúng cục bộ để tìm tệp và ý định chính xác</div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🧬</div>
+                  <div>
+                    <div class="win-row-title">Bật tìm kiếm ngữ nghĩa tiếng Việt (ONNX Semantic)</div>
+                    <div class="win-row-sub">Tìm file bằng mô tả tự nhiên ngay cả khi không nhớ chính xác tên file</div>
+                  </div>
+                </div>
+                <label class="win-toggle-wrap">
+                  <input type="checkbox" id="win-toggle-semantic" class="win-toggle-input" checked />
+                  <span class="win-toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">⚡</div>
+                  <div>
+                    <div class="win-row-title">Tự động khởi động tiến trình Ollama</div>
+                    <div class="win-row-sub">Khởi chạy dịch vụ Ollama nền khi LAILauncher mở</div>
+                  </div>
+                </div>
+                <label class="win-toggle-wrap">
+                  <input type="checkbox" id="win-toggle-ollama-auto" class="win-toggle-input" checked />
+                  <span class="win-toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+
+          <!-- ================= TAB 5: KHỞI ĐỘNG & KHAY HỆ THỐNG (STARTUP) ================= -->
+          <section class="win-tab-pane" id="tab-startup">
+            <div class="win-page-header">
+              <div class="win-breadcrumb">Trang chủ &gt; Hệ thống &gt; Khởi động</div>
+              <h2 class="win-page-title">Khởi động &amp; Khay hệ thống</h2>
+              <p class="win-page-desc">Thiết lập tự khởi động cùng Windows và tối ưu hóa tài nguyên phần cứng</p>
+            </div>
+
+            <div class="win-card-group">
+              <div class="win-group-header">
+                <div class="win-group-title">Tự động vận hành cùng Windows</div>
+                <div class="win-group-sub">Đảm bảo launcher luôn sẵn sàng phục vụ chỉ sau một tổ hợp phím</div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🪟</div>
+                  <div>
+                    <div class="win-row-title">Khởi động cùng Windows (Run on Startup)</div>
+                    <div class="win-row-sub">Tác động khởi động: Cực thấp (&lt; 15ms) • Không làm chậm máy</div>
+                  </div>
+                </div>
+                <label class="win-toggle-wrap">
+                  <input type="checkbox" id="win-toggle-startup" class="win-toggle-input" checked />
+                  <span class="win-toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">📥</div>
+                  <div>
+                    <div class="win-row-title">Thu nhỏ xuống Khay hệ thống (System Tray)</div>
+                    <div class="win-row-sub">Giữ ứng dụng chạy ngầm và hiển thị icon tia sét ⚡ ở góc màn hình</div>
+                  </div>
+                </div>
+                <label class="win-toggle-wrap">
+                  <input type="checkbox" id="win-toggle-tray" class="win-toggle-input" checked />
+                  <span class="win-toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🍃</div>
+                  <div>
+                    <div class="win-row-title">Chế độ ngủ tiết kiệm RAM khi nhàn rỗi</div>
+                    <div class="win-row-sub">Tự động xả cache RAM xuống &lt; 35 MB sau 5 phút không sử dụng</div>
+                  </div>
+                </div>
+                <label class="win-toggle-wrap">
+                  <input type="checkbox" id="win-toggle-eco" class="win-toggle-input" checked />
+                  <span class="win-toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+
+          <!-- ================= TAB 6: THÔNG TIN HỆ THỐNG (ABOUT) ================= -->
+          <section class="win-tab-pane" id="tab-about">
+            <div class="win-page-header">
+              <div class="win-breadcrumb">Trang chủ &gt; Hệ thống &gt; Giới thiệu</div>
+              <h2 class="win-page-title">Thông tin &amp; Bản quyền</h2>
+              <p class="win-page-desc">Thông số kỹ thuật của bản cài đặt LAILauncher Local AI</p>
+            </div>
+
+            <div class="win-card-group">
+              <div class="win-hero-card win-about-hero">
+                <div class="win-about-icon">⚡</div>
+                <div class="win-about-info">
+                  <div class="win-about-title">LAILauncher Pro v2.4.0</div>
+                  <div class="win-about-sub">Local AI Search &amp; Productivity Engine for Windows 10 &amp; 11</div>
+                  <div class="win-about-meta">Bản phát hành chính thức • Kiến trúc x64 &amp; ARM64</div>
+                </div>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🛠️</div>
+                  <div>
+                    <div class="win-row-title">Nền tảng công nghệ</div>
+                    <div class="win-row-sub">.NET 8.0 WPF • WebView2 Chromium • ONNX Runtime 1.20</div>
+                  </div>
+                </div>
+                <span class="win-pill-text">Framework 8.0</span>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">📜</div>
+                  <div>
+                    <div class="win-row-title">Giấy phép phát hành (License)</div>
+                    <div class="win-row-sub">Giấy phép mã nguồn mở MIT License • 100% Hoàn toàn miễn phí</div>
+                  </div>
+                </div>
+                <span class="win-pill-text">MIT Open Source</span>
+              </div>
+
+              <div class="win-settings-card win-row-card">
+                <div class="win-row-left">
+                  <div class="win-row-icon">🔄</div>
+                  <div>
+                    <div class="win-row-title">Kiểm tra bản cập nhật mới nhất</div>
+                    <div class="win-row-sub">Phiên bản hiện tại là phiên bản mới nhất (Up to date)</div>
+                  </div>
+                </div>
+                <button type="button" class="win-btn-accent" id="btn-check-update">Kiểm tra ngay</button>
+              </div>
+            </div>
+          </section>
+
+        </main>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Fullscreen Camera Shutter Flash Effect -->
+  <div class="screenshot-flash-overlay" id="screenshot-flash-overlay"></div>
+
+  <!-- Screenshot Preview Modal -->
+  <div class="screenshot-preview-modal" id="screenshot-preview-modal" role="dialog" aria-modal="true" aria-label="Xem trước ảnh chụp màn hình">
+    <div class="screenshot-modal-card">
+      <div class="screenshot-modal-header">
+        <div class="screenshot-modal-title">
+          <span>📸</span>
+          <strong>Ảnh chụp màn hình (Screenshot)</strong>
+        </div>
+        <button type="button" class="screenshot-modal-close" id="btn-close-screenshot-modal">✕</button>
+      </div>
+      <div class="screenshot-preview-box" id="screenshot-preview-box">
+        <canvas id="screenshot-canvas" width="640" height="360"></canvas>
+      </div>
+      <div class="screenshot-modal-actions">
+        <div class="screenshot-modal-meta" id="screenshot-modal-meta">1920 × 1080 • PNG</div>
+        <div class="screenshot-btn-group">
+          <button type="button" class="screenshot-btn" id="btn-copy-screenshot">📋 Sao chép</button>
+          <button type="button" class="screenshot-btn primary" id="btn-download-screenshot">💾 Lưu tệp ảnh</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Notification Toast Shelf -->
+  <div class="toast-shelf" id="toast-shelf" aria-live="polite"></div>
+
+  <!-- Scripts Module Integration -->
+  <script type="module" src="./icons.js"></script>
+  <script type="module" src="./app.js"></script>
+  <script type="module" src="./landing.js"></script>
 </body>
 </html>

@@ -1,7 +1,10 @@
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -10,6 +13,7 @@ using Launcher.SDK;
 using Launcher.Core.Search;
 using Launcher.Core.Actions;
 using Launcher.Database.Repositories;
+using Launcher.Indexer;
 using Launcher.App.Services;
 using Launcher.AI;
 
@@ -23,6 +27,10 @@ public partial class MainWindow : Window
     private readonly IAIProvider? _aiProvider;
     private readonly AIPlugin? _aiPlugin;
     private readonly OllamaProcessService? _ollamaProcessService;
+    private readonly AppIndexer? _appIndexer;
+    private readonly FileIndexer? _fileIndexer;
+    private readonly IAppRepository? _appRepo;
+    private readonly IFileRepository? _fileRepo;
     private readonly GlobalHotkey _hotkey;
     private readonly DispatcherTimer _clockTimer;
     private CancellationTokenSource? _searchCts;
@@ -33,8 +41,31 @@ public partial class MainWindow : Window
     private bool _hasCustomPosition = false;
     private double _customPositionX = 0;
     private double _customPositionY = 0;
+    private string? _pendingWifiSsid;
+    private string? _pendingWifiProfileName;
+    private bool _hideOnDeactivate = true;
+    private bool _rememberLastQuery;
+    private bool _showQuickStrip = false;
+    private bool _minimizeToTray = true;
+    private CancellationTokenSource? _commandCts;
+    private readonly ConcurrentQueue<string> _pendingCommandLines = new();
+    private readonly DispatcherTimer _cmdFlushTimer;
+    private string _shellWorkingDir = Launcher.Core.Utilities.ShellCommandRunner.GetDefaultWorkingDirectory();
+    private string _lastExecutedCommand = string.Empty;
+    private bool _lastExecutedUsePowerShell;
+    private bool _isCommandRunning;
 
-    public MainWindow(QueryPipeline pipeline, ActionRunner actionRunner, ISettingsRepository settingsRepo, IAIProvider? aiProvider = null, AIPlugin? aiPlugin = null, OllamaProcessService? ollamaProcessService = null)
+    public MainWindow(
+        QueryPipeline pipeline,
+        ActionRunner actionRunner,
+        ISettingsRepository settingsRepo,
+        IAIProvider? aiProvider = null,
+        AIPlugin? aiPlugin = null,
+        OllamaProcessService? ollamaProcessService = null,
+        AppIndexer? appIndexer = null,
+        FileIndexer? fileIndexer = null,
+        IAppRepository? appRepo = null,
+        IFileRepository? fileRepo = null)
     {
         InitializeComponent();
         _pipeline = pipeline;
@@ -43,6 +74,10 @@ public partial class MainWindow : Window
         _aiProvider = aiProvider;
         _aiPlugin = aiPlugin;
         _ollamaProcessService = ollamaProcessService;
+        _appIndexer = appIndexer;
+        _fileIndexer = fileIndexer;
+        _appRepo = appRepo;
+        _fileRepo = fileRepo;
         _hotkey = new GlobalHotkey();
 
         if (_aiPlugin != null)
@@ -59,9 +94,20 @@ public partial class MainWindow : Window
         _clockTimer.Start();
         UpdateDateTimeDisplay();
 
+        _cmdFlushTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(50)
+        };
+        _cmdFlushTimer.Tick += (s, e) => FlushPendingCommandOutput();
+
         Loaded += OnLoaded;
         Closing += OnClosing;
         ThemeManager.AppearanceChanged += OnAppearanceChanged;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
+        Launcher.Core.Utilities.WindowsControlService.OnDarkModeChanged += OnWindowsDarkModeChangedCallback;
+        Launcher.Core.Utilities.WindowsControlService.OnBatterySaverChanged += OnWindowsBatterySaverChangedCallback;
+        Launcher.Core.Utilities.WindowsControlService.OnWifiStateChanged += OnWindowsWifiStateChangedCallback;
+        Launcher.Core.Utilities.WindowsControlService.OnBluetoothStateChanged += OnWindowsBluetoothStateChangedCallback;
     }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -73,7 +119,7 @@ public partial class MainWindow : Window
 
         // 1. Load & Apply Saved Theme, Glass Appearance & Accent
         var savedTheme = await _settingsRepo.GetAsync("AppTheme");
-        var themeMode = ThemeMode.Dark;
+        var themeMode = ThemeMode.Windows11;
         if (!string.IsNullOrEmpty(savedTheme) && Enum.TryParse<ThemeMode>(savedTheme, true, out var parsedTheme))
         {
             themeMode = parsedTheme;
@@ -84,6 +130,13 @@ public partial class MainWindow : Window
         if (!string.IsNullOrEmpty(savedOsStyle) && Enum.TryParse<OsStyle>(savedOsStyle, true, out var parsedOs))
         {
             osStyle = parsedOs;
+        }
+
+        var savedUiStyle = await _settingsRepo.GetAsync("AppUiStyle");
+        var uiStyle = UiStyle.ModernGlass;
+        if (!string.IsNullOrEmpty(savedUiStyle) && Enum.TryParse<UiStyle>(savedUiStyle, true, out var parsedUiStyle))
+        {
+            uiStyle = parsedUiStyle;
         }
 
         var savedForcedLight = await _settingsRepo.GetAsync("AppForcedLightMode");
@@ -101,7 +154,7 @@ public partial class MainWindow : Window
         bool accentOnBorder = bool.TryParse(savedAccentOnBorder, out var aob) && aob;
 
         var savedGlassEnabled = await _settingsRepo.GetAsync("AppGlassEnabled");
-        bool glassEnabled = bool.TryParse(savedGlassEnabled, out var ge) && ge;
+        bool glassEnabled = string.IsNullOrWhiteSpace(savedGlassEnabled) || (bool.TryParse(savedGlassEnabled, out var ge) && ge);
 
         var savedGlassTint = await _settingsRepo.GetAsync("AppGlassTintColor");
 
@@ -126,7 +179,8 @@ public partial class MainWindow : Window
             glassOpacity: glassOpacity,
             glassTintWithAccent: glassTintWithAccent,
             osStyle: osStyle,
-            forcedLightMode: forcedLight
+            forcedLightMode: forcedLight,
+            uiStyle: uiStyle
         );
 
         // 2. Load & Register Hotkey
@@ -145,7 +199,6 @@ public partial class MainWindow : Window
 
         UpdateHotkeyBadge(GlobalHotkey.FormatHotkey(_hotkey.Modifiers, _hotkey.Key));
         UpdateOsAndModeUI();
-        UpdateEnergySaverUI(Launcher.Core.Utilities.WindowsControlService.IsBatterySaverActive());
 
         SearchBox.Focus();
         ShowInitialFeatureGuide();
@@ -184,20 +237,36 @@ public partial class MainWindow : Window
             _hasCustomPosition = false;
         }
 
+        // 3.2 Load Saved Window Dimensions
+        var savedWidthStr = await _settingsRepo.GetAsync("AppWindowWidth");
+        if (!string.IsNullOrEmpty(savedWidthStr) &&
+            double.TryParse(savedWidthStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsedWidth))
+        {
+            Width = Math.Clamp(parsedWidth, 520, 1200);
+        }
+
+        var savedHeightStr = await _settingsRepo.GetAsync("AppWindowHeight");
+        if (!string.IsNullOrEmpty(savedHeightStr) &&
+            double.TryParse(savedHeightStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsedHeight))
+        {
+            Height = Math.Clamp(parsedHeight, 340, 860);
+        }
+
+        await ReloadBehaviorSettingsAsync();
+        if (_showQuickStrip)
+        {
+            _ = RefreshQuickSystemStatesAsync();
+        }
+
         MonitorService.PositionWindow(this, _monitorTargetMode, _specificMonitorDevice, _windowPositionMode, _hasCustomPosition, _customPositionX, _customPositionY);
         UpdateResetPositionButtonState();
     }
 
     private void UpdateDateTimeDisplay()
     {
-        var now = DateTime.Now;
-        if (HeaderClockText != null)
+        if (ThemeManager.CurrentOsStyle == OsStyle.Linux && GnomeClockText != null)
         {
-            HeaderClockText.Text = now.ToString("dd-MM • HH:mm");
-        }
-        if (GnomeClockText != null)
-        {
-            GnomeClockText.Text = now.ToString("ddd, dd/MM  HH:mm");
+            GnomeClockText.Text = DateTime.Now.ToString("ddd, dd/MM  HH:mm:ss");
         }
     }
 
@@ -208,8 +277,50 @@ public partial class MainWindow : Window
 
     private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+        Launcher.Core.Utilities.WindowsControlService.OnDarkModeChanged -= OnWindowsDarkModeChangedCallback;
+        Launcher.Core.Utilities.WindowsControlService.OnBatterySaverChanged -= OnWindowsBatterySaverChangedCallback;
+        Launcher.Core.Utilities.WindowsControlService.OnWifiStateChanged -= OnWindowsWifiStateChangedCallback;
+        Launcher.Core.Utilities.WindowsControlService.OnBluetoothStateChanged -= OnWindowsBluetoothStateChangedCallback;
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
+        ThemeManager.AppearanceChanged -= OnAppearanceChanged;
         _clockTimer.Stop();
+        _cmdFlushTimer.Stop();
+        _commandCts?.Cancel();
+        _commandCts?.Dispose();
         _hotkey.Dispose();
+    }
+
+    private void OnWindowsDarkModeChangedCallback(bool enableDark)
+    {
+        Dispatcher.BeginInvoke(async () =>
+        {
+            bool launcherShouldBeLight = !enableDark;
+            if (ThemeManager.IsLightMode != launcherShouldBeLight)
+            {
+                ThemeManager.SetLightMode(launcherShouldBeLight);
+                await _settingsRepo.SetAsync("AppForcedLightMode", launcherShouldBeLight.ToString());
+                UpdateOsAndModeUI();
+            }
+        });
+    }
+
+    private void OnWindowsBatterySaverChangedCallback(bool isOn)
+    {
+        Dispatcher.BeginInvoke(() => UpdateEnergySaverUI(isOn));
+    }
+
+    private void OnWindowsWifiStateChangedCallback(bool isOn)
+    {
+        Dispatcher.BeginInvoke(async () =>
+        {
+            string? ssid = isOn ? await Task.Run(Launcher.Core.Utilities.WindowsControlService.GetConnectedWifiSsid) : null;
+            UpdateWifiUI(isOn, ssid);
+        });
+    }
+
+    private void OnWindowsBluetoothStateChangedCallback(bool isOn)
+    {
+        Dispatcher.BeginInvoke(() => UpdateBluetoothUI(isOn));
     }
 
     private DateTime _lastToggleTime = DateTime.MinValue;
@@ -273,12 +384,54 @@ public partial class MainWindow : Window
         var helper = new WindowInteropHelper(this);
         ForceForeground(helper.Handle);
 
+        if (!_rememberLastQuery && !string.IsNullOrEmpty(SearchBox.Text))
+        {
+            SearchBox.Text = string.Empty;
+        }
+
+        if (!_rememberLastQuery)
+        {
+            CloseCommandOutputPanel();
+        }
+
         if (string.IsNullOrWhiteSpace(SearchBox.Text))
         {
             ShowInitialFeatureGuide();
         }
 
-        UpdateEnergySaverUI(Launcher.Core.Utilities.WindowsControlService.IsBatterySaverActive());
+        if (_showQuickStrip)
+        {
+            _ = RefreshQuickSystemStatesAsync();
+        }
+    }
+
+    public void OpenWithQuery(string query)
+    {
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.BeginInvoke(() => OpenWithQuery(query));
+            return;
+        }
+
+        ShowLauncher();
+        if (WifiPasswordOverlay != null)
+        {
+            WifiPasswordOverlay.Visibility = Visibility.Collapsed;
+        }
+        _pendingWifiSsid = null;
+        _pendingWifiProfileName = null;
+
+        if (string.Equals(SearchBox.Text, query, StringComparison.Ordinal))
+        {
+            _ = RunSearchAsync(query, debounceMs: 0);
+        }
+        else
+        {
+            SearchBox.Text = query;
+        }
+
+        SearchBox.CaretIndex = SearchBox.Text.Length;
+        SearchBox.Focus();
     }
 
     private static void ForceForeground(IntPtr hWnd)
@@ -314,6 +467,17 @@ public partial class MainWindow : Window
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
+        // 0. If in-app Wi-Fi Password overlay is open, let PasswordBox handle typing and Esc close it
+        if (WifiPasswordOverlay != null && WifiPasswordOverlay.Visibility == Visibility.Visible)
+        {
+            if (e.Key == Key.Escape)
+            {
+                CloseWifiPasswordOverlay();
+                e.Handled = true;
+            }
+            return;
+        }
+
         // 1. If ContextMenu is open, let it handle arrow keys, Enter, and Escape
         if (ResultsContextMenu.IsOpen)
         {
@@ -336,9 +500,24 @@ public partial class MainWindow : Window
             }
         }
 
-        // 2. Escape: Hide launcher window
+        // 2. Escape: Stop/close inline command output first, otherwise hide launcher window
         if (e.Key == Key.Escape)
         {
+            if (CommandOutputPanel != null && CommandOutputPanel.Visibility == Visibility.Visible)
+            {
+                if (_isCommandRunning)
+                {
+                    _commandCts?.Cancel();
+                }
+                else
+                {
+                    CloseCommandOutputPanel();
+                    SearchBox.Focus();
+                }
+                e.Handled = true;
+                return;
+            }
+
             Hide();
             e.Handled = true;
             return;
@@ -385,9 +564,13 @@ public partial class MainWindow : Window
         else if (e.Key == Key.D && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
         {
             ThemeManager.ToggleLightDarkMode();
-            _ = _settingsRepo.SetAsync("AppForcedLightMode", ThemeManager.IsLightMode.ToString());
+            bool isLight = ThemeManager.IsLightMode;
+            _ = _settingsRepo.SetAsync("AppForcedLightMode", isLight.ToString());
+            Launcher.Core.Utilities.WindowsControlService.SetWindowsDarkMode(!isLight);
             UpdateOsAndModeUI();
+            ShowToast(isLight ? "☀️ Đã chuyển sang Chế độ Sáng (Light Glass)" : "🌙 Đã chuyển sang Chế độ Tối (Dark Glass)");
             e.Handled = true;
+            return;
         }
         // 3.6 Ctrl + Alt + S: Summarize selected document with AI
         else if (e.Key == Key.S && (Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
@@ -395,9 +578,22 @@ public partial class MainWindow : Window
             OnActionSummarizeFileClicked(this, new RoutedEventArgs());
             e.Handled = true;
         }
-        // 4. Down Arrow: Navigate to next result in list
+        // 3.7 Ctrl + Alt + L: Toggle Windows 11 / Linux GNOME OS style
+        else if (e.Key == Key.L && (Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt))
+        {
+            OnOsSwitchClicked(this, new RoutedEventArgs());
+            e.Handled = true;
+        }
+        // 4. Down Arrow: Navigate to next result in list (or scroll output panel)
         else if (e.Key == Key.Down)
         {
+            if (CommandOutputPanel != null && CommandOutputPanel.Visibility == Visibility.Visible)
+            {
+                CommandOutputScrollViewer?.LineDown();
+                e.Handled = true;
+                return;
+            }
+
             if (ResultsList.Items.Count > 0)
             {
                 var nextIndex = (ResultsList.SelectedIndex + 1) % ResultsList.Items.Count;
@@ -406,9 +602,16 @@ public partial class MainWindow : Window
             }
             e.Handled = true;
         }
-        // 5. Up Arrow: Navigate to previous result in list (or wrap to bottom)
+        // 5. Up Arrow: Navigate to previous result in list (or scroll output panel)
         else if (e.Key == Key.Up)
         {
+            if (CommandOutputPanel != null && CommandOutputPanel.Visibility == Visibility.Visible)
+            {
+                CommandOutputScrollViewer?.LineUp();
+                e.Handled = true;
+                return;
+            }
+
             if (ResultsList.Items.Count > 0)
             {
                 var prevIndex = ResultsList.SelectedIndex <= 0 ? ResultsList.Items.Count - 1 : ResultsList.SelectedIndex - 1;
@@ -496,10 +699,19 @@ public partial class MainWindow : Window
                 }
             }
         }
-        // 11. Ctrl + C: Copy selected item path if no text in SearchBox is selected
+        // 11. Ctrl + C: Copy inline command output or selected item path if no text in SearchBox is selected
         else if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
         {
-            if (SearchBox.SelectionLength == 0 && ResultsList.SelectedItem != null)
+            if (CommandOutputPanel != null && CommandOutputPanel.Visibility == Visibility.Visible && SearchBox.SelectionLength == 0)
+            {
+                if (CommandOutputTextBox.SelectionLength > 0)
+                {
+                    return;
+                }
+                OnCmdCopyClicked(this, new RoutedEventArgs());
+                e.Handled = true;
+            }
+            else if (SearchBox.SelectionLength == 0 && ResultsList.SelectedItem != null)
             {
                 CopySelectedPath();
                 e.Handled = true;
@@ -524,6 +736,11 @@ public partial class MainWindow : Window
 
     private void OnWindowDeactivated(object? sender, EventArgs e)
     {
+        if (!_hideOnDeactivate)
+        {
+            return;
+        }
+
         // Don't auto-hide if settings window is open
         if (_activeSettingsWindow != null && _activeSettingsWindow.IsLoaded)
         {
@@ -540,14 +757,18 @@ public partial class MainWindow : Window
         SearchBox.Focus();
     }
 
-    private async void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
     {
         if (ActionFlyoutPanel != null && ActionFlyoutPanel.Visibility == Visibility.Visible)
         {
             ActionFlyoutPanel.Visibility = Visibility.Collapsed;
         }
 
-        var query = SearchBox.Text;
+        _ = RunSearchAsync(SearchBox.Text, debounceMs: 40);
+    }
+
+    private async Task RunSearchAsync(string query, int debounceMs = 40)
+    {
         PlaceholderText.Visibility = string.IsNullOrEmpty(query) ? Visibility.Visible : Visibility.Collapsed;
         ClearSearchButton.Visibility = string.IsNullOrEmpty(query) ? Visibility.Collapsed : Visibility.Visible;
         UpdateSearchPrefixBadge(query);
@@ -555,8 +776,16 @@ public partial class MainWindow : Window
         if (string.IsNullOrWhiteSpace(query))
         {
             _searchCts?.Cancel();
+            CloseCommandOutputPanel();
             ShowInitialFeatureGuide();
             return;
+        }
+
+        if (CommandOutputPanel != null &&
+            CommandOutputPanel.Visibility == Visibility.Visible &&
+            !query.TrimStart().StartsWith('>'))
+        {
+            CloseCommandOutputPanel();
         }
 
         _searchCts?.Cancel();
@@ -565,16 +794,119 @@ public partial class MainWindow : Window
 
         try
         {
-            // Debounce 40ms
-            await Task.Delay(40, token);
+            if (debounceMs > 0)
+            {
+                await Task.Delay(debounceMs, token);
+            }
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            var results = await _pipeline.ExecuteAsync(query, token);
+            var results = await Task.Run(() => _pipeline.ExecuteAsync(query, token), token);
             sw.Stop();
 
             if (!token.IsCancellationRequested)
             {
                 var resultList = results.ToList();
+
+                // Direct Light / Dark Mode Controls Integration
+                if (IsModeQuery(query))
+                {
+                    var isLightActive = ThemeManager.IsLightMode;
+
+                    var toggleResult = new QueryResult
+                    {
+                        Id = "mode_toggle_direct",
+                        Title = isLightActive ? "🌙 Chuyển sang Chế độ Tối (Dark Glass)" : "☀️ Chuyển sang Chế độ Sáng (Light Glass)",
+                        Subtitle = isLightActive 
+                            ? "Kích hoạt giao diện kính mờ obsidian ban đêm sang trọng cho Launcher & Windows (Phím tắt: Ctrl + D)"
+                            : "Kích hoạt giao diện kính mờ sương sữa thanh lịch cho Launcher & Windows (Phím tắt: Ctrl + D)",
+                        Type = ResultType.Setting,
+                        Score = 1100,
+                        Actions = new List<ResultAction>
+                        {
+                            new ResultAction
+                            {
+                                Name = "Chuyển chế độ",
+                                SyncAction = () =>
+                                {
+                                    ThemeManager.ToggleLightDarkMode();
+                                    bool newLight = ThemeManager.IsLightMode;
+                                    _ = _settingsRepo.SetAsync("AppForcedLightMode", newLight.ToString());
+                                    Launcher.Core.Utilities.WindowsControlService.SetWindowsDarkMode(!newLight);
+                                    UpdateOsAndModeUI();
+                                    ShowToast(newLight ? "☀️ Đã chuyển sang Chế độ Sáng (Light Glass)!" : "🌙 Đã chuyển sang Chế độ Tối (Dark Glass)!");
+                                }
+                            }
+                        }
+                    };
+
+                    var lightResult = new QueryResult
+                    {
+                        Id = "mode_light_direct",
+                        Title = "☀️ Chế độ Sáng (Launcher Light Glass)",
+                        Subtitle = "Bật giao diện kính mờ sương sữa thanh lịch cho cả Launcher & Windows (Ctrl + D)",
+                        Type = ResultType.Setting,
+                        Score = 1090,
+                        Actions = new List<ResultAction>
+                        {
+                            new ResultAction
+                            {
+                                Name = "Bật Chế độ Sáng",
+                                SyncAction = () =>
+                                {
+                                    ThemeManager.SetLightMode(true);
+                                    _ = _settingsRepo.SetAsync("AppForcedLightMode", "True");
+                                    Launcher.Core.Utilities.WindowsControlService.SetWindowsDarkMode(false);
+                                    UpdateOsAndModeUI();
+                                    ShowToast("☀️ Đã chuyển sang Chế độ Sáng (Light Glass)!");
+                                }
+                            }
+                        }
+                    };
+
+                    var darkResult = new QueryResult
+                    {
+                        Id = "mode_dark_direct",
+                        Title = "🌙 Chế độ Tối (Launcher Dark Glass)",
+                        Subtitle = "Bật giao diện kính mờ obsidian ban đêm sang trọng cho cả Launcher & Windows (Ctrl + D)",
+                        Type = ResultType.Setting,
+                        Score = 1080,
+                        Actions = new List<ResultAction>
+                        {
+                            new ResultAction
+                            {
+                                Name = "Bật Chế độ Tối",
+                                SyncAction = () =>
+                                {
+                                    ThemeManager.SetLightMode(false);
+                                    _ = _settingsRepo.SetAsync("AppForcedLightMode", "False");
+                                    Launcher.Core.Utilities.WindowsControlService.SetWindowsDarkMode(true);
+                                    UpdateOsAndModeUI();
+                                    ShowToast("🌙 Đã chuyển sang Chế độ Tối (Dark Glass)!");
+                                }
+                            }
+                        }
+                    };
+
+                    var qLower = query.Trim().ToLowerInvariant();
+                    if (qLower.Contains("sang") || qLower.Contains("sáng") || qLower.Contains("light"))
+                    {
+                        resultList.Insert(0, darkResult);
+                        resultList.Insert(0, toggleResult);
+                        resultList.Insert(0, lightResult);
+                    }
+                    else if (qLower.Contains("toi") || qLower.Contains("tối") || qLower.Contains("dark"))
+                    {
+                        resultList.Insert(0, lightResult);
+                        resultList.Insert(0, toggleResult);
+                        resultList.Insert(0, darkResult);
+                    }
+                    else
+                    {
+                        resultList.Insert(0, darkResult);
+                        resultList.Insert(0, lightResult);
+                        resultList.Insert(0, toggleResult);
+                    }
+                }
 
                 // Quick Theme presets integration
                 if (IsThemeQuery(query))
@@ -634,23 +966,35 @@ public partial class MainWindow : Window
                 }
 
                 ResultsList.ItemsSource = resultList;
+                bool isOutputVisible = CommandOutputPanel != null && CommandOutputPanel.Visibility == Visibility.Visible;
+
                 if (resultList.Count > 0)
                 {
                     ResultsList.SelectedIndex = 0;
-                    ResultsList.Visibility = Visibility.Visible;
-                    NoResultsPanel.Visibility = Visibility.Collapsed;
-                    StatusDot.Fill = (Brush)new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81));
+                    if (!isOutputVisible)
+                    {
+                        ResultsList.Visibility = Visibility.Visible;
+                        NoResultsPanel.Visibility = Visibility.Collapsed;
+                        StatusDot.Fill = (Brush)new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81));
+                    }
                 }
                 else
                 {
-                    ResultsList.Visibility = Visibility.Collapsed;
-                    NoResultsPanel.Visibility = Visibility.Visible;
-                    StatusDot.Fill = (Brush)new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B));
+                    if (!isOutputVisible)
+                    {
+                        ResultsList.Visibility = Visibility.Collapsed;
+                        NoResultsPanel.Visibility = Visibility.Visible;
+                        StatusDot.Fill = (Brush)new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B));
+                    }
                 }
 
-                StatusText.Text = resultList.Count > 0
-                    ? $"{resultList.Count} kết quả trong {sw.ElapsedMilliseconds} ms"
-                    : "Không tìm thấy kết quả phù hợp";
+                if (!isOutputVisible)
+                {
+                    bool isEn = LocalizationService.CurrentLanguage == LocalizationService.English;
+                    StatusText.Text = resultList.Count > 0
+                        ? (isEn ? $"{resultList.Count} results · {sw.ElapsedMilliseconds} ms" : $"{resultList.Count} kết quả · {sw.ElapsedMilliseconds} ms")
+                        : (isEn ? "No results" : "Không có kết quả");
+                }
             }
         }
         catch (OperationCanceledException)
@@ -666,7 +1010,7 @@ public partial class MainWindow : Window
         ResultsList.Visibility = Visibility.Visible;
         ClearSearchButton.Visibility = Visibility.Collapsed;
         StatusDot.Fill = (Brush)new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81));
-        StatusText.Text = "Local AI Launcher • Sẵn sàng";
+        StatusText.Text = LocalizationService.Get("Str_StatusReady");
         ResultsList.ItemsSource = guideItems;
         if (guideItems.Count > 0)
         {
@@ -676,13 +1020,14 @@ public partial class MainWindow : Window
 
     private static List<QueryResult> GetInitialFeatureGuide()
     {
+        bool isEn = LocalizationService.CurrentLanguage == LocalizationService.English;
         return
         [
             new QueryResult
             {
                 Id = "guide_calc",
                 Title = "calc",
-                Subtitle = "Tính toán số học, đổi đơn vị và hệ cơ số (vd: 50 * 20%, 100 km to mi, 0xFF to dec)",
+                Subtitle = isEn ? "Math & unit conversion (e.g. 50 * 20%, 100 km to mi)" : "Tính toán, đổi đơn vị (vd: 50 * 20%, 100 km to mi)",
                 Type = ResultType.Calculator,
                 ShortcutHint = "Alt+1",
                 Metadata = new() { ["ActionKeyword"] = "calc" }
@@ -691,7 +1036,7 @@ public partial class MainWindow : Window
             {
                 Id = "guide_ai",
                 Title = "ai",
-                Subtitle = "Hỏi đáp AI, tóm tắt hoặc dịch Clipboard với mô hình cục bộ (ai: câu hỏi, ? prompt)",
+                Subtitle = isEn ? "Ask local AI, summarize or translate" : "Hỏi đáp AI cục bộ, tóm tắt hoặc dịch nhanh",
                 Type = ResultType.AI,
                 ShortcutHint = "Alt+2",
                 Metadata = new() { ["ActionKeyword"] = "ai" }
@@ -700,114 +1045,37 @@ public partial class MainWindow : Window
             {
                 Id = "guide_shell",
                 Title = ">",
-                Subtitle = "Chạy lệnh Terminal trực tiếp (CMD / PowerShell: ping, ipconfig, code .)",
+                Subtitle = isEn ? "Run Terminal command (CMD / PowerShell)" : "Chạy lệnh Terminal (CMD / PowerShell)",
                 Type = ResultType.Command,
                 ShortcutHint = "Alt+3",
                 Metadata = new() { ["ActionKeyword"] = ">" }
             },
             new QueryResult
             {
-                Id = "guide_bookmarks",
-                Title = "b",
-                Subtitle = "Tìm kiếm dấu trang trình duyệt web (Chrome, Edge, Brave, Firefox...)",
-                Type = ResultType.Bookmark,
-                ShortcutHint = "Alt+4",
-                Metadata = new() { ["ActionKeyword"] = "b" }
-            },
-            new QueryResult
-            {
                 Id = "guide_sys",
                 Title = "sys",
-                Subtitle = "Điều khiển Windows (Chế độ sáng/tối, âm lượng, độ sáng màn hình, pin, Wi-Fi)",
+                Subtitle = isEn ? "Control Wi-Fi, Bluetooth, battery, volume..." : "Điều khiển Wi-Fi, Bluetooth, pin, âm lượng...",
                 Type = ResultType.SystemCommand,
-                ShortcutHint = "Alt+5",
+                ShortcutHint = "Alt+4",
                 Metadata = new() { ["ActionKeyword"] = "sys" }
             },
             new QueryResult
             {
-                Id = "guide_settings",
-                Title = "set",
-                Subtitle = "Mở nhanh trang Cài đặt Windows (Display, Sound, Network, Bluetooth, Apps...)",
-                Type = ResultType.Setting,
-                ShortcutHint = "Alt+6",
-                Metadata = new() { ["ActionKeyword"] = "set" }
-            },
-            new QueryResult
-            {
-                Id = "guide_proc",
-                Title = "kill",
-                Subtitle = "Quản lý và dừng ứng dụng hoặc tiến trình đang chạy (Process Killer)",
-                Type = ResultType.Process,
-                ShortcutHint = "Alt+7",
-                Metadata = new() { ["ActionKeyword"] = "kill" }
+                Id = "guide_bookmarks",
+                Title = "b",
+                Subtitle = isEn ? "Search browser bookmarks" : "Tìm dấu trang trình duyệt",
+                Type = ResultType.Bookmark,
+                ShortcutHint = "Alt+5",
+                Metadata = new() { ["ActionKeyword"] = "b" }
             },
             new QueryResult
             {
                 Id = "guide_google",
                 Title = "g",
-                Subtitle = "Tìm kiếm nhanh từ khóa trên Google Search",
+                Subtitle = isEn ? "Search on Google" : "Tìm kiếm nhanh trên Google",
                 Type = ResultType.Url,
-                ShortcutHint = "Alt+8",
+                ShortcutHint = "Alt+6",
                 Metadata = new() { ["ActionKeyword"] = "g" }
-            },
-            new QueryResult
-            {
-                Id = "guide_youtube",
-                Title = "yt",
-                Subtitle = "Tìm kiếm video và kênh trên YouTube",
-                Type = ResultType.Url,
-                ShortcutHint = "Alt+9",
-                Metadata = new() { ["ActionKeyword"] = "yt" }
-            },
-            new QueryResult
-            {
-                Id = "guide_translate",
-                Title = "trans",
-                Subtitle = "Dịch nhanh đoạn văn bản qua Google Translate",
-                Type = ResultType.Url,
-                Metadata = new() { ["ActionKeyword"] = "trans" }
-            },
-            new QueryResult
-            {
-                Id = "guide_github",
-                Title = "gh",
-                Subtitle = "Tra cứu mã nguồn, thư viện và repository trên GitHub",
-                Type = ResultType.Url,
-                Metadata = new() { ["ActionKeyword"] = "gh" }
-            },
-            new QueryResult
-            {
-                Id = "guide_launcher_settings",
-                Title = "settings",
-                Subtitle = "Tùy chỉnh giao diện, phím tắt và mô hình AI của Launcher",
-                Type = ResultType.Plugin,
-                ShortcutHint = "Ctrl+,",
-                Metadata = new() { ["ActionKeyword"] = "settings" }
-            },
-            new QueryResult
-            {
-                Id = "guide_semantic",
-                Title = "🎯 AI Semantic Search",
-                Subtitle = "Tìm kiếm ngữ nghĩa không cần nhớ tên tệp (vd: 'báo cáo tài chính', 'hợp đồng', 'ảnh hoàng hôn')",
-                Type = ResultType.AI,
-                ShortcutHint = "NLP",
-                Metadata = new() { ["ActionKeyword"] = "báo cáo tài chính" }
-            },
-            new QueryResult
-            {
-                Id = "guide_filters",
-                Title = "pdf: / doc: / img: / code:",
-                Subtitle = "Bộ lọc định dạng thông minh cho tài liệu, bảng tính (sheet:), hình ảnh, mã nguồn (code:)",
-                Type = ResultType.Folder,
-                Metadata = new() { ["ActionKeyword"] = "doc:" }
-            },
-            new QueryResult
-            {
-                Id = "guide_explorer",
-                Title = "doc:",
-                Subtitle = "Duyệt nhanh tài liệu và cây thư mục tập tin cục bộ",
-                Type = ResultType.Folder,
-                Metadata = new() { ["ActionKeyword"] = "doc:" }
             }
         ];
     }
@@ -835,10 +1103,12 @@ public partial class MainWindow : Window
 
     private async void ApplyPresetTheme(ThemeMode mode, string name)
     {
-        ThemeManager.ApplyTheme(mode);
+        ThemeManager.ApplyThemePreset(mode);
         await _settingsRepo.SetAsync("AppTheme", mode.ToString());
+        await _settingsRepo.SetAsync("AppAccentFromWindows", (mode == ThemeMode.System).ToString());
         await _settingsRepo.SetAsync("AppAccentColor", string.Empty);
         await _settingsRepo.SetAsync("AppGlassTintColor", string.Empty);
+        UpdateOsAndModeUI();
         ShowToast($"Đã áp dụng {name}!");
     }
 
@@ -850,9 +1120,44 @@ public partial class MainWindow : Window
                  or "hotkey" or "phim tat" or "phím tắt" or "khoi dong" or "khởi động" or ">settings" or ">config";
     }
 
+    private static bool IsModeQuery(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query)) return false;
+        var q = query.Trim().ToLowerInvariant();
+        return q is "sang" or "sáng" or "toi" or "tối" or "che do sang" or "chế độ sáng" 
+                 or "che do toi" or "chế độ tối" or "light" or "dark" or "light mode" or "dark mode"
+                 or "sang toi" or "sáng tối" or "doi che do" or "đổi chế độ" or "toggle mode"
+                 or "giao dien sang" or "giao diện sáng" or "giao dien toi" or "giao diện tối"
+                 or "light glass" or "dark glass" or "mode" or "chế độ" or "che do"
+               || q.StartsWith("che do ") || q.StartsWith("chế độ ");
+    }
+
     private void OnResultDoubleClick(object sender, MouseButtonEventArgs e)
     {
         ExecuteSelectedResult();
+    }
+
+    private static bool TryParseLiveShellQuery(string? text, out string command, out bool usePowerShell)
+    {
+        command = string.Empty;
+        usePowerShell = false;
+        if (string.IsNullOrWhiteSpace(text)) return false;
+
+        var trimmed = text.Trim();
+        if (trimmed.StartsWith(">>"))
+        {
+            usePowerShell = true;
+            command = trimmed[2..].Trim();
+            return !string.IsNullOrEmpty(command);
+        }
+
+        if (trimmed.StartsWith('>'))
+        {
+            command = trimmed[1..].Trim();
+            return !string.IsNullOrEmpty(command);
+        }
+
+        return false;
     }
 
     private async void ExecuteSelectedResult()
@@ -862,7 +1167,38 @@ public partial class MainWindow : Window
             ActionFlyoutPanel.Visibility = Visibility.Collapsed;
         }
 
-        if (ResultsList.SelectedItem is QueryResult selected)
+        var selected = ResultsList.SelectedItem as QueryResult;
+
+        if (TryParseLiveShellQuery(SearchBox.Text, out var liveCmd, out var liveUsePs))
+        {
+            bool hasCurrentCommandResults = ResultsList.Items.OfType<QueryResult>()
+                .Any(r => r.Type == ResultType.Command &&
+                          r.Metadata.TryGetValue("Command", out var c) &&
+                          string.Equals(c, liveCmd, StringComparison.Ordinal));
+
+            bool userPickedFallbackUrl = hasCurrentCommandResults &&
+                                         selected != null &&
+                                         selected.Type == ResultType.Url;
+
+            if (!userPickedFallbackUrl)
+            {
+                bool usePs = liveUsePs;
+                if (hasCurrentCommandResults &&
+                    selected != null &&
+                    selected.Type == ResultType.Command &&
+                    selected.Metadata.TryGetValue("Command", out var selCmd) &&
+                    string.Equals(selCmd, liveCmd, StringComparison.Ordinal) &&
+                    selected.Metadata.TryGetValue("Shell", out var selShell))
+                {
+                    usePs = string.Equals(selShell, "powershell", StringComparison.OrdinalIgnoreCase);
+                }
+
+                await RunInlineShellCommandAsync(liveCmd, usePs);
+                return;
+            }
+        }
+
+        if (selected != null)
         {
             if (selected.Id == "calc_prompt" || selected.Id == "cmd_prompt")
             {
@@ -909,11 +1245,54 @@ public partial class MainWindow : Window
                 return;
             }
 
+            if (selected.Metadata.TryGetValue("RequiresWifiPassword", out var reqPwd) &&
+                string.Equals(reqPwd, "True", StringComparison.OrdinalIgnoreCase) &&
+                selected.Metadata.TryGetValue("WifiSsid", out var wifiSsid))
+            {
+                selected.Metadata.TryGetValue("WifiProfileName", out var profileName);
+                ShowWifiPasswordOverlay(wifiSsid, profileName);
+                return;
+            }
+
             if (selected.Metadata.TryGetValue("ActionKeyword", out var kw))
             {
-                SearchBox.Text = kw.EndsWith(":") ? kw : kw + " ";
+                var nextText = kw.EndsWith(":") ? kw : kw + " ";
+                if (string.Equals(SearchBox.Text, nextText, StringComparison.Ordinal))
+                {
+                    await RunSearchAsync(nextText, debounceMs: 0);
+                }
+                else
+                {
+                    SearchBox.Text = nextText;
+                }
                 SearchBox.CaretIndex = SearchBox.Text.Length;
                 SearchBox.Focus();
+                return;
+            }
+
+            if (selected.Metadata.TryGetValue("StayOpen", out var stayOpen) &&
+                string.Equals(stayOpen, "True", StringComparison.OrdinalIgnoreCase))
+            {
+                await _actionRunner.ExecuteAsync(SearchBox.Text, selected);
+
+                if (selected.Metadata.ContainsKey("RefreshBatteryUI"))
+                {
+                    UpdateEnergySaverUI(Launcher.Core.Utilities.WindowsControlService.IsBatterySaverActive());
+                }
+
+                await RefreshQuickSystemStatesAsync();
+
+                if (selected.Metadata.TryGetValue("ToastSuccess", out var toastMsg) && !string.IsNullOrWhiteSpace(toastMsg))
+                {
+                    ShowToast(toastMsg);
+                }
+
+                if (selected.Metadata.TryGetValue("RefreshList", out var refreshList) &&
+                    string.Equals(refreshList, "True", StringComparison.OrdinalIgnoreCase))
+                {
+                    await Task.Delay(350);
+                    await RunSearchAsync(SearchBox.Text, debounceMs: 0);
+                }
                 return;
             }
 
@@ -924,7 +1303,40 @@ public partial class MainWindow : Window
 
     private async void ExecuteSelectedRunAsAdmin()
     {
-        if (ResultsList.SelectedItem is QueryResult selected)
+        var selected = ResultsList.SelectedItem as QueryResult;
+
+        if (TryParseLiveShellQuery(SearchBox.Text, out var liveCmd, out var liveUsePs))
+        {
+            bool hasCurrentCommandResults = ResultsList.Items.OfType<QueryResult>()
+                .Any(r => r.Type == ResultType.Command &&
+                          r.Metadata.TryGetValue("Command", out var c) &&
+                          string.Equals(c, liveCmd, StringComparison.Ordinal));
+
+            bool userPickedFallbackUrl = hasCurrentCommandResults &&
+                                         selected != null &&
+                                         selected.Type == ResultType.Url;
+
+            if (!userPickedFallbackUrl)
+            {
+                bool usePs = liveUsePs;
+                if (hasCurrentCommandResults &&
+                    selected != null &&
+                    selected.Type == ResultType.Command &&
+                    selected.Metadata.TryGetValue("Command", out var selCmd) &&
+                    string.Equals(selCmd, liveCmd, StringComparison.Ordinal) &&
+                    selected.Metadata.TryGetValue("Shell", out var selShell))
+                {
+                    usePs = string.Equals(selShell, "powershell", StringComparison.OrdinalIgnoreCase);
+                }
+
+                var adminAction = ActionRunner.CreateCommandAction(liveCmd, runAsAdmin: true, usePowerShell: usePs);
+                Hide();
+                await adminAction.ExecuteAsync();
+                return;
+            }
+        }
+
+        if (selected != null)
         {
             if (selected.Id == "cmd_prompt" || selected.Id == "calc_prompt")
             {
@@ -1029,12 +1441,129 @@ public partial class MainWindow : Window
             _aiProvider,
             _ollamaProcessService,
             ApplyMonitorSettings,
-            TestPositionOnMonitor)
+            TestPositionOnMonitor,
+            _appIndexer,
+            _fileIndexer,
+            _appRepo,
+            _fileRepo,
+            ApplyWindowSize,
+            MoveWindowToPreset,
+            () => _ = ReloadBehaviorSettingsAsync())
         {
             Owner = this
         };
         _activeSettingsWindow.Closed += (s, e) => _activeSettingsWindow = null;
         _activeSettingsWindow.ShowDialog();
+    }
+
+    public async Task ReloadBehaviorSettingsAsync()
+    {
+        var hideDeactStr = await _settingsRepo.GetAsync("AppHideOnDeactivate");
+        _hideOnDeactivate = string.IsNullOrEmpty(hideDeactStr) || !bool.TryParse(hideDeactStr, out var hda) || hda;
+
+        var rememberStr = await _settingsRepo.GetAsync("AppRememberLastQuery");
+        _rememberLastQuery = bool.TryParse(rememberStr, out var rlm) && rlm;
+
+        var stripStr = await _settingsRepo.GetAsync("AppShowQuickStrip");
+        _showQuickStrip = bool.TryParse(stripStr, out var sqs) && sqs;
+
+        var minTrayStr = await _settingsRepo.GetAsync("AppMinimizeToTray");
+        _minimizeToTray = string.IsNullOrEmpty(minTrayStr) || !bool.TryParse(minTrayStr, out var mtt) || mtt;
+
+        if (QuickSettingsStrip != null)
+        {
+            QuickSettingsStrip.Visibility = _showQuickStrip ? Visibility.Visible : Visibility.Collapsed;
+        }
+        if (_showQuickStrip)
+        {
+            _ = RefreshQuickSystemStatesAsync();
+        }
+    }
+
+    public async void ApplyWindowSize(double width, double height)
+    {
+        double clampedW = Math.Clamp(width, 520, 1200);
+        double clampedH = Math.Clamp(height, 340, 860);
+        Width = clampedW;
+        Height = clampedH;
+        await _settingsRepo.SetAsync("AppWindowWidth", ((int)Math.Round(clampedW)).ToString(System.Globalization.CultureInfo.InvariantCulture));
+        await _settingsRepo.SetAsync("AppWindowHeight", ((int)Math.Round(clampedH)).ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+        if (IsVisible)
+        {
+            MonitorService.PositionWindow(this, _monitorTargetMode, _specificMonitorDevice, _windowPositionMode, _hasCustomPosition, _customPositionX, _customPositionY);
+        }
+    }
+
+    public async void MoveWindowToPreset(string preset)
+    {
+        var targetMonitor = MonitorService.GetTargetMonitor(_monitorTargetMode, _specificMonitorDevice);
+        var workArea = targetMonitor.WorkingArea;
+        const double margin = 24;
+
+        double w = ActualWidth > 0 ? ActualWidth : Width;
+        double h = ActualHeight > 0 ? ActualHeight : Height;
+        double newLeft;
+        double newTop;
+
+        switch (preset)
+        {
+            case "TopLeft":
+                newLeft = workArea.Left + margin;
+                newTop = workArea.Top + margin;
+                break;
+            case "TopRight":
+                newLeft = workArea.Right - w - margin;
+                newTop = workArea.Top + margin;
+                break;
+            case "Center":
+                _hasCustomPosition = false;
+                _windowPositionMode = WindowVerticalPosition.Center;
+                await _settingsRepo.SetAsync("AppWindowCustomPositionEnabled", "false");
+                await _settingsRepo.SetAsync("AppWindowPositionMode", nameof(WindowVerticalPosition.Center));
+                MonitorService.PositionWindow(this, _monitorTargetMode, _specificMonitorDevice, _windowPositionMode, false);
+                UpdateResetPositionButtonState();
+                return;
+            case "TopCenter":
+            default:
+                _hasCustomPosition = false;
+                _windowPositionMode = WindowVerticalPosition.TopCenter;
+                await _settingsRepo.SetAsync("AppWindowCustomPositionEnabled", "false");
+                await _settingsRepo.SetAsync("AppWindowPositionMode", nameof(WindowVerticalPosition.TopCenter));
+                MonitorService.PositionWindow(this, _monitorTargetMode, _specificMonitorDevice, _windowPositionMode, false);
+                UpdateResetPositionButtonState();
+                return;
+        }
+
+        Left = newLeft;
+        Top = newTop;
+        _hasCustomPosition = true;
+        _customPositionX = newLeft;
+        _customPositionY = newTop;
+        await _settingsRepo.SetAsync("AppWindowCustomPositionEnabled", "true");
+        await _settingsRepo.SetAsync("AppWindowCustomPositionX", newLeft.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        await _settingsRepo.SetAsync("AppWindowCustomPositionY", newTop.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        UpdateResetPositionButtonState();
+    }
+
+    private void OnLanguageChanged(string lang)
+    {
+        Dispatcher.BeginInvoke(() =>
+        {
+            if (_showQuickStrip)
+            {
+                _ = RefreshQuickSystemStatesAsync();
+            }
+            UpdateOsAndModeUI();
+            if (string.IsNullOrWhiteSpace(SearchBox.Text))
+            {
+                ShowInitialFeatureGuide();
+            }
+            else if (ResultsList.ItemsSource != null)
+            {
+                ResultsList.Items.Refresh();
+            }
+        });
     }
 
     public void ApplyMonitorSettings(MonitorTargetMode mode, string? specificDevice, WindowVerticalPosition vPos)
@@ -1139,16 +1668,11 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnAiQuickLaunchClicked(object sender, RoutedEventArgs e)
-    {
-        var prompt = string.IsNullOrWhiteSpace(SearchBox.Text) ? "Xin chào! Bạn có thể giúp gì cho tôi hôm nay?" : SearchBox.Text;
-        OpenAiStreamingWindow(prompt);
-    }
-
     private void OnAppearanceChanged()
     {
         Dispatcher.Invoke(() =>
         {
+            ThemeManager.EnableWindowBlur(this);
             UpdateOsAndModeUI();
             if (ResultsList.ItemsSource != null)
             {
@@ -1164,7 +1688,29 @@ public partial class MainWindow : Window
 
     private void OnWindowMinimizeClicked(object sender, RoutedEventArgs e)
     {
-        Hide();
+        if (_minimizeToTray)
+        {
+            Hide();
+        }
+        else
+        {
+            WindowState = WindowState.Minimized;
+        }
+    }
+
+    private void OnResizeThumbDragDelta(object sender, DragDeltaEventArgs e)
+    {
+        Width = Math.Clamp(Width + e.HorizontalChange, 520, 1200);
+        Height = Math.Clamp(Height + e.VerticalChange, 340, 860);
+    }
+
+    private async void OnResizeThumbDragCompleted(object sender, DragCompletedEventArgs e)
+    {
+        await _settingsRepo.SetAsync("AppWindowWidth", ((int)Math.Round(Width)).ToString(System.Globalization.CultureInfo.InvariantCulture));
+        await _settingsRepo.SetAsync("AppWindowHeight", ((int)Math.Round(Height)).ToString(System.Globalization.CultureInfo.InvariantCulture));
+        ShowToast(LocalizationService.CurrentLanguage == LocalizationService.English
+            ? $"Resized window to {(int)Width} × {(int)Height} px"
+            : $"Đã chỉnh kích cỡ cửa sổ: {(int)Width} × {(int)Height} px");
     }
 
     private System.Windows.Threading.DispatcherTimer? _toastTimer;
@@ -1199,40 +1745,38 @@ public partial class MainWindow : Window
         ShowToast(newOs == OsStyle.Windows ? "Đã chuyển sang giao diện Windows 11 Fluent" : "Đã chuyển sang giao diện Linux GNOME Adwaita");
     }
 
-    private async void OnLightDarkToggleClicked(object sender, RoutedEventArgs e)
-    {
-        ThemeManager.ToggleLightDarkMode();
-        await _settingsRepo.SetAsync("AppForcedLightMode", ThemeManager.IsLightMode.ToString());
-        UpdateOsAndModeUI();
-        ShowToast(ThemeManager.IsLightMode ? "Đã chuyển sang Chế độ Sáng" : "Đã chuyển sang Chế độ Tối");
-    }
-
     private void UpdateOsAndModeUI()
     {
         bool isWin = ThemeManager.CurrentOsStyle == OsStyle.Windows;
+        bool isLight = ThemeManager.IsLightMode;
+
+        if (QuickSettingsStrip != null)
+        {
+            bool isClassicBottom = ThemeManager.CurrentUiStyle == UiStyle.ClassicCard;
+            Grid.SetRow(QuickSettingsStrip, isClassicBottom ? 4 : 2);
+            QuickSettingsStrip.Margin = isClassicBottom ? new Thickness(0, 8, 0, 0) : new Thickness(0, 7, 0, 0);
+            QuickSettingsStrip.Visibility = _showQuickStrip ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         if (GnomeTopBar != null)
         {
             GnomeTopBar.Visibility = isWin ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        if (HeaderThemeBadge != null)
+        if (LinuxTrafficDots != null)
         {
-            HeaderThemeBadge.Text = ThemeManager.CurrentTheme.ToString();
+            LinuxTrafficDots.Visibility = isWin ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        if (OsIconPath != null && OsLabelText != null)
+        if (WindowsCaptionControls != null)
         {
-            OsIconPath.Data = isWin ? (Geometry)FindResource("GeoWindows") : (Geometry)FindResource("GeoLinuxTux");
-            OsLabelText.Text = isWin ? "Win 11" : "Linux";
+            WindowsCaptionControls.Visibility = isWin ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        if (ModeEmojiText != null && ModeLabelText != null)
-        {
-            bool isLight = ThemeManager.IsLightMode;
-            ModeEmojiText.Text = isLight ? "☀️" : "🌙";
-            ModeLabelText.Text = isLight ? "Light" : "Dark";
-        }
+        // Adjust ambient refraction glow orbs for light mode vs dark mode
+        if (OrbPrimary != null) OrbPrimary.Opacity = isLight ? 0.04 : 0.09;
+        if (OrbSecondary != null) OrbSecondary.Opacity = isLight ? 0.03 : 0.07;
+        if (OrbTertiary != null) OrbTertiary.Opacity = isLight ? 0.02 : 0.05;
     }
 
     #region Horizontal Quick Settings Strip Handlers (Windows Search 2025 Inline Toggles)
@@ -1247,14 +1791,22 @@ public partial class MainWindow : Window
     {
         bool isNowOn = Launcher.Core.Utilities.WindowsControlService.ToggleBatterySaver();
         UpdateEnergySaverUI(isNowOn);
-        ShowToast(isNowOn ? "🍃 Tiết kiệm pin: Đã BẬT (Energy Saver)" : "🔋 Tiết kiệm pin: Đã TẮT (Balanced Mode)");
+        ShowToast(isNowOn ? "🍃 Tiết kiệm pin: Đã BẬT trực tiếp (Energy Saver)" : "🔋 Tiết kiệm pin: Đã TẮT (Balanced Mode)");
     }
 
     private void UpdateEnergySaverUI(bool isNowOn)
     {
         if (QuickEnergySaverText != null)
         {
-            QuickEnergySaverText.Text = isNowOn ? "Tiết kiệm pin (Bật)" : "Tiết kiệm pin";
+            QuickEnergySaverText.Text = isNowOn
+                ? LocalizationService.Get("Str_Quick_BatteryOn")
+                : LocalizationService.Get("Str_Quick_Battery");
+        }
+        if (QuickEnergySaverDot != null)
+        {
+            QuickEnergySaverDot.Fill = isNowOn
+                ? new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81))
+                : new SolidColorBrush(Color.FromRgb(0x64, 0x74, 0x8B));
         }
         if (QuickEnergySaverBtn != null)
         {
@@ -1267,7 +1819,9 @@ public partial class MainWindow : Window
         var newAlign = Launcher.Core.Utilities.WindowsControlService.ToggleTaskbarAlignment();
         if (QuickTaskbarText != null)
         {
-            QuickTaskbarText.Text = newAlign == Launcher.Core.Utilities.TaskbarAlignment.Center ? "Taskbar: Giữa" : "Taskbar: Trái";
+            QuickTaskbarText.Text = newAlign == Launcher.Core.Utilities.TaskbarAlignment.Center
+                ? LocalizationService.Get("Str_Quick_TaskbarCenter")
+                : LocalizationService.Get("Str_Quick_TaskbarLeft");
         }
         ShowToast(newAlign == Launcher.Core.Utilities.TaskbarAlignment.Center 
             ? "🎯 Đã chuyển thanh Taskbar sang Căn Giữa (Center)" 
@@ -1295,15 +1849,213 @@ public partial class MainWindow : Window
         ShowToast("⚡ Đang hiển thị danh sách các trình chạy ngầm và mức tiêu thụ RAM");
     }
 
-    private void OnQuickWifiClicked(object sender, RoutedEventArgs e)
+    private async void OnQuickWifiClicked(object sender, RoutedEventArgs e)
     {
-        Launcher.Core.Utilities.WindowsControlService.ShowAvailableNetworks();
+        if (QuickWifiBtn != null) QuickWifiBtn.IsEnabled = false;
+        try
+        {
+            bool isNowOn = await Launcher.Core.Utilities.WindowsControlService.ToggleWifiAsync();
+            string? ssid = isNowOn ? await Task.Run(Launcher.Core.Utilities.WindowsControlService.GetConnectedWifiSsid) : null;
+            UpdateWifiUI(isNowOn, ssid);
+            ShowToast(isNowOn ? "📶 Wi-Fi: Đã BẬT trực tiếp trên ứng dụng" : "📴 Wi-Fi: Đã TẮT trực tiếp trên ứng dụng");
+            if (Launcher.Core.Plugins.SystemCommandsPlugin.IsHardwareListQuery(SearchBox.Text))
+            {
+                await Task.Delay(350);
+                await RunSearchAsync(SearchBox.Text, debounceMs: 0);
+            }
+        }
+        finally
+        {
+            if (QuickWifiBtn != null) QuickWifiBtn.IsEnabled = true;
+        }
     }
 
-    private void OnQuickBluetoothClicked(object sender, RoutedEventArgs e)
+    private void OnQuickWifiRightClicked(object sender, MouseButtonEventArgs e)
     {
-        Launcher.Core.Utilities.WindowsControlService.ToggleBluetooth();
-        ShowToast("📶 Bluetooth: Đã gửi lệnh bật/tắt sóng Bluetooth");
+        e.Handled = true;
+        OpenWithQuery("sys wifi list");
+    }
+
+    private async void OnQuickBluetoothClicked(object sender, RoutedEventArgs e)
+    {
+        if (QuickBluetoothBtn != null) QuickBluetoothBtn.IsEnabled = false;
+        try
+        {
+            bool isNowOn = await Launcher.Core.Utilities.WindowsControlService.ToggleBluetoothAsync();
+            UpdateBluetoothUI(isNowOn);
+            ShowToast(isNowOn ? "📶 Bluetooth: Đã BẬT trực tiếp trên ứng dụng" : "📴 Bluetooth: Đã TẮT trực tiếp trên ứng dụng");
+            if (Launcher.Core.Plugins.SystemCommandsPlugin.IsHardwareListQuery(SearchBox.Text))
+            {
+                await Task.Delay(350);
+                await RunSearchAsync(SearchBox.Text, debounceMs: 0);
+            }
+        }
+        finally
+        {
+            if (QuickBluetoothBtn != null) QuickBluetoothBtn.IsEnabled = true;
+        }
+    }
+
+    private void OnQuickBluetoothRightClicked(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+        OpenWithQuery("sys bluetooth list");
+    }
+
+    private void UpdateWifiUI(bool isOn, string? connectedSsid)
+    {
+        if (QuickWifiText != null)
+        {
+            QuickWifiText.Text = isOn
+                ? (string.IsNullOrWhiteSpace(connectedSsid) ? LocalizationService.Get("Str_Quick_WifiOn") : $"Wi-Fi: {connectedSsid}")
+                : LocalizationService.Get("Str_Quick_WifiOff");
+        }
+        if (QuickWifiDot != null)
+        {
+            QuickWifiDot.Fill = isOn
+                ? new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81))
+                : new SolidColorBrush(Color.FromRgb(0x64, 0x74, 0x8B));
+        }
+        if (QuickWifiBtn != null)
+        {
+            QuickWifiBtn.Opacity = isOn ? 1.0 : 0.78;
+        }
+    }
+
+    private void UpdateBluetoothUI(bool isOn)
+    {
+        if (QuickBluetoothText != null)
+        {
+            QuickBluetoothText.Text = isOn
+                ? LocalizationService.Get("Str_Quick_BluetoothOn")
+                : LocalizationService.Get("Str_Quick_BluetoothOff");
+        }
+        if (QuickBluetoothDot != null)
+        {
+            QuickBluetoothDot.Fill = isOn
+                ? new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6))
+                : new SolidColorBrush(Color.FromRgb(0x64, 0x74, 0x8B));
+        }
+        if (QuickBluetoothBtn != null)
+        {
+            QuickBluetoothBtn.Opacity = isOn ? 1.0 : 0.78;
+        }
+    }
+
+    private async Task RefreshQuickSystemStatesAsync()
+    {
+        try
+        {
+            var (batteryOn, wifiOn, ssid, btOn) = await Task.Run(() =>
+            {
+                bool bat = Launcher.Core.Utilities.WindowsControlService.IsBatterySaverActive();
+                bool wifi = Launcher.Core.Utilities.WindowsControlService.IsWifiEnabled();
+                string? curSsid = wifi ? Launcher.Core.Utilities.WindowsControlService.GetConnectedWifiSsid() : null;
+                bool bt = Launcher.Core.Utilities.WindowsControlService.IsBluetoothEnabled();
+                return (bat, wifi, curSsid, bt);
+            });
+
+            UpdateEnergySaverUI(batteryOn);
+            UpdateWifiUI(wifiOn, ssid);
+            UpdateBluetoothUI(btOn);
+        }
+        catch
+        {
+            // Keep UI responsive even if hardware query fails
+        }
+    }
+
+    private void ShowWifiPasswordOverlay(string ssid, string? profileName)
+    {
+        _pendingWifiSsid = ssid;
+        _pendingWifiProfileName = string.IsNullOrWhiteSpace(profileName) ? null : profileName;
+        if (WifiPasswordSsidText != null)
+        {
+            WifiPasswordSsidText.Text = ssid;
+        }
+        if (WifiPasswordBox != null)
+        {
+            WifiPasswordBox.Password = string.Empty;
+        }
+        if (WifiPasswordOverlay != null)
+        {
+            WifiPasswordOverlay.Visibility = Visibility.Visible;
+        }
+        WifiPasswordBox?.Focus();
+    }
+
+    private void CloseWifiPasswordOverlay()
+    {
+        if (WifiPasswordOverlay != null)
+        {
+            WifiPasswordOverlay.Visibility = Visibility.Collapsed;
+        }
+        _pendingWifiSsid = null;
+        _pendingWifiProfileName = null;
+        SearchBox.Focus();
+    }
+
+    private void OnWifiPasswordCancelClicked(object sender, RoutedEventArgs e)
+    {
+        CloseWifiPasswordOverlay();
+    }
+
+    private void OnWifiPasswordBoxKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            e.Handled = true;
+            _ = ConnectPendingWifiAsync();
+        }
+        else if (e.Key == Key.Escape)
+        {
+            e.Handled = true;
+            CloseWifiPasswordOverlay();
+        }
+    }
+
+    private void OnWifiPasswordConnectClicked(object sender, RoutedEventArgs e)
+    {
+        _ = ConnectPendingWifiAsync();
+    }
+
+    private async Task ConnectPendingWifiAsync()
+    {
+        var ssid = _pendingWifiSsid;
+        if (string.IsNullOrWhiteSpace(ssid))
+        {
+            CloseWifiPasswordOverlay();
+            return;
+        }
+
+        var password = WifiPasswordBox?.Password ?? string.Empty;
+        var profileName = _pendingWifiProfileName;
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            ShowToast("⚠️ Vui lòng nhập mật khẩu Wi-Fi!");
+            WifiPasswordBox?.Focus();
+            return;
+        }
+
+        if (WifiPasswordConnectBtn != null) WifiPasswordConnectBtn.IsEnabled = false;
+        try
+        {
+            ShowToast($"📶 Đang kết nối tới {ssid}...");
+            var (success, message) = await Task.Run(() =>
+                Launcher.Core.Utilities.WindowsControlService.ConnectToWifiNetwork(ssid, password, profileName));
+            ShowToast(success ? $"📶 {message}" : $"❌ {message}");
+            CloseWifiPasswordOverlay();
+            await RefreshQuickSystemStatesAsync();
+            if (Launcher.Core.Plugins.SystemCommandsPlugin.IsHardwareListQuery(SearchBox.Text))
+            {
+                await Task.Delay(500);
+                await RunSearchAsync(SearchBox.Text, debounceMs: 0);
+            }
+        }
+        finally
+        {
+            if (WifiPasswordConnectBtn != null) WifiPasswordConnectBtn.IsEnabled = true;
+        }
     }
 
     #endregion
@@ -1313,7 +2065,14 @@ public partial class MainWindow : Window
         if (SearchPrefixBadge == null) return;
 
         var q = query.TrimStart();
-        if (q.StartsWith(">"))
+        if (q.StartsWith(">>"))
+        {
+            SearchPrefixBadge.Visibility = Visibility.Visible;
+            SearchPrefixIcon.Data = (Geometry)FindResource("GeoTerminal");
+            SearchPrefixText.Text = "PowerShell";
+            SearchPrefixBadge.Background = new SolidColorBrush(Color.FromRgb(0x25, 0x63, 0xEB)); // Blue
+        }
+        else if (q.StartsWith(">"))
         {
             SearchPrefixBadge.Visibility = Visibility.Visible;
             SearchPrefixIcon.Data = (Geometry)FindResource("GeoTerminal");
@@ -1391,6 +2150,204 @@ public partial class MainWindow : Window
         var mathChars = new[] { '+', '-', '*', '/', '^', '%', '=' };
         return q.Any(c => mathChars.Contains(c)) && q.Any(char.IsDigit);
     }
+
+    #region Inline Shell Command Runner
+
+    private async Task RunInlineShellCommandAsync(string command, bool usePowerShell)
+    {
+        _commandCts?.Cancel();
+        _commandCts?.Dispose();
+        var cts = new CancellationTokenSource();
+        _commandCts = cts;
+        var token = cts.Token;
+
+        while (_pendingCommandLines.TryDequeue(out _)) { }
+        CommandOutputTextBox.Clear();
+
+        _isCommandRunning = true;
+        _lastExecutedCommand = command;
+        _lastExecutedUsePowerShell = usePowerShell;
+
+        bool isEn = LocalizationService.CurrentLanguage == LocalizationService.English;
+
+        ResultsList.Visibility = Visibility.Collapsed;
+        NoResultsPanel.Visibility = Visibility.Collapsed;
+        CommandOutputPanel.Visibility = Visibility.Visible;
+        CmdStopBtn.Visibility = Visibility.Visible;
+
+        var amberBrush = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B));
+        CmdStatusDot.Fill = amberBrush;
+        StatusDot.Fill = amberBrush;
+        CmdHeaderCommandText.Text = (usePowerShell ? "PS> " : "> ") + command;
+        CmdHeaderMetaText.Text = isEn ? $"Running · {_shellWorkingDir}" : $"Đang chạy · {_shellWorkingDir}";
+        StatusText.Text = isEn ? "Running command..." : "Đang chạy lệnh...";
+
+        _cmdFlushTimer.Start();
+
+        Launcher.Core.Utilities.ShellExecutionResult result;
+        try
+        {
+            result = await Launcher.Core.Utilities.ShellCommandRunner.ExecuteStreamingAsync(
+                command,
+                _shellWorkingDir,
+                usePowerShell,
+                (line, _) => _pendingCommandLines.Enqueue(line),
+                token);
+        }
+        catch (Exception ex)
+        {
+            result = new Launcher.Core.Utilities.ShellExecutionResult(
+                ExitCode: -1,
+                Output: string.Empty,
+                Error: ex.Message,
+                WasCanceled: false,
+                DirectoryChanged: false,
+                WorkingDirectory: _shellWorkingDir,
+                Duration: TimeSpan.Zero);
+            _pendingCommandLines.Enqueue(ex.Message);
+        }
+
+        if (!ReferenceEquals(_commandCts, cts))
+        {
+            return;
+        }
+
+        _cmdFlushTimer.Stop();
+        FlushPendingCommandOutput();
+
+        _shellWorkingDir = result.WorkingDirectory;
+        _isCommandRunning = false;
+        CmdStopBtn.Visibility = Visibility.Collapsed;
+
+        if (string.IsNullOrWhiteSpace(CommandOutputTextBox.Text) && !result.WasCanceled)
+        {
+            CommandOutputTextBox.Text = isEn
+                ? "(Command completed with no output)"
+                : "(Lệnh đã thực thi xong — không có đầu ra)";
+        }
+
+        var durationLabel = result.Duration.TotalSeconds >= 1.0
+            ? $"{result.Duration.TotalSeconds:F2} s"
+            : $"{(int)Math.Round(result.Duration.TotalMilliseconds)} ms";
+
+        Brush statusBrush;
+        if (result.WasCanceled)
+        {
+            statusBrush = amberBrush;
+            CmdHeaderMetaText.Text = isEn
+                ? $"Stopped · {durationLabel} · {_shellWorkingDir}"
+                : $"Đã dừng · {durationLabel} · {_shellWorkingDir}";
+            StatusText.Text = isEn ? $"Stopped · {durationLabel}" : $"Đã dừng · {durationLabel}";
+        }
+        else if (result.ExitCode == 0)
+        {
+            statusBrush = new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81));
+            CmdHeaderMetaText.Text = $"Exit 0 · {durationLabel} · {_shellWorkingDir}";
+            StatusText.Text = $"Exit 0 · {durationLabel}";
+        }
+        else
+        {
+            statusBrush = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+            CmdHeaderMetaText.Text = $"Exit {result.ExitCode} · {durationLabel} · {_shellWorkingDir}";
+            StatusText.Text = $"Exit {result.ExitCode} · {durationLabel}";
+        }
+
+        CmdStatusDot.Fill = statusBrush;
+        StatusDot.Fill = statusBrush;
+    }
+
+    private void FlushPendingCommandOutput()
+    {
+        if (_pendingCommandLines.IsEmpty || CommandOutputTextBox == null) return;
+
+        var batch = new System.Text.StringBuilder();
+        int count = 0;
+        while (count < 200 && _pendingCommandLines.TryDequeue(out var line))
+        {
+            batch.AppendLine(line);
+            count++;
+        }
+
+        if (batch.Length == 0) return;
+
+        const int maxDisplayChars = 200_000;
+        if (CommandOutputTextBox.Text.Length > maxDisplayChars)
+        {
+            var tail = CommandOutputTextBox.Text[^100_000..];
+            CommandOutputTextBox.Text = tail + batch.ToString();
+        }
+        else
+        {
+            CommandOutputTextBox.AppendText(batch.ToString());
+        }
+
+        CommandOutputScrollViewer?.ScrollToEnd();
+    }
+
+    private void CloseCommandOutputPanel()
+    {
+        if (CommandOutputPanel == null || CommandOutputPanel.Visibility != Visibility.Visible)
+        {
+            return;
+        }
+
+        _cmdFlushTimer.Stop();
+        _commandCts?.Cancel();
+        _isCommandRunning = false;
+        while (_pendingCommandLines.TryDequeue(out _)) { }
+        CommandOutputPanel.Visibility = Visibility.Collapsed;
+        CmdStopBtn.Visibility = Visibility.Collapsed;
+
+        if (ResultsList.Items.Count > 0)
+        {
+            ResultsList.Visibility = Visibility.Visible;
+            NoResultsPanel.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void OnCmdStopClicked(object sender, RoutedEventArgs e)
+    {
+        _commandCts?.Cancel();
+    }
+
+    private void OnCmdCopyClicked(object sender, RoutedEventArgs e)
+    {
+        var text = CommandOutputTextBox?.Text;
+        if (!string.IsNullOrEmpty(text))
+        {
+            Clipboard.SetText(text);
+            ShowToast(LocalizationService.CurrentLanguage == LocalizationService.English
+                ? "📋 Command output copied"
+                : "📋 Đã sao chép kết quả lệnh");
+        }
+    }
+
+    private void OnCmdOpenExternalClicked(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(_lastExecutedCommand)) return;
+
+        try
+        {
+            Process.Start(Launcher.Core.Utilities.ShellCommandRunner.BuildExternalStartInfo(
+                _lastExecutedCommand,
+                _shellWorkingDir,
+                runAsAdmin: false,
+                usePowerShell: _lastExecutedUsePowerShell));
+            Hide();
+        }
+        catch (Exception ex)
+        {
+            ShowToast($"❌ {ex.Message}");
+        }
+    }
+
+    private void OnCmdCloseClicked(object sender, RoutedEventArgs e)
+    {
+        CloseCommandOutputPanel();
+        SearchBox.Focus();
+    }
+
+    #endregion
 
     #region Window Dragging & Position Management
 
@@ -1476,15 +2433,11 @@ public partial class MainWindow : Window
         if (_hasCustomPosition)
         {
             ResetPositionBtn.Visibility = Visibility.Visible;
-            if (CustomPosIndicator != null) CustomPosIndicator.Visibility = Visibility.Visible;
-            if (ResetPosLabel != null) ResetPosLabel.Text = "Reset vị trí";
             ResetPositionBtn.ToolTip = $"Đang dùng vị trí tùy chỉnh (X: {(int)_customPositionX}, Y: {(int)_customPositionY}). Nhấp để đưa về trung tâm.";
         }
         else
         {
             ResetPositionBtn.Visibility = Visibility.Collapsed;
-            if (CustomPosIndicator != null) CustomPosIndicator.Visibility = Visibility.Collapsed;
-            if (ResetPosLabel != null) ResetPosLabel.Text = "Vị trí";
             ResetPositionBtn.ToolTip = "Cửa sổ đang ở vị trí trung tâm. Kéo thanh tiêu đề để di chuyển & lưu vị trí mới.";
         }
     }

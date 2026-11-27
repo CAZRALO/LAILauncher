@@ -1,0 +1,77 @@
+name: Release LAILauncher
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish'
+        required: false
+        default: 'v2.4.0'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore and build Release
+        shell: pwsh
+        run: |
+          dotnet restore LAILauncher.sln
+          dotnet build LAILauncher.sln -c Release --no-restore
+
+      - name: Package portable and framework-dependent archives
+        shell: pwsh
+        run: |
+          $tag = "${{ inputs.tag }}"
+          if ([string]::IsNullOrWhiteSpace($tag)) {
+            $tag = "${{ github.ref_name }}"
+          }
+
+          New-Item -ItemType Directory -Path "dist" -Force | Out-Null
+
+          dotnet publish src/Launcher.App/Launcher.App.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o publish/portable
+          Compress-Archive -Path "publish/portable/*" -DestinationPath "dist/LAILauncher-$tag-portable.zip" -Force
+
+          dotnet publish src/Launcher.App/Launcher.App.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=false -o publish/framework-dependent
+          Compress-Archive -Path "publish/framework-dependent/*" -DestinationPath "dist/LAILauncher-$tag-framework-dependent.zip" -Force
+
+      - name: Create or update GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ inputs.tag }}"
+          if ([string]::IsNullOrWhiteSpace($tag)) {
+            $tag = "${{ github.ref_name }}"
+          }
+
+          $notes = @"
+          ## LAILauncher $tag
+
+          ### Highlights
+          - Minimalized MainWindow UI for focused, clutter-free searching
+          - Inline streaming CMD (`>`) and PowerShell (`>>`) command execution inside the launcher window
+          - Multi-theme Liquid Glass & Windows / Linux chrome styles with bilingual VI / EN localization
+          - Local Ollama AI assistant, ONNX-based semantic search, and Windows quick system controls
+          - Verified with 212 passing unit tests
+          "@
+
+          gh release view "$tag" *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload "$tag" dist/* --clobber
+          } else {
+            gh release create "$tag" dist/* --title "LAILauncher $tag" --notes "$notes"
+          }

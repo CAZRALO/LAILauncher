@@ -20,13 +20,25 @@ public enum ThemeMode
     Linux,
     Ubuntu,
     Arch,
-    Aurora
+    Aurora,
+    Windows11,
+    Windows10,
+    WindowsVista
 }
 
 public enum OsStyle
 {
     Windows,
     Linux
+}
+
+public enum UiStyle
+{
+    ModernGlass,
+    CompactCommand,
+    SharpCyber,
+    PillFloating,
+    ClassicCard
 }
 
 public static class ThemeManager
@@ -38,32 +50,40 @@ public static class ThemeManager
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
     private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-    private const int DWMWA_SYSTEMBACKDROP_TYPE = 38;
-    private const int DWMWA_MICA_EFFECT = 1029;
 
-    [DllImport("user32.dll")]
-    private static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+    private readonly record struct LightPaletteSpec(
+        string WindowTintHex,
+        string SidebarTintHex,
+        string CardTintHex,
+        string AccentHex,
+        string IconInkHex,
+        string PrimaryInkHex,
+        string? VistaGradTop = null,
+        string? VistaGradMid = null,
+        string? VistaGradBot = null);
 
-    [StructLayout(LayoutKind.Sequential)]
-    private struct WindowCompositionAttributeData
+    private static LightPaletteSpec GetLightPaletteSpec(ThemeMode theme) => theme switch
     {
-        public int Attribute;
-        public IntPtr Data;
-        public int SizeOfData;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct AccentPolicy
-    {
-        public int AccentState;
-        public int AccentFlags;
-        public int GradientColor;
-        public int AnimationId;
-    }
+        ThemeMode.Windows11 => new("#DDEAF9", "#CFE1F6", "#F2F7FE", "#0067C0", "#0B5CAD", "#132238"),
+        ThemeMode.Windows10 => new("#D8E7F6", "#C9DDF2", "#EEF5FC", "#0078D7", "#005EA8", "#102033"),
+        ThemeMode.WindowsVista => new("#C9ECFB", "#B4E3F8", "#ECF9FF", "#0284C7", "#0369A1", "#0C2A42", "#BFEAFB", "#DFF6FF", "#C6ECFC"),
+        ThemeMode.Cyberpunk => new("#FFE0EC", "#FCD0E2", "#FFF3F8", "#E11D48", "#BE123C", "#380E1E"),
+        ThemeMode.Emerald => new("#D5F3E5", "#C2ECD8", "#EEFCF5", "#059669", "#047857", "#0B3325"),
+        ThemeMode.Nord => new("#DCE6F2", "#CCD9EA", "#F0F5FA", "#4C759E", "#36597D", "#1E2C3E"),
+        ThemeMode.Dracula => new("#E8DFFC", "#DACDF9", "#F6F2FF", "#7C3AED", "#6D28D9", "#24173B"),
+        ThemeMode.Sunset => new("#FFE5D4", "#FCD6BE", "#FFF5EE", "#EA580C", "#C2410C", "#3B1A0B"),
+        ThemeMode.Ubuntu => new("#F5E1DA", "#EBD0C6", "#FCF3F0", "#E95420", "#C43E10", "#33171D"),
+        ThemeMode.Arch => new("#D4F0FA", "#C0E7F6", "#EEF9FE", "#0284C7", "#0369A1", "#0D2B3E"),
+        ThemeMode.Aurora => new("#E3DDFC", "#D5CCFA", "#F4F1FF", "#7C3AED", "#6D28D9", "#1D1742"),
+        ThemeMode.TokyoNight => new("#DEE5F9", "#CED9F5", "#F2F5FD", "#3D59A1", "#2E4687", "#1A223B"),
+        ThemeMode.Linux => new("#DEF2E4", "#CBEAD5", "#F1FBF4", "#16A34A", "#15803D", "#132E1E"),
+        _ => new("#E1ECFA", "#D4E4F7", "#F4F8FE", "#2563EB", "#1D4ED8", "#152338")
+    };
 
     // Current State
     public static ThemeMode CurrentTheme { get; private set; } = ThemeMode.Dark;
     public static OsStyle CurrentOsStyle { get; private set; } = OsStyle.Windows;
+    public static UiStyle CurrentUiStyle { get; private set; } = UiStyle.ModernGlass;
     public static bool? ForcedLightMode { get; private set; } = null;
     public static string? CustomAccentColorHex { get; private set; } = null;
     public static bool UseWindowsAccentColor { get; private set; } = false;
@@ -78,13 +98,10 @@ public static class ThemeManager
     // Events
     public static event Action<ThemeMode>? ThemeChanged;
     public static event Action<OsStyle>? OsStyleChanged;
+    public static event Action<UiStyle>? UiStyleChanged;
     public static event Action<string?>? AccentColorChanged;
     public static event Action? AppearanceChanged;
 
-    /// <summary>
-    /// Indicates whether the active visual presentation is light mode.
-    /// Supports dynamic toggle for any selected theme.
-    /// </summary>
     public static bool IsLightMode
     {
         get
@@ -99,9 +116,6 @@ public static class ThemeManager
         }
     }
 
-    /// <summary>
-    /// Active accent color currently rendered across the app.
-    /// </summary>
     public static string ActiveAccentHex
     {
         get
@@ -118,17 +132,10 @@ public static class ThemeManager
         }
     }
 
-    /// <summary>
-    /// Active glass tint color.
-    /// </summary>
     public static string ActiveGlassTintHex
     {
         get
         {
-            if (IsLightMode)
-            {
-                return "#FFFFFF";
-            }
             if (GlassTintWithAccent)
             {
                 return ActiveAccentHex;
@@ -137,13 +144,14 @@ public static class ThemeManager
             {
                 return CustomGlassTintHex;
             }
+            if (IsLightMode)
+            {
+                return GetLightPaletteSpec(CurrentTheme).WindowTintHex;
+            }
             return GetDefaultGlassTintHex(CurrentTheme);
         }
     }
 
-    /// <summary>
-    /// Load all stored appearance settings and apply them simultaneously.
-    /// </summary>
     public static void LoadConfiguration(
         ThemeMode theme,
         string? accentHex,
@@ -154,10 +162,12 @@ public static class ThemeManager
         double glassOpacity,
         bool glassTintWithAccent,
         OsStyle osStyle = OsStyle.Windows,
-        bool? forcedLightMode = null)
+        bool? forcedLightMode = null,
+        UiStyle uiStyle = UiStyle.ModernGlass)
     {
         CurrentTheme = theme;
         CurrentOsStyle = osStyle;
+        CurrentUiStyle = uiStyle;
         ForcedLightMode = forcedLightMode;
         CustomAccentColorHex = string.IsNullOrWhiteSpace(accentHex) ? null : NormalizeHex(accentHex);
         UseWindowsAccentColor = useWindowsAccent;
@@ -173,6 +183,35 @@ public static class ThemeManager
     public static void ApplyTheme(ThemeMode theme)
     {
         CurrentTheme = theme;
+        if (theme == ThemeMode.Light)
+        {
+            ForcedLightMode = true;
+        }
+        else if (theme == ThemeMode.Dark)
+        {
+            ForcedLightMode = false;
+        }
+        CustomAccentColorHex = null;
+        CustomGlassTintHex = null;
+        UseWindowsAccentColor = (theme == ThemeMode.System);
+        ApplyAppearance();
+    }
+
+    /// <summary>
+    /// Applies a color/theme preset while preserving the user's current Light/Dark choice
+    /// (except when switching to <see cref="ThemeMode.System"/>, which syncs with Windows).
+    /// </summary>
+    public static void ApplyThemePreset(ThemeMode theme)
+    {
+        CurrentTheme = theme;
+        if (theme == ThemeMode.System)
+        {
+            ForcedLightMode = null;
+        }
+        else if (theme == ThemeMode.Light)
+        {
+            ForcedLightMode = true;
+        }
         CustomAccentColorHex = null;
         CustomGlassTintHex = null;
         UseWindowsAccentColor = (theme == ThemeMode.System);
@@ -182,9 +221,43 @@ public static class ThemeManager
     public static void SetOsStyle(OsStyle os)
     {
         CurrentOsStyle = os;
+        if (os == OsStyle.Linux && (CurrentTheme == ThemeMode.Dark || CurrentTheme == ThemeMode.System))
+        {
+            CurrentTheme = ThemeMode.Ubuntu;
+        }
+        else if (os == OsStyle.Windows && (CurrentTheme == ThemeMode.Ubuntu || CurrentTheme == ThemeMode.Arch || CurrentTheme == ThemeMode.Linux))
+        {
+            CurrentTheme = ThemeMode.Windows11;
+        }
+
         ApplyAppearance();
-        OsStyleChanged?.Invoke(os);
+        OsStyleChanged?.Invoke(CurrentOsStyle);
     }
+
+    public static void SetUiStyle(UiStyle uiStyle)
+    {
+        CurrentUiStyle = uiStyle;
+        ApplyAppearance();
+        UiStyleChanged?.Invoke(CurrentUiStyle);
+    }
+
+    public static UiStyle CycleUiStyle()
+    {
+        var values = Enum.GetValues<UiStyle>();
+        int next = (Array.IndexOf(values, CurrentUiStyle) + 1) % values.Length;
+        SetUiStyle(values[next]);
+        return CurrentUiStyle;
+    }
+
+    public static string GetUiStyleDisplayName(UiStyle style) => style switch
+    {
+        UiStyle.ModernGlass => "Modern Glass (Mặc định)",
+        UiStyle.CompactCommand => "Gọn nhẹ (Compact)",
+        UiStyle.SharpCyber => "Vuông vắn (Cyber)",
+        UiStyle.PillFloating => "Viên thuốc (Pill)",
+        UiStyle.ClassicCard => "Thẻ cổ điển (Classic)",
+        _ => "Modern Glass"
+    };
 
     public static void SetLightMode(bool? isLight)
     {
@@ -285,26 +358,15 @@ public static class ThemeManager
 
             IntPtr hwnd = helper.Handle;
 
-            // 1. Windows 11 (Build 22000+) Native Immersive Dark Mode for native dialogs/menus
             if (Environment.OSVersion.Version.Build >= 22000)
             {
                 int darkMode = IsLightMode ? 0 : 1;
                 DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkMode, sizeof(int));
             }
-
-            // NOTE: Do NOT call SetWindowCompositionAttribute (ACCENT_ENABLE_BLURBEHIND)
-            // or DWMWA_SYSTEMBACKDROP_TYPE on WPF windows with AllowsTransparency="True".
-            // In Windows 10 (1809+) and Windows 11, invoking DWM backdrop or SetWindowCompositionAttribute
-            // on layered windows (WS_EX_LAYERED) causes DWM to paint the transparent margins,
-            // drop shadows, and rounded corners with a solid, opaque black rectangular box!
-            // WPF's native per-pixel alpha rendering pipeline handles transparency and rounded corners cleanly.
         }
         catch { }
     }
 
-    /// <summary>
-    /// Re-computes and updates all Application Resource dictionaries with active theme, glass tint and accent.
-    /// </summary>
     public static void ApplyAppearance()
     {
         var appResources = Application.Current?.Resources;
@@ -312,7 +374,6 @@ public static class ThemeManager
 
         bool isLight = IsLightMode;
 
-        // 1. Resolve Effective Base Theme
         ThemeMode effectiveBaseTheme;
         if (CurrentTheme == ThemeMode.System)
         {
@@ -329,19 +390,15 @@ public static class ThemeManager
 
         bool isGlass = CurrentTheme == ThemeMode.Glass || IsGlassEffectEnabled;
 
-        // 2. Set OS Style Dimensions and Visibility Resources
         bool isLinux = CurrentOsStyle == OsStyle.Linux;
-        appResources["WindowCornerRadius"] = isLinux ? new CornerRadius(20) : new CornerRadius(14);
-        appResources["WindowCornerRadiusTop"] = isLinux ? new CornerRadius(20, 20, 0, 0) : new CornerRadius(14, 14, 0, 0);
         appResources["IsLinuxStyle"] = isLinux;
         appResources["IsWindowsStyle"] = !isLinux;
         appResources["LinuxVisibility"] = isLinux ? Visibility.Visible : Visibility.Collapsed;
         appResources["WindowsVisibility"] = !isLinux ? Visibility.Visible : Visibility.Collapsed;
 
-        // 3. Apply Theme Base Palette (Typography, Card, Popup, Scrollbar)
         ApplyBaseThemePalette(appResources, effectiveBaseTheme, isLight);
+        ApplyUiStyleResources(appResources, effectiveBaseTheme, isLinux);
 
-        // 4. Resolve Effective Accent Color
         string accentHex = ActiveAccentHex;
         Color accentColor;
         try
@@ -354,7 +411,6 @@ public static class ThemeManager
             accentColor = ColorFromHex(accentHex);
         }
 
-        // 5. Apply Glass Surface & Specular Highlights
         if (isGlass)
         {
             ApplyGlassSurface(appResources, effectiveBaseTheme, isLight, accentColor);
@@ -367,13 +423,142 @@ public static class ThemeManager
             }
         }
 
-        // 6. Apply Accent Color to all controls
         ApplyAccentBrushes(appResources, accentColor, isLight, isGlass);
 
-        // 7. Notify subscribers
         ThemeChanged?.Invoke(CurrentTheme);
         AccentColorChanged?.Invoke(accentHex);
         AppearanceChanged?.Invoke();
+    }
+
+    private static void ApplyUiStyleResources(ResourceDictionary appResources, ThemeMode effectiveTheme, bool isLinux)
+    {
+        switch (CurrentUiStyle)
+        {
+            case UiStyle.CompactCommand:
+                appResources["WindowCornerRadius"] = new CornerRadius(12);
+                appResources["WindowCornerRadiusTop"] = new CornerRadius(12, 12, 0, 0);
+                appResources["WindowBorderThickness"] = new Thickness(1);
+                appResources["SearchCornerRadius"] = new CornerRadius(9);
+                appResources["SearchBorderThickness"] = new Thickness(1);
+                appResources["SearchPadding"] = new Thickness(12, 6, 12, 6);
+                appResources["ItemCornerRadius"] = new CornerRadius(7);
+                appResources["ItemPadding"] = new Thickness(8, 4, 8, 4);
+                appResources["ItemMargin"] = new Thickness(0, 0.5, 0, 0.5);
+                appResources["ItemBorderThickness"] = new Thickness(1);
+                appResources["ItemDefaultBorderBrush"] = Brushes.Transparent;
+                appResources["IndicatorCornerRadius"] = new CornerRadius(1.5);
+                appResources["IconCornerRadius"] = new CornerRadius(7);
+                appResources["IconBoxSize"] = 28.0;
+                appResources["PillCornerRadius"] = new CornerRadius(6);
+                appResources["QuickStripVisibility"] = Visibility.Collapsed;
+                appResources["FooterVisibility"] = Visibility.Visible;
+                break;
+
+            case UiStyle.SharpCyber:
+                appResources["WindowCornerRadius"] = new CornerRadius(4);
+                appResources["WindowCornerRadiusTop"] = new CornerRadius(4, 4, 0, 0);
+                appResources["WindowBorderThickness"] = new Thickness(2);
+                appResources["SearchCornerRadius"] = new CornerRadius(3);
+                appResources["SearchBorderThickness"] = new Thickness(2);
+                appResources["SearchPadding"] = new Thickness(12, 8, 12, 8);
+                appResources["ItemCornerRadius"] = new CornerRadius(3);
+                appResources["ItemPadding"] = new Thickness(10, 6, 10, 6);
+                appResources["ItemMargin"] = new Thickness(0, 1.5, 0, 1.5);
+                appResources["ItemBorderThickness"] = new Thickness(1);
+                appResources["ItemDefaultBorderBrush"] = Brushes.Transparent;
+                appResources["IndicatorCornerRadius"] = new CornerRadius(0);
+                appResources["IconCornerRadius"] = new CornerRadius(3);
+                appResources["IconBoxSize"] = 32.0;
+                appResources["PillCornerRadius"] = new CornerRadius(3);
+                appResources["QuickStripVisibility"] = Visibility.Collapsed;
+                appResources["FooterVisibility"] = Visibility.Visible;
+                break;
+
+            case UiStyle.PillFloating:
+                appResources["WindowCornerRadius"] = new CornerRadius(24);
+                appResources["WindowCornerRadiusTop"] = new CornerRadius(24, 24, 0, 0);
+                appResources["WindowBorderThickness"] = new Thickness(1.5);
+                appResources["SearchCornerRadius"] = new CornerRadius(22);
+                appResources["SearchBorderThickness"] = new Thickness(1.5);
+                appResources["SearchPadding"] = new Thickness(14, 9, 14, 9);
+                appResources["ItemCornerRadius"] = new CornerRadius(16);
+                appResources["ItemPadding"] = new Thickness(10, 7, 10, 7);
+                appResources["ItemMargin"] = new Thickness(0, 2, 0, 2);
+                appResources["ItemBorderThickness"] = new Thickness(1);
+                appResources["ItemDefaultBorderBrush"] = Brushes.Transparent;
+                appResources["IndicatorCornerRadius"] = new CornerRadius(3);
+                appResources["IconCornerRadius"] = new CornerRadius(17);
+                appResources["IconBoxSize"] = 34.0;
+                appResources["PillCornerRadius"] = new CornerRadius(16);
+                appResources["QuickStripVisibility"] = Visibility.Collapsed;
+                appResources["FooterVisibility"] = Visibility.Visible;
+                break;
+
+            case UiStyle.ClassicCard:
+                appResources["WindowCornerRadius"] = new CornerRadius(10);
+                appResources["WindowCornerRadiusTop"] = new CornerRadius(10, 10, 0, 0);
+                appResources["WindowBorderThickness"] = new Thickness(1.5);
+                appResources["SearchCornerRadius"] = new CornerRadius(8);
+                appResources["SearchBorderThickness"] = new Thickness(1.5);
+                appResources["SearchPadding"] = new Thickness(12, 8, 12, 8);
+                appResources["ItemCornerRadius"] = new CornerRadius(8);
+                appResources["ItemPadding"] = new Thickness(10, 6, 10, 6);
+                appResources["ItemMargin"] = new Thickness(0, 2, 0, 2);
+                appResources["ItemBorderThickness"] = new Thickness(1);
+                appResources["ItemDefaultBorderBrush"] = Brushes.Transparent;
+                appResources["IndicatorCornerRadius"] = new CornerRadius(2);
+                appResources["IconCornerRadius"] = new CornerRadius(8);
+                appResources["IconBoxSize"] = 32.0;
+                appResources["PillCornerRadius"] = new CornerRadius(6);
+                appResources["QuickStripVisibility"] = Visibility.Collapsed;
+                appResources["FooterVisibility"] = Visibility.Visible;
+                break;
+
+            case UiStyle.ModernGlass:
+            default:
+                if (effectiveTheme == ThemeMode.Windows10 && !isLinux)
+                {
+                    appResources["WindowCornerRadius"] = new CornerRadius(6);
+                    appResources["WindowCornerRadiusTop"] = new CornerRadius(6, 6, 0, 0);
+                    appResources["WindowBorderThickness"] = new Thickness(1);
+                    appResources["SearchCornerRadius"] = new CornerRadius(4);
+                    appResources["SearchBorderThickness"] = new Thickness(1.5);
+                    appResources["SearchPadding"] = new Thickness(12, 8, 12, 8);
+                    appResources["ItemCornerRadius"] = new CornerRadius(4);
+                    appResources["ItemPadding"] = new Thickness(10, 6, 10, 6);
+                    appResources["ItemMargin"] = new Thickness(0, 1, 0, 1);
+                    appResources["ItemBorderThickness"] = new Thickness(1);
+                    appResources["ItemDefaultBorderBrush"] = Brushes.Transparent;
+                    appResources["IndicatorCornerRadius"] = new CornerRadius(1);
+                    appResources["IconCornerRadius"] = new CornerRadius(6);
+                    appResources["IconBoxSize"] = 32.0;
+                    appResources["PillCornerRadius"] = new CornerRadius(4);
+                    appResources["QuickStripVisibility"] = Visibility.Collapsed;
+                    appResources["FooterVisibility"] = Visibility.Visible;
+                }
+                else
+                {
+                    double winRad = isLinux ? 20 : 14;
+                    appResources["WindowCornerRadius"] = new CornerRadius(winRad);
+                    appResources["WindowCornerRadiusTop"] = new CornerRadius(winRad, winRad, 0, 0);
+                    appResources["WindowBorderThickness"] = new Thickness(1);
+                    appResources["SearchCornerRadius"] = new CornerRadius(10);
+                    appResources["SearchBorderThickness"] = new Thickness(1.5);
+                    appResources["SearchPadding"] = new Thickness(12, 8, 12, 8);
+                    appResources["ItemCornerRadius"] = new CornerRadius(8);
+                    appResources["ItemPadding"] = new Thickness(10, 6, 10, 6);
+                    appResources["ItemMargin"] = new Thickness(0, 1, 0, 1);
+                    appResources["ItemBorderThickness"] = new Thickness(1);
+                    appResources["ItemDefaultBorderBrush"] = Brushes.Transparent;
+                    appResources["IndicatorCornerRadius"] = new CornerRadius(2);
+                    appResources["IconCornerRadius"] = new CornerRadius(8);
+                    appResources["IconBoxSize"] = 32.0;
+                    appResources["PillCornerRadius"] = new CornerRadius(8);
+                    appResources["QuickStripVisibility"] = Visibility.Collapsed;
+                    appResources["FooterVisibility"] = Visibility.Visible;
+                }
+                break;
+        }
     }
 
     static ThemeManager()
@@ -410,15 +595,127 @@ public static class ThemeManager
     {
         switch (theme)
         {
+            case ThemeMode.Windows11:
+                SetBrush(appResources, "WindowBgBrush", ColorFromHex("#1C212B"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#181C25"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#252B37"));
+                SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#333D52"));
+                SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#252B37"));
+                SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#39445B"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E2E8F0"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#B5C2D6"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#8896AE"));
+                SetBrush(appResources, "IconMutedBrush", ColorFromHex("#A5B6CE"));
+                SetBrush(appResources, "AccentBrush", ColorFromHex("#0078D4"));
+                SetBrush(appResources, "LogoBrush", ColorFromHex("#60CDFF"));
+                SetBrush(appResources, "ItemHoverBgBrush", ColorFromHex("#2B3342"));
+                SetBrush(appResources, "ItemSelectedBgBrush", ColorFromHex("#253954"));
+                SetBrush(appResources, "ItemSelectedBorderBrush", ColorFromHex("#0078D4"));
+                SetBrush(appResources, "ContextMenuBgBrush", ColorFromHex("#202632"));
+                SetBrush(appResources, "ContextMenuBorderBrush", ColorFromHex("#39445B"));
+                SetBrush(appResources, "PopupBgBrush", ColorFromHex("#202632"));
+                SetBrush(appResources, "PopupBorderBrush", ColorFromHex("#39445B"));
+                SetBrush(appResources, "SeparatorBrush", ColorFromHex("#2D3546"));
+                SetBrush(appResources, "BadgeBgBrush", ColorFromHex("#232A38"));
+                SetBrush(appResources, "BadgeBorderBrush", ColorFromHex("#38435C"));
+                SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#60CDFF"));
+                SetBrush(appResources, "DateBadgeBgBrush", ColorFromHex("#1D3352"));
+                SetBrush(appResources, "DateBadgeBorderBrush", ColorFromHex("#2A4C7D"));
+                SetBrush(appResources, "DateBadgeForegroundBrush", ColorFromHex("#60CDFF"));
+                SetBrush(appResources, "CardBgBrush", ColorFromHex("#242A36"));
+                SetBrush(appResources, "CardBorderBrush", ColorFromHex("#323A4C"));
+                SetBrush(appResources, "ScrollBarThumbBrush", ColorFromHex("#46526B"));
+                SetBrush(appResources, "ScrollBarThumbHoverBrush", ColorFromHex("#0078D4"));
+                SetBrush(appResources, "ScrollBarTrackBrush", ColorFromHex("#1D222D"));
+                SetColor(appResources, "ShadowColor", ColorFromHex("#090C12"));
+                appResources["ShadowOpacity"] = 0.62;
+                break;
+
+            case ThemeMode.Windows10:
+                SetBrush(appResources, "WindowBgBrush", ColorFromHex("#141923"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#10141D"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#1D2432"));
+                SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#0078D7"));
+                SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#1B212E"));
+                SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#313B4F"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E2E8F0"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#B6C2D4"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#8290A6"));
+                SetBrush(appResources, "IconMutedBrush", ColorFromHex("#9CB0CC"));
+                SetBrush(appResources, "AccentBrush", ColorFromHex("#0078D7"));
+                SetBrush(appResources, "LogoBrush", ColorFromHex("#38BDF8"));
+                SetBrush(appResources, "ItemHoverBgBrush", ColorFromHex("#232C3D"));
+                SetBrush(appResources, "ItemSelectedBgBrush", ColorFromHex("#1A3554"));
+                SetBrush(appResources, "ItemSelectedBorderBrush", ColorFromHex("#0078D7"));
+                SetBrush(appResources, "ContextMenuBgBrush", ColorFromHex("#171C27"));
+                SetBrush(appResources, "ContextMenuBorderBrush", ColorFromHex("#334155"));
+                SetBrush(appResources, "PopupBgBrush", ColorFromHex("#171C27"));
+                SetBrush(appResources, "PopupBorderBrush", ColorFromHex("#334155"));
+                SetBrush(appResources, "SeparatorBrush", ColorFromHex("#252E3F"));
+                SetBrush(appResources, "BadgeBgBrush", ColorFromHex("#1C2331"));
+                SetBrush(appResources, "BadgeBorderBrush", ColorFromHex("#2F3B52"));
+                SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#60A5FA"));
+                SetBrush(appResources, "DateBadgeBgBrush", ColorFromHex("#162B47"));
+                SetBrush(appResources, "DateBadgeBorderBrush", ColorFromHex("#254878"));
+                SetBrush(appResources, "DateBadgeForegroundBrush", ColorFromHex("#60A5FA"));
+                SetBrush(appResources, "CardBgBrush", ColorFromHex("#1B2230"));
+                SetBrush(appResources, "CardBorderBrush", ColorFromHex("#2B3548"));
+                SetBrush(appResources, "ScrollBarThumbBrush", ColorFromHex("#3B4861"));
+                SetBrush(appResources, "ScrollBarThumbHoverBrush", ColorFromHex("#0078D7"));
+                SetBrush(appResources, "ScrollBarTrackBrush", ColorFromHex("#151A24"));
+                SetColor(appResources, "ShadowColor", ColorFromHex("#06080D"));
+                appResources["ShadowOpacity"] = 0.65;
+                break;
+
+            case ThemeMode.WindowsVista:
+                appResources["WindowBgBrush"] = CreateAeroGradientBrush(
+                    ColorFromHex("#102B42"),
+                    ColorFromHex("#0B1B2E"),
+                    ColorFromHex("#123650"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#0B2034"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#15354F"));
+                SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#38BDF8"));
+                SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#102A40"));
+                SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#255A80"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#DFECF7"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#B5D8EE"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#7BA3BF"));
+                SetBrush(appResources, "IconMutedBrush", ColorFromHex("#7DD3FC"));
+                SetBrush(appResources, "AccentBrush", ColorFromHex("#1BA1E2"));
+                SetBrush(appResources, "LogoBrush", ColorFromHex("#38BDF8"));
+                SetBrush(appResources, "ItemHoverBgBrush", ColorFromHex("#173C5B"));
+                SetBrush(appResources, "ItemSelectedBgBrush", ColorFromHex("#1B4D75"));
+                SetBrush(appResources, "ItemSelectedBorderBrush", ColorFromHex("#38BDF8"));
+                SetBrush(appResources, "ContextMenuBgBrush", ColorFromHex("#0E253A"));
+                SetBrush(appResources, "ContextMenuBorderBrush", ColorFromHex("#2D6B99"));
+                SetBrush(appResources, "PopupBgBrush", ColorFromHex("#0E253A"));
+                SetBrush(appResources, "PopupBorderBrush", ColorFromHex("#2D6B99"));
+                SetBrush(appResources, "SeparatorBrush", ColorFromHex("#1E4668"));
+                SetBrush(appResources, "BadgeBgBrush", ColorFromHex("#12314B"));
+                SetBrush(appResources, "BadgeBorderBrush", ColorFromHex("#27628F"));
+                SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#7DD3FC"));
+                SetBrush(appResources, "DateBadgeBgBrush", ColorFromHex("#143B5C"));
+                SetBrush(appResources, "DateBadgeBorderBrush", ColorFromHex("#2B74A8"));
+                SetBrush(appResources, "DateBadgeForegroundBrush", ColorFromHex("#7DD3FC"));
+                SetBrush(appResources, "CardBgBrush", ColorFromHex("#132F48"));
+                SetBrush(appResources, "CardBorderBrush", ColorFromHex("#25547B"));
+                SetBrush(appResources, "ScrollBarThumbBrush", ColorFromHex("#2B6A99"));
+                SetBrush(appResources, "ScrollBarThumbHoverBrush", ColorFromHex("#38BDF8"));
+                SetBrush(appResources, "ScrollBarTrackBrush", ColorFromHex("#0D2134"));
+                SetColor(appResources, "ShadowColor", ColorFromHex("#030D17"));
+                appResources["ShadowOpacity"] = 0.72;
+                break;
+
             case ThemeMode.Ubuntu:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#1E1322"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#19101C"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#2D1C33"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#3A2337"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#2C1832"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#4A2E46"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#F7F6F5"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#E6C29E"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#9E7A8E"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E6DFDA"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#DFBA98"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#A58296"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#E6C29E"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#E95420"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#E95420"));
@@ -441,22 +738,20 @@ public static class ThemeManager
                 SetBrush(appResources, "ScrollBarThumbBrush", ColorFromHex("#633959"));
                 SetBrush(appResources, "ScrollBarThumbHoverBrush", ColorFromHex("#E95420"));
                 SetBrush(appResources, "ScrollBarTrackBrush", ColorFromHex("#221626"));
-                SetBrush(appResources, "KbdBgBrush", ColorFromHex("#2E1934"));
-                SetBrush(appResources, "KbdBorderBrush", ColorFromHex("#4E2C4B"));
-                SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#F7F6F5"));
                 SetColor(appResources, "ShadowColor", ColorFromHex("#100A12"));
                 appResources["ShadowOpacity"] = 0.65;
                 break;
 
             case ThemeMode.Arch:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#111827"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#0D1320"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#1B253A"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#1F2937"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#162033"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#28364D"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#F0F9FF"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#BAE6FD"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#64748B"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#DFECF7"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#B5DCEE"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#7B8FA8"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#7DD3FC"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#00AAD4"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#38BDF8"));
@@ -479,22 +774,20 @@ public static class ThemeManager
                 SetBrush(appResources, "ScrollBarThumbBrush", ColorFromHex("#2D4367"));
                 SetBrush(appResources, "ScrollBarThumbHoverBrush", ColorFromHex("#00AAD4"));
                 SetBrush(appResources, "ScrollBarTrackBrush", ColorFromHex("#141C2B"));
-                SetBrush(appResources, "KbdBgBrush", ColorFromHex("#17243B"));
-                SetBrush(appResources, "KbdBorderBrush", ColorFromHex("#283D61"));
-                SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#F0F9FF"));
                 SetColor(appResources, "ShadowColor", ColorFromHex("#070B12"));
                 appResources["ShadowOpacity"] = 0.65;
                 break;
 
             case ThemeMode.Aurora:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#0E122B"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#0B0E23"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#1B1F48"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#262252"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#161A3C"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#342D6D"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#F5F3FF"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#DDD6FE"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#7C739E"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E3E1F0"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#C9BDF4"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#887FAD"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#C4B5FD"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#8B5CF6"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#06B6D4"));
@@ -517,22 +810,20 @@ public static class ThemeManager
                 SetBrush(appResources, "ScrollBarThumbBrush", ColorFromHex("#3B3475"));
                 SetBrush(appResources, "ScrollBarThumbHoverBrush", ColorFromHex("#8B5CF6"));
                 SetBrush(appResources, "ScrollBarTrackBrush", ColorFromHex("#131637"));
-                SetBrush(appResources, "KbdBgBrush", ColorFromHex("#1F1C4A"));
-                SetBrush(appResources, "KbdBorderBrush", ColorFromHex("#3A3078"));
-                SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#F5F3FF"));
                 SetColor(appResources, "ShadowColor", ColorFromHex("#080A1A"));
                 appResources["ShadowOpacity"] = 0.70;
                 break;
 
             case ThemeMode.Cyberpunk:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#0D0B18"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#0A0813"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#1E1734"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#F43F5E"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#17132B"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#E11D48"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#FFFFFF"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#E0E7FF"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#938BB8"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E8E3ED"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#CBD5F2"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#9B92BF"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#FDA4AF"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#F43F5E"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#06B6D4"));
@@ -561,13 +852,14 @@ public static class ThemeManager
 
             case ThemeMode.Nord:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#242933"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#1F242D"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#2F3644"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#434C5E"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#2E3440"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#4C566A"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#ECEFF4"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#D8DEE9"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#7B88A1"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E2E7F0"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#C8D0DF"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#8694AD"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#D8DEE9"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#88C0D0"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#81A1C1"));
@@ -581,7 +873,7 @@ public static class ThemeManager
                 SetBrush(appResources, "SeparatorBrush", ColorFromHex("#3B4252"));
                 SetBrush(appResources, "BadgeBgBrush", ColorFromHex("#2E3440"));
                 SetBrush(appResources, "BadgeBorderBrush", ColorFromHex("#4C566A"));
-                SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#ECEFF4"));
+                SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#E2E7F0"));
                 SetBrush(appResources, "DateBadgeBgBrush", ColorFromHex("#2E3A4E"));
                 SetBrush(appResources, "DateBadgeBorderBrush", ColorFromHex("#5E81AC"));
                 SetBrush(appResources, "DateBadgeForegroundBrush", ColorFromHex("#88C0D0"));
@@ -596,13 +888,14 @@ public static class ThemeManager
 
             case ThemeMode.Dracula:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#21222C"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#1C1D26"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#2D2F3D"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#44475A"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#282A36"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#6272A4"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#F8F8F2"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#BD93F9"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#6272A4"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E3E1F0"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#BDA5EC"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#7B88B8"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#BD93F9"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#BD93F9"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#FF79C6"));
@@ -631,13 +924,14 @@ public static class ThemeManager
 
             case ThemeMode.TokyoNight:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#1A1B26"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#161722"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#24283B"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#2F3549"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#202336"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#3D4566"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#C0CAF5"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#C9D3F2"));
                 SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#9AA5CE"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#565F89"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#6C76A3"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#9AA5CE"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#7AA2F7"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#7DCFFF"));
@@ -666,13 +960,14 @@ public static class ThemeManager
 
             case ThemeMode.Emerald:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#0C1814"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#09130F"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#152A22"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#1B382B"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#13261F"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#264D3B"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#ECFDF5"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#A7F3D0"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#527E6A"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#DCF0E6"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#9DE0BE"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#65917D"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#A7F3D0"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#10B981"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#34D399"));
@@ -701,13 +996,14 @@ public static class ThemeManager
 
             case ThemeMode.Sunset:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#18111A"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#130E15"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#271A2B"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#3A2337"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#231726"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#4A2E46"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#FFF1F2"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#FECDD3"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#8E6D87"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E6DFDA"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#F2BCC5"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#9D7B95"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#FECDD3"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#FB923C"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#F43F5E"));
@@ -736,13 +1032,14 @@ public static class ThemeManager
 
             case ThemeMode.Linux:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#242424"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#1E1E1E"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#323232"));
                 SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#414141"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#303030"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#4A4A4A"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#F6F5F4"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#D0CFCC"));
-                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#A3A29E"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E4E3E0"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#C9C7C3"));
+                SetBrush(appResources, "TextMutedBrush", ColorFromHex("#9A9893"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#C0BFBC"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#8FF0A4"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#8FF0A4"));
@@ -756,7 +1053,7 @@ public static class ThemeManager
                 SetBrush(appResources, "SeparatorBrush", ColorFromHex("#414141"));
                 SetBrush(appResources, "BadgeBgBrush", ColorFromHex("#353535"));
                 SetBrush(appResources, "BadgeBorderBrush", ColorFromHex("#505050"));
-                SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#E6E5E2"));
+                SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#E4E3E0"));
                 SetBrush(appResources, "DateBadgeBgBrush", ColorFromHex("#35483A"));
                 SetBrush(appResources, "DateBadgeBorderBrush", ColorFromHex("#55735C"));
                 SetBrush(appResources, "DateBadgeForegroundBrush", ColorFromHex("#A8F0B5"));
@@ -772,18 +1069,19 @@ public static class ThemeManager
             case ThemeMode.Dark:
             default:
                 SetBrush(appResources, "WindowBgBrush", ColorFromHex("#0F121C"));
-                SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#222838"));
+                SetBrush(appResources, "SidebarBgBrush", ColorFromHex("#0B0E17"));
+                SetBrush(appResources, "SurfaceElevatedBrush", ColorFromHex("#1B2133"));
+                SetBrush(appResources, "WindowBorderBrush", ColorFromHex("#252D40"));
                 SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#161A28"));
                 SetBrush(appResources, "SearchBarBorderBrush", ColorFromHex("#2C344A"));
-                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#F8FAFC"));
-                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#CBD5E1"));
+                SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#E2E8F0"));
+                SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#BAC6D9"));
                 SetBrush(appResources, "TextMutedBrush", ColorFromHex("#8492A6"));
-                SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
                 SetBrush(appResources, "IconMutedBrush", ColorFromHex("#94A3B8"));
                 SetBrush(appResources, "AccentBrush", ColorFromHex("#3B82F6"));
                 SetBrush(appResources, "LogoBrush", ColorFromHex("#60A5FA"));
                 SetBrush(appResources, "ItemHoverBgBrush", ColorFromHex("#22293C"));
-                SetBrush(appResources, "ItemSelectedBgBrush", Color.FromArgb(45, 59, 130, 246));
+                SetBrush(appResources, "ItemSelectedBgBrush", Color.FromArgb(48, 59, 130, 246));
                 SetBrush(appResources, "ItemSelectedBorderBrush", ColorFromHex("#3B82F6"));
                 SetBrush(appResources, "ContextMenuBgBrush", ColorFromHex("#121622"));
                 SetBrush(appResources, "ContextMenuBorderBrush", ColorFromHex("#2C344A"));
@@ -806,212 +1104,232 @@ public static class ThemeManager
                 break;
         }
 
-        // Dark universal defaults
-        SetBrush(appResources, "KbdBgBrush", ColorFromHex("#262A34"));
-        SetBrush(appResources, "KbdBorderBrush", ColorFromHex("#383D4C"));
-        SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#E2E8F0"));
-        SetBrush(appResources, "EmptyStateBrush", ColorFromHex("#64748B"));
-        SetBrush(appResources, "IconBrush", ColorFromHex("#FFFFFF"));
-        SetBrush(appResources, "GlassRimBrush", Color.FromArgb(36, 255, 255, 255));
+        // Universal luminous soft-white IconBrush & control tokens on Dark themes (never dull/black or pure glare)
+        SetBrush(appResources, "IconBrush", ColorFromHex("#E2E8F0"));
+        SetBrush(appResources, "KbdBgBrush", ColorFromHex("#222836"));
+        SetBrush(appResources, "KbdBorderBrush", ColorFromHex("#3A4359"));
+        SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#DCE4F0"));
+        SetBrush(appResources, "EmptyStateBrush", ColorFromHex("#7B8BA3"));
+        SetBrush(appResources, "ToggleOffBgBrush", ColorFromHex("#2D3548"));
+        SetBrush(appResources, "ToggleThumbBrush", ColorFromHex("#E2E8F0"));
+        SetBrush(appResources, "SubtleHoverBgBrush", Color.FromArgb(24, 255, 255, 255));
+        SetBrush(appResources, "GlassRimBrush", Color.FromArgb(42, 255, 255, 255));
     }
 
     private static void ApplyBaseThemeLightPalette(ResourceDictionary appResources, ThemeMode theme)
     {
-        string accent = GetDefaultAccentHex(theme);
-        Color accentColor;
-        try { accentColor = ColorFromHex(accent); }
-        catch { accentColor = ColorFromHex("#3B82F6"); }
+        var spec = GetLightPaletteSpec(theme);
 
-        // Light background base (Clean Frosted Liquid Glass / Milk Glass)
-        Color windowBg = ColorFromHex("#FFFFFF");
-        Color windowBorder = ColorFromHex("#CBD5E1");
-        Color searchBg = ColorFromHex("#FFFFFF");
-        Color searchBorder = ColorFromHex("#CBD5E1");
+        Color winTint = ColorFromHex(spec.WindowTintHex);
+        Color sidebarBg = ColorFromHex(spec.SidebarTintHex);
+        Color cardBg = ColorFromHex(spec.CardTintHex);
+        Color accentColor = ColorFromHex(spec.AccentHex);
+        Color iconInk = ColorFromHex(spec.IconInkHex);
+        Color primaryInk = ColorFromHex(spec.PrimaryInkHex);
 
-        // Specific light tint adjustments for artistic themes (Exact match with Web Studio)
-        switch (theme)
+        Color secondaryInk = BlendColors(primaryInk, accentColor, 0.28);
+        Color mutedInk = BlendColors(ColorFromHex("#52647D"), accentColor, 0.22);
+        Color cardBorder = BlendColors(sidebarBg, accentColor, 0.28);
+        Color winBorder = BlendColors(sidebarBg, accentColor, 0.36);
+        Color searchBg = BlendColors(ColorFromHex("#FFFFFF"), winTint, 0.38);
+        Color searchBorder = BlendColors(cardBorder, accentColor, 0.25);
+        Color hoverBg = BlendColors(sidebarBg, accentColor, 0.14);
+        Color elevatedBg = BlendColors(cardBg, accentColor, 0.10);
+        Color badgeBg = Color.FromArgb(30, accentColor.R, accentColor.G, accentColor.B);
+        Color badgeBorder = Color.FromArgb(95, accentColor.R, accentColor.G, accentColor.B);
+
+        if (theme == ThemeMode.WindowsVista && spec.VistaGradTop != null && spec.VistaGradMid != null && spec.VistaGradBot != null)
         {
-            case ThemeMode.Ubuntu:
-                accentColor = ColorFromHex("#E95420");
-                break;
-            case ThemeMode.Arch:
-                accentColor = ColorFromHex("#00AAD4");
-                break;
-            case ThemeMode.Aurora:
-                accentColor = ColorFromHex("#8B5CF6");
-                break;
-            case ThemeMode.Cyberpunk:
-                accentColor = ColorFromHex("#F43F5E");
-                break;
-            case ThemeMode.Nord:
-                accentColor = ColorFromHex("#88C0D0");
-                break;
-            case ThemeMode.Dracula:
-                accentColor = ColorFromHex("#BD93F9");
-                break;
-            case ThemeMode.Emerald:
-                accentColor = ColorFromHex("#10B981");
-                break;
-            case ThemeMode.Sunset:
-                accentColor = ColorFromHex("#FB923C");
-                break;
-            case ThemeMode.Linux:
-                accentColor = ColorFromHex("#16A34A");
-                break;
-            default:
-                accentColor = ColorFromHex("#3B82F6");
-                break;
+            appResources["WindowBgBrush"] = CreateAeroGradientBrush(
+                ColorFromHex(spec.VistaGradTop),
+                ColorFromHex(spec.VistaGradMid),
+                ColorFromHex(spec.VistaGradBot));
+        }
+        else
+        {
+            SetBrush(appResources, "WindowBgBrush", winTint);
         }
 
-        SetBrush(appResources, "WindowBgBrush", windowBg);
-        SetBrush(appResources, "WindowBorderBrush", windowBorder);
+        SetBrush(appResources, "SidebarBgBrush", sidebarBg);
+        SetBrush(appResources, "SurfaceElevatedBrush", elevatedBg);
+        SetBrush(appResources, "WindowBorderBrush", winBorder);
         SetBrush(appResources, "SearchBarBgBrush", searchBg);
         SetBrush(appResources, "SearchBarBorderBrush", searchBorder);
-        SetBrush(appResources, "TextPrimaryBrush", ColorFromHex("#0F172A"));
-        SetBrush(appResources, "TextSecondaryBrush", ColorFromHex("#475569"));
-        SetBrush(appResources, "TextMutedBrush", ColorFromHex("#64748B"));
-        SetBrush(appResources, "IconBrush", ColorFromHex("#1E293B"));
-        SetBrush(appResources, "IconMutedBrush", ColorFromHex("#64748B"));
+        SetBrush(appResources, "TextPrimaryBrush", primaryInk);
+        SetBrush(appResources, "TextSecondaryBrush", secondaryInk);
+        SetBrush(appResources, "TextMutedBrush", mutedInk);
+        SetBrush(appResources, "IconBrush", iconInk);
+        SetBrush(appResources, "IconMutedBrush", BlendColors(iconInk, ColorFromHex("#64748B"), 0.42));
         SetBrush(appResources, "AccentBrush", accentColor);
         SetBrush(appResources, "LogoBrush", accentColor);
-        SetBrush(appResources, "ItemHoverBgBrush", ColorFromHex("#F1F5F9"));
-        SetBrush(appResources, "ItemSelectedBgBrush", Color.FromArgb(28, accentColor.R, accentColor.G, accentColor.B));
-        SetBrush(appResources, "ItemSelectedBorderBrush", Color.FromArgb(160, accentColor.R, accentColor.G, accentColor.B));
-        SetBrush(appResources, "ContextMenuBgBrush", ColorFromHex("#FFFFFF"));
-        SetBrush(appResources, "ContextMenuBorderBrush", ColorFromHex("#E2E8F0"));
-        SetBrush(appResources, "PopupBgBrush", ColorFromHex("#FFFFFF"));
-        SetBrush(appResources, "PopupBorderBrush", ColorFromHex("#E2E8F0"));
-        SetBrush(appResources, "SeparatorBrush", ColorFromHex("#E2E8F0"));
-        SetBrush(appResources, "BadgeBgBrush", ColorFromHex("#F1F5F9"));
-        SetBrush(appResources, "BadgeBorderBrush", ColorFromHex("#E2E8F0"));
-        SetBrush(appResources, "BadgeForegroundBrush", ColorFromHex("#475569"));
-        SetBrush(appResources, "DateBadgeBgBrush", Color.FromArgb(24, accentColor.R, accentColor.G, accentColor.B));
-        SetBrush(appResources, "DateBadgeBorderBrush", Color.FromArgb(120, accentColor.R, accentColor.G, accentColor.B));
-        SetBrush(appResources, "DateBadgeForegroundBrush", accentColor);
-        SetBrush(appResources, "CardBgBrush", ColorFromHex("#F8FAFC"));
-        SetBrush(appResources, "CardBorderBrush", ColorFromHex("#E2E8F0"));
-        SetBrush(appResources, "ScrollBarThumbBrush", ColorFromHex("#CBD5E1"));
+        SetBrush(appResources, "ItemHoverBgBrush", hoverBg);
+        SetBrush(appResources, "ItemSelectedBgBrush", Color.FromArgb(44, accentColor.R, accentColor.G, accentColor.B));
+        SetBrush(appResources, "ItemSelectedBorderBrush", accentColor);
+        SetBrush(appResources, "ContextMenuBgBrush", cardBg);
+        SetBrush(appResources, "ContextMenuBorderBrush", cardBorder);
+        SetBrush(appResources, "PopupBgBrush", cardBg);
+        SetBrush(appResources, "PopupBorderBrush", cardBorder);
+        SetBrush(appResources, "SeparatorBrush", cardBorder);
+        SetBrush(appResources, "BadgeBgBrush", badgeBg);
+        SetBrush(appResources, "BadgeBorderBrush", badgeBorder);
+        SetBrush(appResources, "BadgeForegroundBrush", iconInk);
+        SetBrush(appResources, "DateBadgeBgBrush", Color.FromArgb(36, accentColor.R, accentColor.G, accentColor.B));
+        SetBrush(appResources, "DateBadgeBorderBrush", Color.FromArgb(125, accentColor.R, accentColor.G, accentColor.B));
+        SetBrush(appResources, "DateBadgeForegroundBrush", iconInk);
+        SetBrush(appResources, "CardBgBrush", cardBg);
+        SetBrush(appResources, "CardBorderBrush", cardBorder);
+        SetBrush(appResources, "ScrollBarThumbBrush", BlendColors(cardBorder, accentColor, 0.35));
         SetBrush(appResources, "ScrollBarThumbHoverBrush", accentColor);
-        SetBrush(appResources, "ScrollBarTrackBrush", ColorFromHex("#F1F5F9"));
-        SetBrush(appResources, "KbdBgBrush", ColorFromHex("#FFFFFF"));
-        SetBrush(appResources, "KbdBorderBrush", ColorFromHex("#CBD5E1"));
-        SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#1E293B"));
-        SetBrush(appResources, "EmptyStateBrush", ColorFromHex("#64748B"));
+        SetBrush(appResources, "ScrollBarTrackBrush", hoverBg);
+        SetBrush(appResources, "KbdBgBrush", elevatedBg);
+        SetBrush(appResources, "KbdBorderBrush", cardBorder);
+        SetBrush(appResources, "KbdForegroundBrush", iconInk);
+        SetBrush(appResources, "EmptyStateBrush", mutedInk);
+        SetBrush(appResources, "ToggleOffBgBrush", BlendColors(cardBorder, mutedInk, 0.25));
+        SetBrush(appResources, "ToggleThumbBrush", ColorFromHex("#FFFFFF"));
+        SetBrush(appResources, "SubtleHoverBgBrush", Color.FromArgb(20, accentColor.R, accentColor.G, accentColor.B));
         SetBrush(appResources, "SelectionIndicatorBrush", accentColor);
         SetBrush(appResources, "GlassRimBrush", Color.FromArgb(220, 255, 255, 255));
-        SetColor(appResources, "ShadowColor", ColorFromHex("#0F172A"));
-        appResources["ShadowOpacity"] = 0.14;
+        SetColor(appResources, "ShadowColor", BlendColors(ColorFromHex("#0F172A"), accentColor, 0.28));
+        appResources["ShadowOpacity"] = 0.16;
     }
 
     private static void ApplyGlassSurface(ResourceDictionary appResources, ThemeMode theme, bool isLight, Color accentColor)
     {
-        // In Light Mode, ALWAYS use pure frosted milk-glass / liquid crystal white!
-        // Never allow a dark custom tint (e.g. from Dark Mode) to contaminate Light Mode.
-        Color tintColor;
         if (isLight)
         {
-            tintColor = ColorFromHex("#FFFFFF");
-        }
-        else if (GlassTintWithAccent)
-        {
-            Color foundation = ColorFromHex("#090B11");
-            tintColor = BlendColors(foundation, accentColor, 0.28);
-        }
-        else if (!string.IsNullOrWhiteSpace(CustomGlassTintHex))
-        {
-            tintColor = ColorFromHex(CustomGlassTintHex);
-        }
-        else
-        {
-            tintColor = ColorFromHex(GetDefaultGlassTintHex(theme));
-        }
+            var spec = GetLightPaletteSpec(theme);
+            Color baseTint = !string.IsNullOrWhiteSpace(CustomGlassTintHex)
+                ? BlendColors(ColorFromHex(CustomGlassTintHex), ColorFromHex("#FFFFFF"), 0.55)
+                : ColorFromHex(spec.WindowTintHex);
 
-        byte alpha = isLight 
-            ? (byte)Math.Clamp((int)(GlassOpacity * 255), 215, 248) 
-            : (byte)Math.Clamp((int)(GlassOpacity * 255), 70, 248);
-
-        // Window Background Brush (Glass Translucent)
-        SetBrush(appResources, "WindowBgBrush", isLight 
-            ? Color.FromArgb(alpha, 255, 255, 255) 
-            : Color.FromArgb(alpha, tintColor.R, tintColor.G, tintColor.B));
-
-        // Search Bar (Translucent Glass Inset)
-        if (isLight)
-        {
-            SetBrush(appResources, "SearchBarBgBrush", ColorFromHex("#FFFFFF"));
-            SetBrush(appResources, "SearchBarBorderBrush", Color.FromArgb(180, 203, 213, 225));
-        }
-        else
-        {
-            byte barAlpha = (byte)Math.Min(245, alpha + 28);
-            byte barR = (byte)Math.Min(255, tintColor.R + 16);
-            byte barG = (byte)Math.Min(255, tintColor.G + 16);
-            byte barB = (byte)Math.Min(255, tintColor.B + 22);
-            SetBrush(appResources, "SearchBarBgBrush", Color.FromArgb(barAlpha, barR, barG, barB));
-            SetBrush(appResources, "SearchBarBorderBrush", Color.FromArgb(100, (byte)Math.Min(255, barR + 60), (byte)Math.Min(255, barG + 60), (byte)Math.Min(255, barB + 80)));
-        }
-
-        // Window Border
-        if (ApplyAccentToBorder)
-        {
-            SetBrush(appResources, "WindowBorderBrush", Color.FromArgb(170, accentColor.R, accentColor.G, accentColor.B));
-        }
-        else
-        {
-            if (isLight)
+            if (GlassTintWithAccent)
             {
-                SetBrush(appResources, "WindowBorderBrush", Color.FromArgb(200, 203, 213, 225));
+                baseTint = BlendColors(baseTint, accentColor, 0.18);
+            }
+
+            byte alpha = (byte)Math.Clamp((int)(GlassOpacity * 255), 214, 246);
+
+            if (theme == ThemeMode.WindowsVista && string.IsNullOrWhiteSpace(CustomGlassTintHex) && spec.VistaGradTop != null && spec.VistaGradMid != null && spec.VistaGradBot != null)
+            {
+                Color c1 = ColorFromHex(spec.VistaGradTop);
+                Color c2 = ColorFromHex(spec.VistaGradMid);
+                Color c3 = ColorFromHex(spec.VistaGradBot);
+                appResources["WindowBgBrush"] = CreateAeroGradientBrush(
+                    Color.FromArgb(alpha, c1.R, c1.G, c1.B),
+                    Color.FromArgb(alpha, c2.R, c2.G, c2.B),
+                    Color.FromArgb(alpha, c3.R, c3.G, c3.B));
+            }
+            else
+            {
+                SetBrush(appResources, "WindowBgBrush", Color.FromArgb(alpha, baseTint.R, baseTint.G, baseTint.B));
+            }
+
+            Color sideColor = BlendColors(baseTint, ColorFromHex(spec.SidebarTintHex), 0.72);
+            SetBrush(appResources, "SidebarBgBrush", Color.FromArgb((byte)Math.Min(250, alpha + 8), sideColor.R, sideColor.G, sideColor.B));
+
+            Color cardCol = ColorFromHex(spec.CardTintHex);
+            SetBrush(appResources, "CardBgBrush", Color.FromArgb(236, cardCol.R, cardCol.G, cardCol.B));
+            SetBrush(appResources, "PopupBgBrush", Color.FromArgb(250, cardCol.R, cardCol.G, cardCol.B));
+            SetBrush(appResources, "ContextMenuBgBrush", Color.FromArgb(250, cardCol.R, cardCol.G, cardCol.B));
+
+            Color searchCol = BlendColors(ColorFromHex("#FFFFFF"), baseTint, 0.32);
+            Color searchBorder = BlendColors(ColorFromHex("#94A3B8"), accentColor, 0.35);
+            SetBrush(appResources, "SearchBarBgBrush", Color.FromArgb(238, searchCol.R, searchCol.G, searchCol.B));
+            SetBrush(appResources, "SearchBarBorderBrush", Color.FromArgb(190, searchBorder.R, searchBorder.G, searchBorder.B));
+
+            if (ApplyAccentToBorder)
+            {
+                SetBrush(appResources, "WindowBorderBrush", Color.FromArgb(195, accentColor.R, accentColor.G, accentColor.B));
+            }
+            else
+            {
+                Color borderCol = BlendColors(sideColor, accentColor, 0.36);
+                SetBrush(appResources, "WindowBorderBrush", Color.FromArgb(220, borderCol.R, borderCol.G, borderCol.B));
+            }
+        }
+        else
+        {
+            Color tintColor;
+            if (GlassTintWithAccent)
+            {
+                tintColor = BlendColors(ColorFromHex("#090B11"), accentColor, 0.28);
+            }
+            else if (!string.IsNullOrWhiteSpace(CustomGlassTintHex))
+            {
+                tintColor = ColorFromHex(CustomGlassTintHex);
+            }
+            else
+            {
+                tintColor = ColorFromHex(GetDefaultGlassTintHex(theme));
+            }
+
+            byte alpha = (byte)Math.Clamp((int)(GlassOpacity * 255), 75, 248);
+
+            if (theme == ThemeMode.WindowsVista && string.IsNullOrWhiteSpace(CustomGlassTintHex) && !GlassTintWithAccent)
+            {
+                appResources["WindowBgBrush"] = CreateAeroGradientBrush(
+                    Color.FromArgb(alpha, 0x10, 0x2B, 0x42),
+                    Color.FromArgb(alpha, 0x0B, 0x1B, 0x2E),
+                    Color.FromArgb(alpha, 0x12, 0x36, 0x50));
+            }
+            else
+            {
+                SetBrush(appResources, "WindowBgBrush", Color.FromArgb(alpha, tintColor.R, tintColor.G, tintColor.B));
+            }
+
+            byte sideAlpha = (byte)Math.Min(250, alpha + 14);
+            SetBrush(appResources, "SidebarBgBrush", Color.FromArgb(sideAlpha, (byte)(tintColor.R * 0.82), (byte)(tintColor.G * 0.82), (byte)(tintColor.B * 0.86)));
+
+            byte barAlpha = (byte)Math.Min(245, alpha + 28);
+            byte barR = (byte)Math.Min(255, tintColor.R + 18);
+            byte barG = (byte)Math.Min(255, tintColor.G + 18);
+            byte barB = (byte)Math.Min(255, tintColor.B + 24);
+            SetBrush(appResources, "SearchBarBgBrush", Color.FromArgb(barAlpha, barR, barG, barB));
+            SetBrush(appResources, "SearchBarBorderBrush", Color.FromArgb(115, (byte)Math.Min(255, barR + 60), (byte)Math.Min(255, barG + 60), (byte)Math.Min(255, barB + 80)));
+
+            if (ApplyAccentToBorder)
+            {
+                SetBrush(appResources, "WindowBorderBrush", Color.FromArgb(175, accentColor.R, accentColor.G, accentColor.B));
             }
             else
             {
                 byte borderR = (byte)Math.Min(255, tintColor.R + 65);
                 byte borderG = (byte)Math.Min(255, tintColor.G + 65);
                 byte borderB = (byte)Math.Min(255, tintColor.B + 85);
-                SetBrush(appResources, "WindowBorderBrush", Color.FromArgb(110, borderR, borderG, borderB));
+                SetBrush(appResources, "WindowBorderBrush", Color.FromArgb(115, borderR, borderG, borderB));
             }
+
+            byte cardAlpha = (byte)Math.Clamp(alpha - 24, 55, 224);
+            SetBrush(appResources, "CardBgBrush", Color.FromArgb(cardAlpha, (byte)Math.Min(255, tintColor.R + 14), (byte)Math.Min(255, tintColor.G + 14), (byte)Math.Min(255, tintColor.B + 18)));
+            SetBrush(appResources, "PopupBgBrush", Color.FromArgb(242, tintColor.R, tintColor.G, tintColor.B));
+            SetBrush(appResources, "ContextMenuBgBrush", Color.FromArgb(242, tintColor.R, tintColor.G, tintColor.B));
+            SetBrush(appResources, "KbdBgBrush", Color.FromArgb(150, (byte)Math.Min(255, tintColor.R + 18), (byte)Math.Min(255, tintColor.G + 18), (byte)Math.Min(255, tintColor.B + 24)));
+            SetBrush(appResources, "KbdBorderBrush", Color.FromArgb(110, (byte)Math.Min(255, tintColor.R + 60), (byte)Math.Min(255, tintColor.G + 60), (byte)Math.Min(255, tintColor.B + 80)));
+            SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#DCE4F0"));
+            SetBrush(appResources, "SelectionIndicatorBrush", accentColor);
+            SetBrush(appResources, "GlassRimBrush", Color.FromArgb(46, 255, 255, 255));
         }
 
-        // Card & Popup (Frosted panels)
-        if (isLight)
-        {
-            SetBrush(appResources, "CardBgBrush", Color.FromArgb(220, 248, 250, 252));
-            SetBrush(appResources, "PopupBgBrush", Color.FromArgb(250, 255, 255, 255));
-            SetBrush(appResources, "ContextMenuBgBrush", Color.FromArgb(250, 255, 255, 255));
-            SetBrush(appResources, "KbdBgBrush", ColorFromHex("#FFFFFF"));
-            SetBrush(appResources, "KbdBorderBrush", ColorFromHex("#CBD5E1"));
-            SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#1E293B"));
-            SetBrush(appResources, "SeparatorBrush", ColorFromHex("#E2E8F0"));
-            SetBrush(appResources, "EmptyStateBrush", ColorFromHex("#64748B"));
-            SetBrush(appResources, "SelectionIndicatorBrush", accentColor);
-            SetBrush(appResources, "GlassRimBrush", Color.FromArgb(230, 255, 255, 255));
-        }
-        else
-        {
-            byte cardAlpha = (byte)Math.Clamp(alpha - 30, 45, 220);
-            SetBrush(appResources, "CardBgBrush", Color.FromArgb(cardAlpha, tintColor.R, tintColor.G, tintColor.B));
-            SetBrush(appResources, "PopupBgBrush", Color.FromArgb(240, tintColor.R, tintColor.G, tintColor.B));
-            SetBrush(appResources, "ContextMenuBgBrush", Color.FromArgb(240, tintColor.R, tintColor.G, tintColor.B));
-            SetBrush(appResources, "KbdBgBrush", Color.FromArgb(140, tintColor.R, tintColor.G, tintColor.B));
-            SetBrush(appResources, "KbdBorderBrush", Color.FromArgb(100, (byte)Math.Min(255, tintColor.R + 60), (byte)Math.Min(255, tintColor.G + 60), (byte)Math.Min(255, tintColor.B + 80)));
-            SetBrush(appResources, "KbdForegroundBrush", ColorFromHex("#F8FAFC"));
-            SetBrush(appResources, "EmptyStateBrush", ColorFromHex("#94A3B8"));
-            SetBrush(appResources, "SelectionIndicatorBrush", accentColor);
-            SetBrush(appResources, "GlassRimBrush", Color.FromArgb(40, 255, 255, 255));
-        }
-
-        // Specular gradient brush (Crisp white rim highlight)
+        // Specular sheen highlight (stronger Aero crystal sheen on Windows Vista)
+        bool isVista = theme == ThemeMode.WindowsVista;
         var specular = new LinearGradientBrush
         {
             StartPoint = new Point(0, 0),
             EndPoint = new Point(1, 1)
         };
-        specular.GradientStops.Add(new GradientStop(isLight ? Color.FromArgb(230, 255, 255, 255) : Color.FromArgb(45, 255, 255, 255), 0.0));
-        specular.GradientStops.Add(new GradientStop(isLight ? Color.FromArgb(70, 255, 255, 255) : Color.FromArgb(8, 255, 255, 255), 0.35));
+        byte rimStart = isVista
+            ? (isLight ? (byte)245 : (byte)95)
+            : (isLight ? (byte)220 : (byte)45);
+        byte rimMid = isVista
+            ? (isLight ? (byte)110 : (byte)28)
+            : (isLight ? (byte)65 : (byte)8);
+        specular.GradientStops.Add(new GradientStop(Color.FromArgb(rimStart, 255, 255, 255), 0.0));
+        specular.GradientStops.Add(new GradientStop(Color.FromArgb(rimMid, 255, 255, 255), 0.35));
         specular.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 1.0));
         specular.Freeze();
         appResources["GlassSpecularBrush"] = specular;
 
-        // Shadows
         if (ApplyAccentToBorder)
         {
             SetColor(appResources, "ShadowColor", accentColor);
@@ -1019,8 +1337,8 @@ public static class ThemeManager
         }
         else
         {
-            SetColor(appResources, "ShadowColor", ColorFromHex("#0F172A"));
-            appResources["ShadowOpacity"] = isLight ? 0.14 : 0.65;
+            SetColor(appResources, "ShadowColor", isLight ? BlendColors(ColorFromHex("#0F172A"), accentColor, 0.28) : ColorFromHex("#0F172A"));
+            appResources["ShadowOpacity"] = isLight ? 0.16 : 0.65;
         }
     }
 
@@ -1041,27 +1359,41 @@ public static class ThemeManager
         SetBrush(appResources, "ItemSelectedBorderBrush", accentColor);
         SetBrush(appResources, "ScrollBarThumbHoverBrush", accentColor);
 
-        // Highlight selection background with subtle accent glow
-        byte selectAlpha = isLight ? (byte)32 : (byte)48;
+        byte selectAlpha = isLight ? (byte)36 : (byte)48;
         SetBrush(appResources, "ItemSelectedBgBrush", Color.FromArgb(selectAlpha, accentColor.R, accentColor.G, accentColor.B));
 
-        // Date Badge Brushes
-        byte badgeBgAlpha = isLight ? (byte)28 : (byte)40;
+        byte badgeBgAlpha = isLight ? (byte)30 : (byte)40;
         SetBrush(appResources, "DateBadgeBgBrush", Color.FromArgb(badgeBgAlpha, accentColor.R, accentColor.G, accentColor.B));
         SetBrush(appResources, "DateBadgeBorderBrush", Color.FromArgb(100, accentColor.R, accentColor.G, accentColor.B));
-        SetBrush(appResources, "DateBadgeForegroundBrush", accentColor);
+        SetBrush(appResources, "DateBadgeForegroundBrush", isLight ? BlendColors(accentColor, ColorFromHex("#0F172A"), 0.22) : accentColor);
 
-        // If Solid mode and user wants accent on border
         if (!isGlass && ApplyAccentToBorder)
         {
             SetBrush(appResources, "WindowBorderBrush", accentColor);
         }
     }
 
+    private static LinearGradientBrush CreateAeroGradientBrush(Color top, Color mid, Color bottom)
+    {
+        var brush = new LinearGradientBrush
+        {
+            StartPoint = new Point(0, 0),
+            EndPoint = new Point(0.2, 1)
+        };
+        brush.GradientStops.Add(new GradientStop(top, 0.0));
+        brush.GradientStops.Add(new GradientStop(mid, 0.52));
+        brush.GradientStops.Add(new GradientStop(bottom, 1.0));
+        brush.Freeze();
+        return brush;
+    }
+
     public static string GetDefaultGlassTintHex(ThemeMode theme)
     {
         return theme switch
         {
+            ThemeMode.Windows11 => "#1B202C",
+            ThemeMode.Windows10 => "#141923",
+            ThemeMode.WindowsVista => "#0D2438",
             ThemeMode.Ubuntu => "#1E1322",
             ThemeMode.Arch => "#111827",
             ThemeMode.Aurora => "#0E122B",
@@ -1071,7 +1403,7 @@ public static class ThemeManager
             ThemeMode.Emerald => "#0C1814",
             ThemeMode.Sunset => "#18111A",
             ThemeMode.Linux => "#242424",
-            _ => "#0B132B" // Dark, Light, System, Glass (Windows Fluent Blue)
+            _ => "#0B132B"
         };
     }
 
@@ -1091,13 +1423,13 @@ public static class ThemeManager
             ThemeMode.Ubuntu => "#E95420",
             ThemeMode.Arch => "#00AAD4",
             ThemeMode.Aurora => "#8B5CF6",
-            _ => "#3B82F6" // Dark & System (Windows Fluent Blue)
+            ThemeMode.Windows11 => "#0078D4",
+            ThemeMode.Windows10 => "#0078D7",
+            ThemeMode.WindowsVista => "#1BA1E2",
+            _ => "#3B82F6"
         };
     }
 
-    /// <summary>
-    /// Gets the Windows System Accent Color using DwmGetColorizationColor or registry fallback.
-    /// </summary>
     public static string GetWindowsAccentColorHex()
     {
         try
@@ -1126,12 +1458,9 @@ public static class ThemeManager
         }
         catch { }
 
-        return "#0078D7"; // Windows 11 default electric blue
+        return "#0078D7";
     }
 
-    /// <summary>
-    /// Checks if Windows is currently set to Apps Light Theme.
-    /// </summary>
     public static bool IsWindowsInLightMode()
     {
         try
@@ -1148,6 +1477,17 @@ public static class ThemeManager
         catch { }
 
         return false;
+    }
+
+    public static double GetRelativeLuminance(Color c)
+    {
+        static double Linearize(byte v)
+        {
+            double s = v / 255.0;
+            return s <= 0.03928 ? s / 12.92 : Math.Pow((s + 0.055) / 1.055, 2.4);
+        }
+
+        return 0.2126 * Linearize(c.R) + 0.7152 * Linearize(c.G) + 0.0722 * Linearize(c.B);
     }
 
     private static Color BlendColors(Color baseColor, Color overlayColor, double overlayRatio)

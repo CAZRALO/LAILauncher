@@ -21,6 +21,9 @@ public static class CalculatorEvaluator
         RegexOptions.Compiled
     );
 
+    [ThreadStatic]
+    private static DataTable? _threadDataTable;
+
     public static bool TryEvaluate(string expression, out double result, out string formatted)
     {
         result = 0;
@@ -437,11 +440,12 @@ public static class CalculatorEvaluator
                 });
             }
 
-            // Ensure floating point division between integers: e.g. "5 / 2" -> "5.0 / 2.0" so DataTable does not truncate to 2
-            expr = Regex.Replace(expr, @"(?<![\.\d])(\d+)\s*/\s*(\d+)(?![\.\d])", "$1.0 / $2.0");
+            // Ensure floating point division between integers: e.g. "5 / 2" -> "5.0 / 2.0", "10 / 2 / 5" -> "10.0 / 2.0 / 5.0"
+            expr = Regex.Replace(expr, @"(?<![\.\d])(\d+)(?![\.\d])(?=\s*/)", "$1.0");
+            expr = Regex.Replace(expr, @"(?<=/\s*)(?<![\.\d])(\d+)(?![\.\d])", "$1.0");
 
-            var dt = new DataTable();
-            var res = dt.Compute(expr, null);
+            _threadDataTable ??= new DataTable();
+            var res = _threadDataTable.Compute(expr, null);
             if (res != null && double.TryParse(res.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var val))
             {
                 if (double.IsInfinity(val) || double.IsNaN(val))

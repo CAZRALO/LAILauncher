@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Local AI Assistant"
+        Icon="pack://application:,,,/Assets/app.ico"
         Height="540" Width="720"
         WindowStyle="None"
         AllowsTransparency="True"

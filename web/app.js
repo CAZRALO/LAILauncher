@@ -436,7 +436,21 @@ const State = {
   // Direct Inline System Controls (Windows Search 2025 style)
   isHotspotOn: false,
   isEnergySaverOn: false,
+  isWifiOn: true,
+  isBluetoothOn: true,
   taskbarAlign: 'center', // 'center' | 'left'
+  wifiNetworks: [
+    { ssid: 'LAILauncher-Office-5G', signal: 96, security: 'WPA3-Personal', band: '5 GHz', saved: true, connected: true },
+    { ssid: 'FiberHome_2.4G_VIP', signal: 82, security: 'WPA2-Personal', band: '2.4 GHz', saved: true, connected: false },
+    { ssid: 'CoffeeHouse_Guest', signal: 68, security: 'Open (Không mật khẩu)', band: '2.4 GHz', saved: false, connected: false },
+    { ssid: 'Lab_DevNet_WiFi6', signal: 54, security: 'WPA3-Enterprise', band: '6 GHz', saved: false, connected: false }
+  ],
+  bluetoothDevices: [
+    { id: 'bt-1', name: 'Sony WH-1000XM5', type: 'Tai nghe Audio', battery: '86%', connected: true, icon: 'bluetooth' },
+    { id: 'bt-2', name: 'Logitech MX Master 3S', type: 'Chuột không dây', battery: '74%', connected: true, icon: 'bluetooth' },
+    { id: 'bt-3', name: 'Keychron K2 Pro', type: 'Bàn phím cơ', battery: '92%', connected: false, icon: 'bluetooth' },
+    { id: 'bt-4', name: 'JBL Flip 6 Speaker', type: 'Loa Bluetooth', battery: '60%', connected: false, icon: 'bluetooth' }
+  ],
   backgroundProcesses: [
     { id: 'p1', name: 'Google Chrome', exe: 'chrome.exe', pid: 14208, ram: '1.42 GB', ramBytes: 1524629504, cpu: '3.4%', icon: 'google' },
     { id: 'p2', name: 'Visual Studio Code', exe: 'Code.exe', pid: 8940, ram: '864 MB', ramBytes: 905969664, cpu: '1.2%', icon: 'app' },
@@ -453,7 +467,12 @@ const State = {
 // 4. CORE CONTROLLER & EVENT WIRING
 // ============================================================================
 
+let isInitialized = false;
+
 export function initLauncher() {
+  if (isInitialized) return;
+  isInitialized = true;
+
   loadSavedPreferences();
   applyAppearance();
   renderThemeSwatches();
@@ -492,6 +511,8 @@ export function initQuickSettingsUI() {
   updateEnergySaverUI();
   updateTaskbarUI();
   updateProcessCountUI();
+  updateWifiUI();
+  updateBluetoothUI();
 }
 
 export function updateHotspotUI() {
@@ -509,6 +530,42 @@ export function updateEnergySaverUI() {
   }
   if (label) {
     label.textContent = State.isEnergySaverOn ? 'Tiết kiệm pin: Bật' : 'Tiết kiệm pin';
+  }
+}
+
+export function updateWifiUI() {
+  const pill = document.getElementById('pill-wifi');
+  const label = document.getElementById('pill-text-wifi');
+  const connected = State.wifiNetworks.find(n => n.connected);
+  if (pill) {
+    pill.classList.toggle('active', State.isWifiOn);
+  }
+  if (label) {
+    if (!State.isWifiOn) {
+      label.textContent = 'Wi-Fi: Tắt';
+    } else if (connected) {
+      label.textContent = `Wi-Fi: ${connected.ssid}`;
+    } else {
+      label.textContent = 'Wi-Fi: Bật';
+    }
+  }
+}
+
+export function updateBluetoothUI() {
+  const pill = document.getElementById('pill-bluetooth');
+  const label = document.getElementById('pill-text-bluetooth');
+  const activeCount = State.bluetoothDevices.filter(d => d.connected).length;
+  if (pill) {
+    pill.classList.toggle('active', State.isBluetoothOn);
+  }
+  if (label) {
+    if (!State.isBluetoothOn) {
+      label.textContent = 'Bluetooth: Tắt';
+    } else if (activeCount > 0) {
+      label.textContent = `Bluetooth (${activeCount})`;
+    } else {
+      label.textContent = 'Bluetooth: Bật';
+    }
   }
 }
 
@@ -542,8 +599,79 @@ export function toggleEnergySaver() {
   State.isEnergySaverOn = !State.isEnergySaverOn;
   updateEnergySaverUI();
   showToast(State.isEnergySaverOn 
-    ? '🌿 Tiết kiệm pin (Energy Saver): ĐÃ BẬT (Power Scheme Silent Toggle)' 
+    ? '🌿 Tiết kiệm pin (Energy Saver): ĐÃ BẬT trực tiếp trên ứng dụng' 
     : '🌿 Tiết kiệm pin: ĐÃ TẮT (Chế độ Cân bằng Balanced)');
+}
+
+export function toggleWifi() {
+  State.isWifiOn = !State.isWifiOn;
+  if (!State.isWifiOn) {
+    State.wifiNetworks.forEach(n => { n.connected = false; });
+  } else if (!State.wifiNetworks.some(n => n.connected)) {
+    const saved = State.wifiNetworks.find(n => n.saved);
+    if (saved) saved.connected = true;
+  }
+  updateWifiUI();
+  showToast(State.isWifiOn
+    ? '📶 Wi-Fi: ĐÃ BẬT trực tiếp trên ứng dụng'
+    : '📴 Wi-Fi: ĐÃ TẮT trực tiếp trên ứng dụng');
+  if (isWifiListQuery(State.query)) {
+    filterQuery(State.query);
+  }
+}
+
+export function toggleBluetooth() {
+  State.isBluetoothOn = !State.isBluetoothOn;
+  if (!State.isBluetoothOn) {
+    State.bluetoothDevices.forEach(d => { d.connected = false; });
+  }
+  updateBluetoothUI();
+  showToast(State.isBluetoothOn
+    ? '📶 Bluetooth: ĐÃ BẬT trực tiếp trên ứng dụng'
+    : '📴 Bluetooth: ĐÃ TẮT trực tiếp trên ứng dụng');
+  if (isBluetoothListQuery(State.query)) {
+    filterQuery(State.query);
+  }
+}
+
+export function connectWifiNetwork(ssid) {
+  if (!State.isWifiOn) {
+    State.isWifiOn = true;
+  }
+  const target = State.wifiNetworks.find(n => n.ssid === ssid);
+  if (!target) return;
+
+  if (target.connected) {
+    target.connected = false;
+    updateWifiUI();
+    showToast(`📴 Đã ngắt kết nối khỏi ${target.ssid}`);
+  } else {
+    State.wifiNetworks.forEach(n => { n.connected = false; });
+    target.connected = true;
+    target.saved = true;
+    updateWifiUI();
+    showToast(`📶 Đã kết nối thành công tới Wi-Fi "${target.ssid}" (${target.band})`);
+  }
+  if (isWifiListQuery(State.query)) {
+    filterQuery(State.query);
+  }
+}
+
+export function toggleBluetoothDevice(deviceId) {
+  if (!State.isBluetoothOn) {
+    State.isBluetoothOn = true;
+  }
+  const dev = State.bluetoothDevices.find(d => d.id === deviceId);
+  if (!dev) return;
+
+  dev.connected = !dev.connected;
+  updateBluetoothUI();
+  showToast(dev.connected
+    ? `🔗 Đã kết nối Bluetooth: ${dev.name} (Pin ${dev.battery})`
+    : `📴 Đã ngắt kết nối Bluetooth: ${dev.name}`);
+  if (isBluetoothListQuery(State.query)) {
+    filterQuery(State.query);
+  }
 }
 
 export function toggleTaskbarAlign() {
@@ -709,11 +837,59 @@ export function applyAppearance() {
   
   const modeBtn = document.getElementById('dock-btn-mode');
   if (modeBtn) {
-    modeBtn.innerHTML = State.mode === 'dark' 
-      ? `${renderIcon('moon')} <span>Tối</span>` 
-      : `${renderIcon('sun')} <span>Sáng</span>`;
+    const isLight = State.mode === 'light';
+    modeBtn.innerHTML = isLight 
+      ? `${renderIcon('sun')} <span>Chế độ Sáng</span>` 
+      : `${renderIcon('moon')} <span>Chế độ Tối</span>`;
+    modeBtn.title = isLight 
+      ? 'Chuyển sang Chế độ Tối (Ctrl + D)' 
+      : 'Chuyển sang Chế độ Sáng (Ctrl + D)';
+    modeBtn.classList.toggle('active', isLight);
   }
-  
+
+  // Update Windows 11 Settings UI elements
+  const winToggleMode = document.getElementById('win-toggle-mode');
+  if (winToggleMode) {
+    winToggleMode.checked = State.mode === 'dark';
+  }
+
+  const heroThemeTitle = document.getElementById('win-hero-theme-title');
+  if (heroThemeTitle) {
+    const curTheme = Themes.find(t => t.id === State.theme);
+    heroThemeTitle.textContent = `Theme: ${curTheme ? curTheme.name : 'Windows 11 Fluent'}`;
+  }
+
+  const miniLauncher = document.getElementById('win-hero-mini-launcher');
+  if (miniLauncher) {
+    miniLauncher.style.borderColor = activeAccent;
+    miniLauncher.style.boxShadow = `0 4px 16px ${rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)` : 'rgba(59, 130, 246, 0.35)'}`;
+  }
+
+  // Sync Top Landing Navbar Mode & Theme Controls
+  const navModeBtn = document.getElementById('nav-theme-toggle');
+  if (navModeBtn) {
+    const isLight = State.mode === 'light';
+    navModeBtn.textContent = isLight ? '☀️' : '🌙';
+    navModeBtn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+    navModeBtn.title = isLight ? 'Chuyển sang Chế độ Tối (Ctrl + D)' : 'Chuyển sang Chế độ Sáng (Ctrl + D)';
+  }
+
+  const navThemeDot = document.getElementById('nav-theme-dot');
+  if (navThemeDot) {
+    navThemeDot.style.background = activeAccent;
+    navThemeDot.style.boxShadow = `0 0 8px ${activeAccent}`;
+  }
+
+  document.querySelectorAll('.nav-theme-option').forEach(opt => {
+    opt.classList.toggle('active', opt.getAttribute('data-theme-id') === State.theme);
+  });
+
+  if (typeof window !== 'undefined' && typeof CustomEvent !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('lailauncher:appearance', {
+      detail: { os: State.os, mode: State.mode, theme: State.theme, accent: activeAccent }
+    }));
+  }
+
   savePreferences();
 }
 
@@ -891,6 +1067,130 @@ export function filterQuery(rawQuery) {
       action: `Tắt tiến trình (PID: ${p.pid})`,
       procData: p
     }));
+    State.selectedIndex = 0;
+    renderResults();
+    return;
+  }
+
+  // 5.5 Live In-App Hardware Lists ('sys wifi list', 'sys bluetooth list', 'wifi list', 'bluetooth list')
+  if (isWifiListQuery(q)) {
+    State.prefixMode = 'sys';
+    if (searchPrefixBadge) {
+      searchPrefixBadge.className = 'search-prefix-badge visible';
+      searchPrefixBadge.innerHTML = `${renderIcon('wifi')} <span>Wi-Fi</span>`;
+    }
+    const filterTerm = normalizeVietnamese(extractHardwareListFilter(q, ['sys wifi list', 'win wifi list', 'sys wifi', 'wifi list', 'danh sach wifi', 'danh sách wifi'])).trim();
+    const list = [];
+
+    const connectedNet = State.wifiNetworks.find(n => n.connected);
+    list.push({
+      id: 'sys-wifi-inline-toggle',
+      title: State.isWifiOn
+        ? `📶 Wi-Fi đang BẬT${connectedNet ? ` (${connectedNet.ssid})` : ''} — Nhấn để TẮT Wi-Fi`
+        : '📴 Wi-Fi đang TẮT — Nhấn để BẬT Wi-Fi trực tiếp trên app',
+      subtitle: 'Chuyển đổi nhanh sóng Wi-Fi mà không cần rời khỏi cửa sổ LAILauncher',
+      category: 'Wi-Fi',
+      type: 'wifi',
+      icon: 'wifi',
+      wifiToggle: true,
+      wifiOn: State.isWifiOn
+    });
+
+    if (State.isWifiOn) {
+      const matchedNets = State.wifiNetworks.filter(n =>
+        !filterTerm ||
+        normalizeVietnamese(n.ssid.toLowerCase()).includes(filterTerm) ||
+        normalizeVietnamese(n.security.toLowerCase()).includes(filterTerm)
+      );
+      matchedNets.forEach(net => {
+        list.push({
+          id: `wifi-net-${net.ssid}`,
+          title: `${net.ssid}${net.connected ? ' (Đang kết nối)' : ''}`,
+          subtitle: `${net.security} • Băng tần ${net.band}${net.saved ? ' • Đã lưu hồ sơ' : ''}`,
+          category: 'Wi-Fi',
+          type: 'wifi',
+          icon: 'wifi',
+          wifiData: net
+        });
+      });
+    }
+
+    State.currentResults = list;
+    State.selectedIndex = 0;
+    renderResults();
+    return;
+  }
+
+  if (isBluetoothListQuery(q)) {
+    State.prefixMode = 'sys';
+    if (searchPrefixBadge) {
+      searchPrefixBadge.className = 'search-prefix-badge visible';
+      searchPrefixBadge.innerHTML = `${renderIcon('bluetooth')} <span>Bluetooth</span>`;
+    }
+    const filterTerm = normalizeVietnamese(extractHardwareListFilter(q, ['sys bluetooth list', 'sys bt list', 'win bluetooth list', 'bluetooth list', 'bt list', 'danh sach bluetooth', 'danh sách bluetooth'])).trim();
+    const list = [];
+
+    const connectedCount = State.bluetoothDevices.filter(d => d.connected).length;
+    list.push({
+      id: 'sys-bt-inline-toggle',
+      title: State.isBluetoothOn
+        ? `📶 Bluetooth đang BẬT (${connectedCount} thiết bị kết nối) — Nhấn để TẮT`
+        : '📴 Bluetooth đang TẮT — Nhấn để BẬT Bluetooth trực tiếp trên app',
+      subtitle: 'Điều khiển radio Bluetooth trực tiếp trên app, không mở Windows Settings',
+      category: 'Bluetooth',
+      type: 'bluetooth',
+      icon: 'bluetooth',
+      bluetoothToggle: true,
+      bluetoothOn: State.isBluetoothOn
+    });
+
+    if (State.isBluetoothOn) {
+      const matchedDevices = State.bluetoothDevices.filter(d =>
+        !filterTerm ||
+        normalizeVietnamese(d.name.toLowerCase()).includes(filterTerm) ||
+        normalizeVietnamese(d.type.toLowerCase()).includes(filterTerm)
+      );
+      matchedDevices.forEach(dev => {
+        list.push({
+          id: `bt-dev-${dev.id}`,
+          title: `${dev.name}${dev.connected ? ' (Đã kết nối)' : ''}`,
+          subtitle: `${dev.type} • Pin: ${dev.battery} • Bluetooth LE/Classic`,
+          category: 'Bluetooth',
+          type: 'bluetooth',
+          icon: 'bluetooth',
+          bluetoothData: dev
+        });
+      });
+    }
+
+    State.currentResults = list;
+    State.selectedIndex = 0;
+    renderResults();
+    return;
+  }
+
+  // 5.6 Explicit System Prefix ('sys' / 'win')
+  if (lowerQ === 'sys' || lowerQ === 'win' || lowerQ.startsWith('sys ') || lowerQ.startsWith('win ')) {
+    State.prefixMode = 'sys';
+    if (searchPrefixBadge) {
+      searchPrefixBadge.className = 'search-prefix-badge visible';
+      searchPrefixBadge.innerHTML = `${renderIcon('settings')} <span>Hệ thống</span>`;
+    }
+    const term = normalizeVietnamese(lowerQ.replace(/^(sys|win)\b\s*/i, '').trim());
+    const sysItems = Database.filter(item => item.type === 'sys').filter(item => {
+      if (!term) return true;
+      return (
+        normalizeVietnamese(item.title.toLowerCase()).includes(term) ||
+        normalizeVietnamese(item.subtitle.toLowerCase()).includes(term) ||
+        (item.tags && item.tags.some(t => normalizeVietnamese(t.toLowerCase()).includes(term)))
+      );
+    });
+    State.currentResults = sysItems.map(item => ({ ...item, isSemanticMatch: false }));
+    State.selectedIndex = 0;
+    renderResults();
+    return;
+  }
+
   // 6. Format Prefix Filters (pdf:, doc:, sheet:, slide:, img:, code:, zip:)
   const formatFilters = [
     { prefix: 'pdf:', tag: 'PDF', exts: ['.pdf'] },
@@ -1091,6 +1391,74 @@ function renderResults() {
           killProcess(item.procData?.pid);
         });
       }
+    } else if (item.type === 'wifi') {
+      const net = item.wifiData;
+      const badgeHtml = item.wifiToggle
+        ? `<span class="net-signal-chip ${item.wifiOn ? 'connected' : 'off'}">${item.wifiOn ? '● Đang bật' : '○ Đang tắt'}</span>
+           <button type="button" class="net-action-btn ${item.wifiOn ? '' : 'primary'}" data-action="wifi-toggle">${item.wifiOn ? 'Tắt Wi-Fi' : 'Bật Wi-Fi'}</button>`
+        : `<span class="net-signal-chip ${net.connected ? 'connected' : ''}">📶 ${net.signal}%</span>
+           <button type="button" class="net-action-btn ${net.connected ? '' : 'primary'}" data-ssid="${escapeHtml(net.ssid)}">${net.connected ? 'Ngắt kết nối' : 'Kết nối'}</button>`;
+
+      li.innerHTML = `
+        <div class="result-item-left">
+          <div class="result-icon-box icon-wifi">
+            ${renderIcon('wifi')}
+          </div>
+          <div class="result-text-box">
+            <div class="result-title">${escapeHtml(item.title)}</div>
+            <div class="result-subtitle">${escapeHtml(item.subtitle)}</div>
+          </div>
+        </div>
+        <div class="proc-row-actions">
+          ${badgeHtml}
+        </div>
+      `;
+
+      const actionBtn = li.querySelector('.net-action-btn');
+      if (actionBtn) {
+        actionBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (item.wifiToggle) {
+            toggleWifi();
+          } else if (net) {
+            connectWifiNetwork(net.ssid);
+          }
+        });
+      }
+    } else if (item.type === 'bluetooth') {
+      const dev = item.bluetoothData;
+      const badgeHtml = item.bluetoothToggle
+        ? `<span class="bt-status-chip ${item.bluetoothOn ? 'connected' : 'off'}">${item.bluetoothOn ? '● Đang bật' : '○ Đang tắt'}</span>
+           <button type="button" class="net-action-btn ${item.bluetoothOn ? '' : 'primary'}" data-action="bt-toggle">${item.bluetoothOn ? 'Tắt Bluetooth' : 'Bật Bluetooth'}</button>`
+        : `<span class="bt-status-chip ${dev.connected ? 'connected' : ''}">🔋 ${dev.battery}</span>
+           <button type="button" class="net-action-btn ${dev.connected ? '' : 'primary'}" data-bt="${escapeHtml(dev.id)}">${dev.connected ? 'Ngắt kết nối' : 'Kết nối'}</button>`;
+
+      li.innerHTML = `
+        <div class="result-item-left">
+          <div class="result-icon-box icon-bluetooth">
+            ${renderIcon('bluetooth')}
+          </div>
+          <div class="result-text-box">
+            <div class="result-title">${escapeHtml(item.title)}</div>
+            <div class="result-subtitle">${escapeHtml(item.subtitle)}</div>
+          </div>
+        </div>
+        <div class="proc-row-actions">
+          ${badgeHtml}
+        </div>
+      `;
+
+      const actionBtn = li.querySelector('.net-action-btn');
+      if (actionBtn) {
+        actionBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (item.bluetoothToggle) {
+            toggleBluetooth();
+          } else if (dev) {
+            toggleBluetoothDevice(dev.id);
+          }
+        });
+      }
     } else {
       const semanticBadgeHtml = item.isSemanticMatch
         ? `<span class="semantic-tag">🎯 AI Semantic</span>`
@@ -1149,6 +1517,46 @@ export function executeAction(item) {
     return;
   }
 
+  if (item.id === 'sys-wifi-inline-toggle') {
+    toggleWifi();
+    return;
+  }
+
+  if (item.id === 'sys-bt-inline-toggle') {
+    toggleBluetooth();
+    return;
+  }
+
+  if (item.wifiData) {
+    connectWifiNetwork(item.wifiData.ssid);
+    return;
+  }
+
+  if (item.bluetoothData) {
+    toggleBluetoothDevice(item.bluetoothData.id);
+    return;
+  }
+
+  if (item.id === 'sys-wifi-flyout') {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.value = 'sys wifi list';
+      searchInput.focus();
+    }
+    filterQuery('sys wifi list');
+    return;
+  }
+
+  if (item.id === 'sys-bluetooth') {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.value = 'sys bluetooth list';
+      searchInput.focus();
+    }
+    filterQuery('sys bluetooth list');
+    return;
+  }
+
   if (item.id === 'sys-hotspot-toggle') {
     toggleHotspot();
     return;
@@ -1185,9 +1593,7 @@ export function executeAction(item) {
   }
 
   if (item.id === 'sys-toggle-dark') {
-    State.mode = State.mode === 'dark' ? 'light' : 'dark';
-    applyAppearance();
-    showToast(`Đã chuyển sang ${State.mode === 'dark' ? 'Chế độ Tối (Dark Mode)' : 'Chế độ Sáng (Light Mode)'}`);
+    toggleLightDarkMode();
     return;
   }
 
@@ -1302,6 +1708,41 @@ export function closeActionFlyout() {
 // 9. EVENT LISTENERS & SHORTCUTS
 // ============================================================================
 
+export function toggleLightDarkMode() {
+  State.mode = State.mode === 'dark' ? 'light' : 'dark';
+  applyAppearance();
+  renderThemeSwatches();
+  renderAccentChips();
+  showToast(`Đã chuyển sang ${State.mode === 'dark' ? 'Chế độ Tối (Dark Glass)' : 'Chế độ Sáng (Frosted Milk Glass)'}`);
+}
+
+export function setTheme(themeId) {
+  const matched = Themes.find(t => t.id === themeId);
+  if (!matched) return false;
+  State.theme = matched.id;
+  State.os = matched.os || State.os;
+  State.customAccent = null;
+  applyAppearance();
+  renderThemeSwatches();
+  renderAccentChips();
+  showToast(`🎨 Đã áp dụng chủ đề ${matched.name}`);
+  return true;
+}
+
+export function setMode(mode) {
+  if (mode !== 'dark' && mode !== 'light') return false;
+  if (State.mode === mode) return true;
+  State.mode = mode;
+  applyAppearance();
+  renderThemeSwatches();
+  renderAccentChips();
+  return true;
+}
+
+export function getAppearanceState() {
+  return { os: State.os, mode: State.mode, theme: State.theme, customAccent: State.customAccent };
+}
+
 function setupEventListeners() {
   const searchInput = document.getElementById('search-input');
   const clearBtn = document.getElementById('search-clear-btn');
@@ -1338,9 +1779,7 @@ function setupEventListeners() {
     // Ctrl + D: Toggle Dark / Light mode
     if (e.ctrlKey && e.key.toLowerCase() === 'd') {
       e.preventDefault();
-      State.mode = State.mode === 'dark' ? 'light' : 'dark';
-      applyAppearance();
-      showToast(`Đã chuyển sang ${State.mode === 'dark' ? 'Chế độ Tối' : 'Chế độ Sáng'}`);
+      toggleLightDarkMode();
       return;
     }
 
@@ -1358,17 +1797,22 @@ function setupEventListeners() {
       const targetOs = btn.getAttribute('data-os');
       if (targetOs) {
         State.os = targetOs;
+        if (targetOs === 'linux') {
+          if (State.theme === 'win-fluent') State.theme = 'linux-yaru';
+          if (State.wallpaper === 'aurora' || State.wallpaper === 'bloom') State.wallpaper = 'ubuntu';
+        } else if (targetOs === 'windows') {
+          if (State.theme === 'linux-yaru') State.theme = 'win-fluent';
+          if (State.wallpaper === 'ubuntu') State.wallpaper = 'aurora';
+        }
         applyAppearance();
-        showToast(targetOs === 'windows' ? 'Chuyển sang giao diện Windows 11 Fluent' : 'Chuyển sang giao diện Linux GNOME Adwaita');
+        renderThemeSwatches();
+        renderWallpaperSwatches();
+        showToast(targetOs === 'windows' ? 'Chuyển sang giao diện Windows 11 Fluent' : 'Chuyển sang giao diện Linux GNOME Adwaita (Ubuntu Yaru)');
       }
     });
   });
 
-  document.getElementById('dock-btn-mode')?.addEventListener('click', () => {
-    State.mode = State.mode === 'dark' ? 'light' : 'dark';
-    applyAppearance();
-    showToast(`Đã chuyển sang ${State.mode === 'dark' ? 'Chế độ Tối' : 'Chế độ Sáng'}`);
-  });
+  document.getElementById('dock-btn-mode')?.addEventListener('click', toggleLightDarkMode);
 
   document.getElementById('dock-btn-settings')?.addEventListener('click', () => {
     toggleSettingsModal();
@@ -1386,6 +1830,27 @@ function setupEventListeners() {
   document.getElementById('btn-linux-close')?.addEventListener('click', () => {
     showToast('Đóng cửa sổ Linux GNOME (Nhấn Alt+Space để mở lại)');
     toggleLauncherVisibility();
+  });
+  document.getElementById('btn-linux-minimize')?.addEventListener('click', () => {
+    showToast('Thu nhỏ cửa sổ Linux GNOME (Nhấn Alt+Space để mở lại)');
+    toggleLauncherVisibility();
+  });
+  document.getElementById('btn-linux-maximize')?.addEventListener('click', () => {
+    toggleSettingsModal();
+  });
+
+  // GNOME Top Bar Controls
+  document.querySelector('.gnome-activities')?.addEventListener('click', () => {
+    const shell = document.getElementById('launcher-shell');
+    if (shell && shell.style.display === 'none') {
+      toggleLauncherVisibility();
+    }
+    document.getElementById('search-input')?.focus();
+    showToast('🐧 Linux GNOME Activities: Mở tìm kiếm ứng dụng & tệp tin');
+  });
+
+  document.getElementById('gnome-power-btn')?.addEventListener('click', () => {
+    showToast('⏻ Linux GNOME Power: Đang ở trạng thái sẵn sàng');
   });
 
   // Action Flyout Items
@@ -1492,6 +1957,122 @@ function setupEventListeners() {
     showToast('Đã khôi phục màu Accent mặc định theo Theme');
   });
 
+  // ============================================================================
+  // WINDOWS 11 SETTINGS APP EVENT LISTENERS
+  // ============================================================================
+
+  // Navigation tab switching
+  document.querySelectorAll('.win-nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.getAttribute('data-tab');
+      if (!targetTab) return;
+
+      document.querySelectorAll('.win-nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.win-tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+      });
+      const activePane = document.getElementById(`tab-${targetTab}`);
+      if (activePane) {
+        activePane.classList.add('active');
+      }
+
+      // Reset search filter when switching tabs
+      const searchInput = document.getElementById('win-settings-search');
+      if (searchInput && searchInput.value) {
+        searchInput.value = '';
+        activePane?.querySelectorAll('.win-settings-card, .win-card-group').forEach(c => c.style.display = '');
+      }
+    });
+  });
+
+  // Windows 11 Caption Controls: Maximize/Restore & Minimize
+  document.getElementById('settings-max-btn')?.addEventListener('click', () => {
+    const win = document.querySelector('.settings-modal');
+    if (win) {
+      const isMax = win.classList.toggle('is-maximized');
+      const maxBtn = document.getElementById('settings-max-btn');
+      if (maxBtn) maxBtn.textContent = isMax ? '❐' : '◻';
+    }
+  });
+
+  document.getElementById('settings-min-btn')?.addEventListener('click', () => {
+    toggleSettingsModal();
+  });
+
+  // Windows 11 Settings Search Filter
+  const winSettingsSearch = document.getElementById('win-settings-search');
+  if (winSettingsSearch) {
+    winSettingsSearch.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const currentPane = document.querySelector('.win-tab-pane.active');
+      if (!currentPane) return;
+
+      const cards = currentPane.querySelectorAll('.win-settings-card, .win-card-group');
+      if (!query) {
+        cards.forEach(c => c.style.display = '');
+        return;
+      }
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+  }
+
+  // Windows 11 Settings Hero Mode Toggle
+  document.getElementById('win-toggle-mode')?.addEventListener('change', (e) => {
+    State.mode = e.target.checked ? 'dark' : 'light';
+    applyAppearance();
+    renderThemeSwatches();
+    renderAccentChips();
+    showToast(`Đã chuyển sang ${State.mode === 'dark' ? 'Chế độ Tối (Dark Glass)' : 'Chế độ Sáng (Frosted Milk Glass)'}`);
+  });
+
+  // Windows 11 Settings Transparency Toggle
+  document.getElementById('win-toggle-transparency')?.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      State.glassOpacity = 0.82;
+      State.glassBlur = 28;
+    } else {
+      State.glassOpacity = 0.98;
+      State.glassBlur = 0;
+    }
+    applyAppearance();
+    showToast(e.target.checked ? 'Đã bật hiệu ứng trong suốt (Transparency On)' : 'Đã tắt hiệu ứng trong suốt (Solid Opacity)');
+  });
+
+  // Windows 11 Settings Action Buttons & Selects
+  document.getElementById('btn-check-ollama')?.addEventListener('click', () => {
+    showToast('Máy chủ Ollama: Hoạt động bình thường (200 OK • http://localhost:11434)');
+  });
+
+  document.getElementById('btn-check-update')?.addEventListener('click', () => {
+    showToast('LAILauncher v2.4.0: Đã cập nhật phiên bản mới nhất!');
+  });
+
+  document.getElementById('win-select-placement')?.addEventListener('change', (e) => {
+    showToast(`Đã lưu căn chỉnh: ${e.target.options[e.target.selectedIndex].text}`);
+  });
+
+  document.getElementById('win-select-animation')?.addEventListener('change', (e) => {
+    showToast(`Đã cập nhật hoạt ảnh: ${e.target.options[e.target.selectedIndex].text}`);
+  });
+
+  document.getElementById('win-select-model')?.addEventListener('change', (e) => {
+    showToast(`Đã kích hoạt mô hình: ${e.target.options[e.target.selectedIndex].text}`);
+  });
+
+  document.querySelectorAll('#win-toggle-semantic, #win-toggle-ollama-auto, #win-toggle-startup, #win-toggle-tray, #win-toggle-eco').forEach(toggle => {
+    toggle.addEventListener('change', (e) => {
+      const card = e.target.closest('.win-settings-card');
+      const label = card?.querySelector('.win-row-title')?.textContent || 'Cài đặt';
+      showToast(`${label}: ${e.target.checked ? 'Bật (ON)' : 'Tắt (OFF)'}`);
+    });
+  });
+
   // Quick Settings Horizontal Strip Controls (Windows Search 2025 Inline Toggles)
   document.getElementById('pill-hotspot')?.addEventListener('click', toggleHotspot);
   document.getElementById('pill-energy')?.addEventListener('click', toggleEnergySaver);
@@ -1506,10 +2087,30 @@ function setupEventListeners() {
     filterQuery('trinh chay ngam');
   });
   document.getElementById('pill-wifi')?.addEventListener('click', () => {
-    showToast('📶 Wi-Fi: Đang quét tìm các điểm truy cập không dây khả dụng...');
+    toggleWifi();
+  });
+  document.getElementById('pill-wifi')?.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.value = 'sys wifi list';
+      searchInput.focus();
+    }
+    filterQuery('sys wifi list');
+    showToast('📶 Đang hiển thị danh sách mạng Wi-Fi trực tiếp trên ứng dụng');
   });
   document.getElementById('pill-bluetooth')?.addEventListener('click', () => {
-    showToast('🔵 Bluetooth: Đang sẵn sàng ghép nối thiết bị ngoại vi');
+    toggleBluetooth();
+  });
+  document.getElementById('pill-bluetooth')?.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.value = 'sys bluetooth list';
+      searchInput.focus();
+    }
+    filterQuery('sys bluetooth list');
+    showToast('🔵 Đang hiển thị danh sách thiết bị Bluetooth trực tiếp trên ứng dụng');
   });
 
   // Screenshot Preview Modal Controls
@@ -1962,8 +2563,50 @@ function renderWallpaperSwatches() {
 }
 
 // ============================================================================
-// 11. HELPERS: MATH, CLOCK, TOAST & MARKDOWN
+// 11. HELPERS: HARDWARE LIST QUERIES, MATH, CLOCK, TOAST & MARKDOWN
 // ============================================================================
+
+export function isWifiListQuery(raw) {
+  if (!raw) return false;
+  const n = normalizeVietnamese(raw.trim().toLowerCase());
+  return (
+    n === 'wifi list' || n.startsWith('wifi list ') ||
+    n === 'sys wifi list' || n.startsWith('sys wifi list ') ||
+    n === 'win wifi list' || n.startsWith('win wifi list ') ||
+    n === 'danh sach wifi' || n.startsWith('danh sach wifi ') ||
+    n === 'sys danh sach wifi' || n.startsWith('sys danh sach wifi ') ||
+    n === 'sys wifi' || n.startsWith('sys wifi ')
+  );
+}
+
+export function isBluetoothListQuery(raw) {
+  if (!raw) return false;
+  const n = normalizeVietnamese(raw.trim().toLowerCase());
+  return (
+    n === 'bluetooth list' || n.startsWith('bluetooth list ') ||
+    n === 'bt list' || n.startsWith('bt list ') ||
+    n === 'sys bluetooth list' || n.startsWith('sys bluetooth list ') ||
+    n === 'sys bt list' || n.startsWith('sys bt list ') ||
+    n === 'win bluetooth list' || n.startsWith('win bluetooth list ') ||
+    n === 'danh sach bluetooth' || n.startsWith('danh sach bluetooth ') ||
+    n === 'sys danh sach bluetooth' || n.startsWith('sys danh sach bluetooth ') ||
+    n === 'sys bluetooth' || n.startsWith('sys bluetooth ') ||
+    n === 'sys bt' || n.startsWith('sys bt ')
+  );
+}
+
+function extractHardwareListFilter(raw, prefixes) {
+  const trimmed = raw.trim();
+  const norm = normalizeVietnamese(trimmed.toLowerCase());
+  for (const p of prefixes) {
+    const pNorm = normalizeVietnamese(p.toLowerCase());
+    if (norm === pNorm) return '';
+    if (norm.startsWith(pNorm + ' ')) {
+      return trimmed.slice(p.length).trim();
+    }
+  }
+  return '';
+}
 
 function isMathExpression(str) {
   if (!str) return false;
@@ -2024,4 +2667,13 @@ function formatMarkdown(text) {
     .replace(/```csharp([\s\S]*?)```/gim, '<pre class="ai-stream-codeblock"><code>$1</code></pre>')
     .replace(/```([\s\S]*?)```/gim, '<pre class="ai-stream-codeblock"><code>$1</code></pre>')
     .replace(/\n/g, '<br>');
+}
+
+// Global auto-initialization fallback for direct script tag loading
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initLauncher());
+  } else {
+    initLauncher();
+  }
 }

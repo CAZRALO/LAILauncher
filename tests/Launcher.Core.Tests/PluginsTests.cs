@@ -96,6 +96,21 @@ public class PluginsTests
         Assert.All(results, r => Assert.Equal(ResultType.Process, r.Type));
     }
 
+    [Fact]
+    public async Task ProcessKillerPlugin_CriticalProcess_HasSafetyProtection()
+    {
+        var plugin = new ProcessKillerPlugin();
+        var context = new QueryContext("kill System");
+        var results = (await plugin.QueryAsync(context)).ToList();
+
+        var sysResult = results.FirstOrDefault(r => r.Metadata.TryGetValue("ProcessName", out var name) && name.Equals("System", StringComparison.OrdinalIgnoreCase));
+        if (sysResult != null)
+        {
+            Assert.Equal("True", sysResult.Metadata["IsCritical"]);
+            Assert.Contains("Bảo vệ", sysResult.Actions[0].Name);
+        }
+    }
+
     [Theory]
     [InlineData("dark mode", "Dark / Light Mode")]
     [InlineData("am luong", "Volume")]
@@ -137,5 +152,66 @@ public class PluginsTests
         Assert.Contains(results, r => r.Title.Contains("Battery", StringComparison.OrdinalIgnoreCase));
         Assert.Contains(results, r => r.Title.Contains("Wi-Fi", StringComparison.OrdinalIgnoreCase));
         Assert.Contains(results, r => r.Title.Contains("Taskbar", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Theory]
+    [InlineData("sys wifi list")]
+    [InlineData("sys wifi list home")]
+    [InlineData("wifi list")]
+    public async Task SystemCommandsPlugin_WifiListQuery_ReturnsInAppWifiResultsOnly(string query)
+    {
+        var plugin = new SystemCommandsPlugin();
+        var results = (await plugin.QueryAsync(new QueryContext(query))).ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.Equal(ResultType.SystemCommand, r.Type));
+        Assert.Contains(results, r => r.Title.Contains("Wi-Fi", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(results, r => r.Title.Contains("Lock Workstation", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Theory]
+    [InlineData("sys bluetooth list")]
+    [InlineData("sys bluetooth list sony")]
+    [InlineData("bluetooth list")]
+    public async Task SystemCommandsPlugin_BluetoothListQuery_ReturnsInAppBluetoothResultsOnly(string query)
+    {
+        var plugin = new SystemCommandsPlugin();
+        var results = (await plugin.QueryAsync(new QueryContext(query))).ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.Equal(ResultType.SystemCommand, r.Type));
+        Assert.Contains(results, r => r.Title.Contains("Bluetooth", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(results, r => r.Title.Contains("Shut Down", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task SystemCommandsPlugin_SysFilteredQuery_ExcludesUnrelatedCommands()
+    {
+        var plugin = new SystemCommandsPlugin();
+        var results = (await plugin.QueryAsync(new QueryContext("sys battery"))).ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r =>
+            Assert.True(
+                r.Title.Contains("Battery", StringComparison.OrdinalIgnoreCase) ||
+                r.Title.Contains("pin", StringComparison.OrdinalIgnoreCase) ||
+                r.Subtitle.Contains("pin", StringComparison.OrdinalIgnoreCase),
+                $"Unexpected unrelated result for 'sys battery': {r.Title}"));
+    }
+
+    [Fact]
+    public async Task SystemCommandsPlugin_WifiAndBluetoothShortcuts_TargetInAppListQueries()
+    {
+        var plugin = new SystemCommandsPlugin();
+
+        var wifiResults = (await plugin.QueryAsync(new QueryContext("sys wifi"))).ToList();
+        Assert.Contains(wifiResults, r =>
+            r.Metadata.TryGetValue("ActionKeyword", out var kw) &&
+            kw == "sys wifi list");
+
+        var btResults = (await plugin.QueryAsync(new QueryContext("sys bluetooth"))).ToList();
+        Assert.Contains(btResults, r =>
+            r.Metadata.TryGetValue("ActionKeyword", out var kw) &&
+            kw == "sys bluetooth list");
     }
 }

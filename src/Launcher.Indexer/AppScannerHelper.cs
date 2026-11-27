@@ -108,7 +108,21 @@ public static class AppScannerHelper
                     return apps;
 
                 dynamic shell = Activator.CreateInstance(shellType)!;
-                dynamic folder = shell.NameSpace("shell:AppsFolder");
+                dynamic? folder = null;
+                for (int attempt = 0; attempt < 3; attempt++)
+                {
+                    try
+                    {
+                        folder = shell.NameSpace("shell:AppsFolder");
+                        if (folder != null) break;
+                    }
+                    catch
+                    {
+                        // Retry on transient COM busy
+                    }
+                    Thread.Sleep(50);
+                }
+
                 if (folder == null)
                     return apps;
 
