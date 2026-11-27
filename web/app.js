@@ -2050,7 +2050,7 @@ function setupEventListeners() {
   });
 
   document.getElementById('btn-check-update')?.addEventListener('click', () => {
-    showToast('LAILauncher v2.4.0: Đã cập nhật phiên bản mới nhất!');
+    showToast('LAILauncher v1.0.0: Đã cập nhật phiên bản mới nhất!');
   });
 
   document.getElementById('win-select-placement')?.addEventListener('change', (e) => {

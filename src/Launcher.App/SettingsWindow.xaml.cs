@@ -1586,7 +1586,7 @@ public partial class SettingsWindow : Window
     {
         if (AboutAppVersionText != null)
         {
-            AboutAppVersionText.Text = "v2.4.0 (.NET 8 Windows Desktop)";
+            AboutAppVersionText.Text = "v1.0.0 (.NET 8 Windows Desktop)";
         }
         if (AboutRuntimeText != null)
         {
@@ -1621,7 +1621,7 @@ public partial class SettingsWindow : Window
     {
         var sb = new StringBuilder();
         sb.AppendLine("LAILauncher Diagnostics");
-        sb.AppendLine($"- Version: 2.4.0");
+        sb.AppendLine($"- Version: 1.0.0");
         sb.AppendLine($"- OS: {Environment.OSVersion}");
         sb.AppendLine($"- Runtime: .NET {Environment.Version} ({(Environment.Is64BitProcess ? "x64" : "x86")})");
         sb.AppendLine($"- Language: {LocalizationService.CurrentLanguage}");

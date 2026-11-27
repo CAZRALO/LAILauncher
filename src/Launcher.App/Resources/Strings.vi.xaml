@@ -4,7 +4,7 @@
 
     <!-- Branding -->
     <sys:String x:Key="Str_AppName">LAILauncher</sys:String>
-    <sys:String x:Key="Str_Version">Phiên bản 2.4.0</sys:String>
+    <sys:String x:Key="Str_Version">Phiên bản 1.0.0</sys:String>
     <sys:String x:Key="Str_SettingsTitle">Cài đặt LAILauncher</sys:String>
     <sys:String x:Key="Str_LangLabel">Ngôn ngữ</sys:String>
 

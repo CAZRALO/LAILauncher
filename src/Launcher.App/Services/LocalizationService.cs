@@ -20,7 +20,7 @@ public static class LocalizationService
     private static readonly Dictionary<string, string> FallbackVi = new(StringComparer.Ordinal)
     {
         ["Str_AppName"] = "LAILauncher",
-        ["Str_Version"] = "Phiên bản 2.4.0",
+        ["Str_Version"] = "Phiên bản 1.0.0",
         ["Str_SettingsTitle"] = "Cài đặt - LAILauncher",
         ["Str_SearchPlaceholder"] = "Tìm ứng dụng, tệp tin, lệnh (>) hoặc tính toán...",
         ["Str_ResultsHeader"] = "KẾT QUẢ TÌM KIẾM & HÀNH ĐỘNG",
@@ -77,7 +77,7 @@ public static class LocalizationService
     private static readonly Dictionary<string, string> FallbackEn = new(StringComparer.Ordinal)
     {
         ["Str_AppName"] = "LAILauncher",
-        ["Str_Version"] = "Version 2.4.0",
+        ["Str_Version"] = "Version 1.0.0",
         ["Str_SettingsTitle"] = "LAILauncher Settings",
         ["Str_SearchPlaceholder"] = "Search apps, files, commands (>) or math...",
         ["Str_ResultsHeader"] = "SEARCH RESULTS & ACTIONS",
